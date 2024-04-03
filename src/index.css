@@ -1,0 +1,65 @@
+/*!
+* Copyright 2024, DarkMatter https://www.darkm.co.za
+*/
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Outfit:wght@100..900&display=swap');
+
+html,
+body,
+div,
+span,
+h1,
+h2,
+p,
+img,
+label,
+a,
+button,
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  font-weight: normal;
+  line-height: 1;
+  border: 0;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+* {
+  outline: none !important;
+  box-sizing: border-box;
+}
+
+*:focus:not(textarea) {
+  outline: 2px dotted #eee !important;
+}
+
+button {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+:root {
+  font-family: "Outfit", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --white: #ffffff;
+  --light-grey: #F5F5F5;
+  --grey: #B2B2B2;
+  --off-black: #191919;
+  --black: #000;
+  --font-1rem: 1rem;
+}
+
+.mx-1 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
