@@ -1,0 +1,37 @@
+[  
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Marketing Campaign", 
+        "group":"Marketing"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Product Feature Update", 
+        "group":"Product"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Monthly Team Retrospective", 
+        "group":"Team"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Project Recap", 
+        "group":"Team"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Design Concept Exploration", 
+        "group":"Design"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Weekly Team Stand-Up", 
+        "group":"Team"
+    },
+    {
+        "image":"deck-placeholder-1.jpg",
+        "name":"Sales Pitch", 
+        "group":"Sales"
+    }
+]  

@@ -6,6 +6,14 @@ const LoginForm = () => {
 
     function updateToggle(id) {
         setToggle(id)
+        
+        if (id == 1) {
+            document.getElementById('login').classList.add('active')
+            document.getElementById('create-account').classList.remove('active')
+        } else {
+            document.getElementById('login').classList.remove('active')
+            document.getElementById('create-account').classList.add('active')
+        }
     }
 
     return (
@@ -19,8 +27,8 @@ const LoginForm = () => {
                     </div>
 
                     <div className="d-flex form-toggle">
-                        <button type="button"  className="active" onClick={()=>updateToggle(1)}>Login</button>
-                        <button type="button" onClick={()=>updateToggle(2)}>Create account</button>
+                        <button id="login" type="button" className="active" onClick={()=>updateToggle(1)}>Login</button>
+                        <button id="create-account" type="button" onClick={()=>updateToggle(2)}>Create account</button>
                     </div>
 
                     <div className={toggle === 1 ? "" : "d-none"}>
