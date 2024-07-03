@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client'
 import LoginForm from './Components/LoginForm/LoginForm.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
+import DropZone from './Components/Dashboard/DropZone.jsx';
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -23,6 +25,10 @@ const router = createBrowserRouter([
     path: "/dashboard/deck",
     element: <Deck/>
   },
+  {
+    path: "/dashboard/deck/dropzone",
+    element: <DropZone/>
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
