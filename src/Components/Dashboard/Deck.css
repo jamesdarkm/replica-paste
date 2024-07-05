@@ -57,8 +57,11 @@ a {
 .card-preview-deck {
   position: relative;
   min-height: 100px;
-  overflow: hidden;
   border: 1px solid #e5e5e5;
+}
+
+.card-preview-deck:hover .card-preview-deck-add {
+  display:block
 }
 
 .card-preview-deck img {

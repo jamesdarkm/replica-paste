@@ -10,10 +10,13 @@ import {
     arrayUnion,
 } from 'firebase/firestore';
 import { ref, getDownloadURL, uploadBytes } from '@firebase/storage';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
 
 const DropZone = () => {
     const [selectedImages, setSelectedImages] = useState([]);
     const captionRef = useRef(null);
+    const [editorData, setEditorData] = useState('');
 
     const baseStyle = {
         flex: 1,
@@ -102,36 +105,83 @@ const DropZone = () => {
 
     return (
         <div>
-          <a href="/dashboard/deck" style={{ position:'absolute', zIndex: '99', right: '10px', top: '10px' }}><ion-icon name='close' size='large'></ion-icon></a>
+            <button onClick={uploadPost}
+                style={{
+                    position: 'absolute',
+                    zIndex: '99',
+                    right: '10px',
+                    top: '10px',
+                    background: 'grey',
+                    padding: '8px 15px',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    border: '2px solid #4f15a6',
+                    borderRadius: '5px',
+                    background: '#4f15a6'
+                }}
+            >
+               Save
+            </button>
 
-          <div
-              className='space-between d-flex drop-container'
-              style={{ padding: '20px', background: '#fff' }}
-          >
-              <div>
-                  <input
-                      ref={captionRef}
-                      type='text'
-                      placeholder='Enter caption'
-                      style={{ padding: '20px', background: '#fff' }}
-                  />
-                  <button onClick={uploadPost}>Post</button>
-              </div>
+            <div
+                className='space-between d-flex drop-container'
+                style={{ padding: '20px', background: '#fff' }}
+            >
+                <div>
+                    <div>
+                    <div className="editor-container">
+                        <CKEditor
+                            editor={InlineEditor}
+                            data={editorData}
+                            onChange={(event, editor) => {
+                                const data = editor.getData();
+                                setEditorData(data);
+                                console.log({ event, editor, data });
+                            }}
+                            config={{
+                                toolbar: [
+                                    'heading', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList'
+                                ],
+                                heading: {
+                                    options: [
+                                        { model: 'paragraph', view: 'p', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                                        { model: 'heading1', view: 'h1', title: 'Title', class: 'ck-heading_heading1' }
+                                    ]
+                                }
+                            }}
+                        />
+                         </div>
+                        <p>Debug {editorData}</p>
+                   
+                    </div>
+                    <input
+                        ref={captionRef}
+                        type='hidden'
+                        value={editorData}
+                    />
+                    
+                </div>
 
-              <div
-                  style={{ padding: '20px', background: '#fff' }}
-                  className='jc-center d-flex'
-              >
-                  <div {...getRootProps({ style })} className='jc-center d-flex'>
-                      <div>{selected_images}</div>
-                      <input {...getInputProps()} />
+                <div
+                    style={{ padding: '20px', background: '#fff' }}
+                    className='jc-center d-flex'
+                >
+                    <div
+                        {...getRootProps({ style })}
+                        className='jc-center d-flex'
+                    >
+                        <div>{selected_images}</div>
+                        <input {...getInputProps()} />
 
-                      <p>
-                          <ion-icon name='add-outline' size='large'></ion-icon>
-                      </p>
-                  </div>
-              </div>
-          </div>
+                        <p>
+                            <ion-icon
+                                name='add-outline'
+                                size='large'
+                            ></ion-icon>
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

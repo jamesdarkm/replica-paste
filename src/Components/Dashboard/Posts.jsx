@@ -14,7 +14,9 @@ const Posts = () => {
                 <div>
                     <img src={file} alt='' />
                 </div>
+                <a href="/dashboard/deck/dropzone" className="card-preview-deck-add"><ion-icon name="add-outline"></ion-icon></a>
             </a>
+            
         ));
         return post_images;
     };

@@ -16,7 +16,7 @@ const LoginSignup = () => {
             <div className='two-column ad-section'></div>
 
             <div className='two-column'>
-                <form className='form' action=''>
+                <div className='form'>
                     <div className='t-center'>
                         <img src='./src/Components/Assets/wetransfer-text-logo.svg' />
                     </div>
@@ -51,7 +51,7 @@ const LoginSignup = () => {
                             <SignUp />
                         </div>
                     )}
-                </form>
+                </div>
             </div>
         </div>
     );
