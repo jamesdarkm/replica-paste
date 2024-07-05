@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 .*NTUSER.DAT
+
+# Environment variables
+.env
+
+# Firebase configuration
+firebase.js
