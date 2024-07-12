@@ -145,7 +145,7 @@ const DropZone = () => {
                                 heading: {
                                     options: [
                                         { model: 'paragraph', view: 'p', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                                        { model: 'heading1', view: 'h1', title: 'Title', class: 'ck-heading_heading1' }
+                                        { model: 'heading1', view: 'h1', title: 'Heading', class: 'ck-heading_heading1' }
                                     ]
                                 }
                             }}

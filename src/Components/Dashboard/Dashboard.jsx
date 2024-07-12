@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
+import { useAuth } from '../../Contexts/AuthContext'
 import './Dashboard.css'
 import './Modal.css'
 
 const Dashboard = () => {
+    const { currentUser } = useAuth();
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
 
@@ -63,7 +65,7 @@ const Dashboard = () => {
             <div className="aside">
                 <div className="gap-10 ai-center d-flex user">
                     <span>N</span>
-                    <span>ND's Team</span>
+                    {/* <span>{currentUser.displayName ? currentUser.displayName : currentUser.email}'s Team</span> */}
                 </div>
                 <ul>
                     <li><a href="" className="gap-10 ai-center d-flex"><ion-icon name="brush-outline"></ion-icon> <span>Brand theme</span></a></li>

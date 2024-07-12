@@ -5,6 +5,9 @@ import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 
+import Login from './Components/Account/LoginForm.jsx';
+import SignUp from './Components/Account/SignupForm.jsx';
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -14,7 +17,11 @@ import './index.css'
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginSignup/>
+    element: <Login/>
+  }, 
+  {
+    path: "/create-account",
+    element: <SignUp/>
   }, 
   {
     path: "/dashboard",
