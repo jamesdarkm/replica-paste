@@ -4,6 +4,8 @@ import LoginSignup from './Components/Account/LoginSignup.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
+import Onboard from './Components/Onboard/Onboard.jsx';
+
 
 import Login from './Components/Account/LoginForm.jsx';
 import SignUp from './Components/Account/SignupForm.jsx';
@@ -24,6 +26,10 @@ const router = createBrowserRouter([
     element: <SignUp/>
   }, 
   {
+    path: "/onboard",
+    element: <Onboard/>
+  },
+  {
     path: "/dashboard",
     element: <Dashboard/>
   },
@@ -34,7 +40,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/deck/dropzone",
     element: <DropZone/>
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
