@@ -1,6 +1,10 @@
 /*!
 * Copyright 2024, DarkMatter https://www.darkm.co.za
 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Outfit:wght@100..900&display=swap');
 
 html,
