@@ -27,6 +27,3 @@ dist-ssr
 
 # Environment variables
 .env
-
-# Firebase configuration
-firebase.js
