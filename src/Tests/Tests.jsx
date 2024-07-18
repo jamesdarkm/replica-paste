@@ -31,10 +31,16 @@ const Tests = () => {
         document.body.classList.remove('active-modal');
     }
 
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+
     return (
         <>
             <div className='flex'>
-                <div class='h-screen w-64 p-4 z-10'>
+                <div class='h-screen w-64 p-4 z-5'>
                     <div className='flex items-center justify-between'>
                         <Link
                             to='/'
@@ -75,9 +81,9 @@ const Tests = () => {
                             </Link>
                         </li>
                         <li>
-                            <Link
-                                to='/'
+                            <button
                                 className='hover:text-gray-400 flex block'
+                                onClick={togglePopup}
                             >
                                 <ion-icon
                                     size='small'
@@ -86,7 +92,7 @@ const Tests = () => {
                                 <span className='ml-3 text-base'>
                                     Invite members
                                 </span>
-                            </Link>
+                            </button>
                         </li>
                         <li>
                             <Link
@@ -106,18 +112,11 @@ const Tests = () => {
                 </div>
 
                 <div className=' flex-1 py-2 pr-6'>
-                    <div class='w-full flex items-center justify-between z-50 '>
+                    <div class='w-full flex items-center justify-between z-10 '>
                         <div className='py-4  border-solid border-b-2 border-slate-200 ml-8 items-center w-full justify-between flex'>
                             <div>
-                                <ion-icon
-                                    size='small'
-                                    name='search-outline'
-                                ></ion-icon>
-                                <input
-                                    type='text'
-                                    class='border-none bg-transparent text-pink-500'
-                                    placeholder='Search decks'
-                                />
+                                <ion-icon size='small' name='search-outline'></ion-icon>
+                                <input type='text' className='w-96 ml-3 rounded border-none bg-transparent' placeholder='Search decks' />
                             </div>
 
                             <div>
@@ -127,13 +126,12 @@ const Tests = () => {
                                             to='/'
                                             className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold'
                                         >
-                                            <ion-icon
-                                                size='small'
-                                                name='help-outline'
-                                            ></ion-icon>
+                                            <ion-icon size='small' name='help-outline'></ion-icon>
                                         </Link>
                                     </div>
+                                    
                                     <button
+                                        onClick={togglePopup}
                                         type='button'
                                         class='ml-6 font-bold rounded border-solid border-2 border-violet-800 px-3 py-2 text-violet-800 dark:hover:bg-neutral-900 '
                                     >
@@ -151,8 +149,21 @@ const Tests = () => {
                         </div>
                     </div>
 
-                    <div className='my-6 mx-auto max-w-screen-xl bg-[#4b5563]'>
-                        <p className='text-lg'>Content area</p>
+                    <div className='my-6 mx-auto max-w-screen-2xl'>
+                    <div class="grid grid-cols-4 gap-4">
+                        <Link to="/about" className="mt-5">
+                            <div className="flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100"><ion-icon size="large" name="add-outline"></ion-icon></div> 
+                            <p className="mt-3 text-lg font-bold">Empty Deck</p>
+                        </Link>
+
+                        {data.map((item, index) => (
+                            <Link to="/dashboard/deck" className="mt-5" key={index}>
+                                <div className="min-h-48 rounded bg-cover" style={{ backgroundImage: `url(./src/Components/Assets/${item.image})` }}></div> 
+                                <p className="mt-3 text-lg font-bold">{item.name}</p>
+                                <span>{item.group}</span>
+                            </Link>
+                        ))}
+                    </div>
                     </div>
                 </div>
             </div>
