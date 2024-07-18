@@ -7,12 +7,11 @@ import 'swiper/css/scrollbar';
 import { useSwiper } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import OnboardTwo from './OnboardTwo';
-import weTransferLogo from '../Assets/wetransfer-text-logo.svg'
-import './Onboard.css';
+import weTransferLogo from '../Assets/wetransfer-text-logo.svg';
 
 const SwiperButtonNext = ({ children }) => {
   const swiper = useSwiper();
-  return <button className='continue-btn' onClick={() => swiper.slideNext()}>{children}</button>;
+  return <button className='mt-20 py-6 px-12 mx-auto block cursor-pointer bg-[#4f15a6] text-xl font-bold rounded-full text-white' onClick={() => swiper.slideNext()}>{children}</button>;
 };
 
 export default function Onboard() {
@@ -27,7 +26,7 @@ export default function Onboard() {
     'Music / Sound',
     'Marketing / PR',
     'Sales / Client relations',
-    'Eduaction / Training',
+    'Education / Training',
     'Architecture / Construction',
     'Product / Software',
     'Data / Finance / Legal',
@@ -62,35 +61,33 @@ export default function Onboard() {
       className="mySwiper"
     >
       <SwiperSlide>
-        <main onClick={closeDropdown}>
-          <div className="logoWrapper">
-            <img className='weTransferLogo' src={weTransferLogo} alt="WeTransfer Logo" />
+        <main className="h-screen p-[20px]" onClick={closeDropdown}>
+          <div className="flex justify-center">
+            <img className='invert' src={weTransferLogo} alt="WeTransfer Logo" />
           </div>
     
-          <div className="profileWrapper">
-            {/* <img className='profileImage' src='./src/Components/Assets/wetransfer-text-logo.svg' /> */}
-            {/* <div className="profileImage"></div> */}
+          <div className="w-[140.5px] h-[127px] bg-[#000] mx-[auto] rounded-[45%] mt-[4%]">
           </div>
     
-          <p className="welcomeText">
+          <p className="font-gt-super text-[3rem] text-center mt-[40px]">
             Welcome to WeTransfer, James
           </p>
     
-          <p className="fieldQuestion">
+          <p className="text-xl mt-16 text-center">
             Firstly, which field are you in?
           </p>
     
-          <div className="custom-select-wrapper">
-            <div className="custom-select" ref={selectRef}>
-              <div className={`select-selected ${isOpen ? 'select-arrow-active' : ''}`} onClick={toggleDropdown}>
+          <div className="relative font-arial w-[550px] mx-auto my-5 border border-gray-300 rounded-xl p-2.5">
+            <div className="custom-select rounded-[20px] w-[550px] mx-[auto] my-[20px] p-[0.5%] font-[Arial] border border-red-500" ref={selectRef}>
+              <div className={`flex justify-between items-center p-5 cursor-pointer ${isOpen ? 'select-arrow-active' : ''}`} onClick={toggleDropdown}>
                 {selected}
-                <i className="fas fa-chevron-down dropdown-icon"></i>
+                <i className="fas fa-chevron-down ml-2"></i>
               </div>
-              <div className={`select-items ${isOpen ? '' : 'select-hide'}`}>
+              <div className={`absolute left-0 right-0 top-full bg-white z-10 ${isOpen ? '' : 'hidden'}`}>
                 {options.map((option, index) => (
                   <div
                     key={index}
-                    className={selected === option ? 'same-as-selected' : ''}
+                    className={`p-2 cursor-pointer ${selected === option ? 'bg-gray-200' : ''}`}
                     onClick={() => handleOptionClick(option)}
                   >
                     {option}
@@ -100,26 +97,26 @@ export default function Onboard() {
             </div>
           </div>
     
-          <div className="user-data-wrapper">
-            <label>
-              <input type="checkbox" name="option2" value="value2"/>
-              <div className="label-text">
-              Let WeTransfer use data you share to show you tailored <br />
-              ads on and off our websites.
-              <span
-                className="tooltip"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                What does this mean?
-              </span>
+          <div className="flex justify-center">
+            <label className="flex items-center">
+              <input className="w-7 h-7 rounded" type="checkbox" name="option2" value="value2"/>
+              <div className="ml-3">
+                Let WeTransfer use data you share to show you tailored <br />
+                ads on and off our websites.
+                <span
+                  className="text-blue-500 underline cursor-pointer ml-1"
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  What does this mean?
+                </span>
               </div>
             </label>
           </div>
     
           {isHovered && (
-            <div className="tooltip-box">
-              <h2 className="tooltip-heading">How is WeTransfer using my data?</h2>
+            <div className="absolute top-12 right-12 w-72 h-112 bg-gray-900 text-white rounded-lg p-6 z-20 shadow-lg">
+              <h2 className="text-2xl text-left mb-4">How is WeTransfer using my data?</h2>
               <p>
                 We use your email address to show you (and others like you). 
                 We Transfer ads on websites you visit, such as social media. 
@@ -139,7 +136,7 @@ export default function Onboard() {
         </main>
       </SwiperSlide>
       <SwiperSlide>
-        <OnboardTwo></OnboardTwo>
+        <OnboardTwo />
       </SwiperSlide>
     </Swiper>
   )
