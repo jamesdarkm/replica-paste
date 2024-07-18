@@ -76,9 +76,9 @@ export default function Onboard() {
           <p className="text-xl mt-16 text-center">
             Firstly, which field are you in?
           </p>
-    
+          
           <div className="relative font-arial w-[550px] mx-auto my-5 border border-gray-300 rounded-xl p-2.5">
-            <div className="custom-select rounded-[20px] w-[550px] mx-[auto] my-[20px] p-[0.5%] font-[Arial] border border-red-500" ref={selectRef}>
+            <div className="custom-select rounded-[20px] w-[550px] mx-[auto] my-[20px] p-[0.5%] font-[Arial] border border-solid border-[##0000004d]" ref={selectRef}>
               <div className={`flex justify-between items-center p-5 cursor-pointer ${isOpen ? 'select-arrow-active' : ''}`} onClick={toggleDropdown}>
                 {selected}
                 <i className="fas fa-chevron-down ml-2"></i>

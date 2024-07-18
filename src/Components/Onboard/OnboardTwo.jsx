@@ -16,7 +16,7 @@ const SwiperButtonNext = ({ children }) => {
       className={`mt-5 py-6 px-12 block cursor-pointer text-xl font-bold rounded-full ${
         children === 'Continue'
           ? 'bg-[#4f15a6] text-white'
-          : 'border border-[#4f15a6] text-[#4f15a6]'
+          : 'border border-solid border-[#4f15a6] text-[#4f15a6]'
       }`}
       onClick={() => swiper.slideNext()}
     >
