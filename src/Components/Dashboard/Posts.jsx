@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { useParams } from 'react-router-dom';
+import {collection, onSnapshot, where, orderBy, query } from 'firebase/firestore';
 import { db } from '../../../firebase';
 // import moment from 'moment'
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);
+    const { id } = useParams();
+
     const postImages = (post) => {
         const post_images = post.images?.map((file) => (
             <a href="/dashboard/deck/dropzone"
@@ -12,6 +15,7 @@ const Posts = () => {
                 key={post.id}
             >
                 <div>
+                {post.title}
                     <img src={file} alt='' />
                 </div>
                 <a href="/dashboard/deck/dropzone" className="card-preview-deck-add"><ion-icon name="add-outline"></ion-icon></a>
@@ -22,8 +26,11 @@ const Posts = () => {
     };
 
     useEffect(() => {
-        const collectionRef = collection(db, 'posts');
-        const q = query(collectionRef, orderBy('timestamp', 'desc'));
+        
+
+        const collectionRef = collection(db, 'decks');
+        const q = query(collectionRef, where('heading', '==', id ), orderBy('timestamp', 'desc'));
+        
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             setPosts(
                 querySnapshot.docs.map((doc) => ({

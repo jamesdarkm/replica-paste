@@ -1,174 +1,201 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useRef, useState, useMemo } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { db, storage } from '../../firebase';
+import {
+    addDoc,
+    collection,
+    serverTimestamp,
+    updateDoc,
+    doc,
+    arrayUnion,
+} from 'firebase/firestore';
+import { ref, getDownloadURL, uploadBytes } from '@firebase/storage';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import InlineEditor from '@ckeditor/ckeditor5-build-inline';
 
-const Tests = () => {
-    const [data, setData] = useState([]);
-    const [modal, setModal] = useState(false);
+const DropZone = () => {
+    const [selectedImages, setSelectedImages] = useState([]);
+    const headingRef = useRef(null);
+    const copyRef = useRef(null);
+    const [editorData, setEditorData] = useState('');
 
-    /**
-     * Test data
-     */
-    useEffect(() => {
-        fetch('./src/Components/Dashboard/test-data.json')
-            .then((response) => response.json())
-            .then((data) => setData(data))
-            .catch((error) => console.error('Error fetching data:', error));
-    }, []);
-
-    /**
-     * Modal toggle
-     */
-    const toggleModal = () => {
-        setModal(!modal);
+    const baseStyle = {
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '20px',
+        borderWidth: 2,
+        borderRadius: 2,
+        borderColor: '#eeeeee',
+        borderStyle: 'dashed',
+        backgroundColor: '#fafafa',
+        color: '#bdbdbd',
+        outline: 'none',
+        transition: 'border .24s ease-in-out',
     };
 
-    /**
-     * Hide the scrollbar when modal is active
-     */
-    if (modal) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
-    }
+    const focusedStyle = {
+        borderColor: '#2196f3',
+    };
 
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const acceptStyle = {
+        borderColor: '#00e676',
+    };
 
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-  };
+    const rejectStyle = {
+        borderColor: '#ff1744',
+    };
+
+    const uploadPost = async () => {
+        let lastDownloadURL = '';
+
+        const docRef = await addDoc(collection(db, 'decks'), {
+            heading: headingRef.current.value,
+            title: copyRef.current.value,
+            timestamp: serverTimestamp(),
+        });
+        
+        await Promise.all(
+            selectedImages.map(async (image, index) => {
+                const imageRef = ref(
+                    storage,
+                    `decks/${docRef.id}/${image.name}`
+                );
+    
+                try {
+                    await uploadBytes(imageRef, image, 'data_url');
+                    const downloadURL = await getDownloadURL(imageRef);
+    
+                    await updateDoc(doc(db, 'decks', docRef.id), {
+                        images: arrayUnion(downloadURL),
+                    });
+    
+                    lastDownloadURL = downloadURL;
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                }
+    
+                if (index === selectedImages.length - 1) {
+                    await updateDoc(doc(db, 'decks', docRef.id), {
+                        thumbnail: lastDownloadURL,
+                    });
+                }
+            })
+        );
+        copyRef.current.value = '';
+        setSelectedImages([]);
+    };
+
+    const onDrop = useCallback((acceptedFiles) => {
+        setSelectedImages(
+            acceptedFiles.map((file) =>
+                Object.assign(file, {
+                    preview: URL.createObjectURL(file),
+                })
+            )
+        );
+    }, []);
+
+    const {
+        getRootProps,
+        getInputProps,
+        isFocused,
+        isDragAccept,
+        isDragReject,
+    } = useDropzone({ onDrop, accept: { 'image/*': [] } });
+
+    const style = useMemo(
+        () => ({
+            ...baseStyle,
+            ...(isFocused ? focusedStyle : {}),
+            ...(isDragAccept ? acceptStyle : {}),
+            ...(isDragReject ? rejectStyle : {}),
+        }),
+        [isFocused, isDragAccept, isDragReject]
+    );
+    const selected_images = selectedImages?.map((file) => (
+        <div>
+            <img src={file.preview} style={{ width: '200px' }} alt='' />
+        </div>
+    ));
 
     return (
         <>
-            <div className='flex'>
-                <div class='h-screen w-64 p-4 z-5'>
-                    <div className='flex items-center justify-between'>
-                        <Link
-                            to='/'
-                            className='flex items-center justify-between'
-                        >
-                            <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                N
-                            </div>
+            <input ref={headingRef} type='text' />
+            <button
+                type='submit'
+                className='p-3 px-5 rounded justify-center rounded-md text-sm font-semibold shadow-sm font-bold text-slate-50 dark:hover:bg-violet-900 bg-violet-800'
+                onClick={uploadPost}
+                style={{
+                    position: 'absolute',
+                    zIndex: '99',
+                    right: '10px',
+                    top: '10px',
+                }}
+            >
+                Save
+            </button>
 
-                            <span className='ml-3 text-base font-bold'>
-                                ND's Team
-                            </span>
-                        </Link>
-                        <Link
-                            to='/'
-                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold'
-                        >
-                            <ion-icon
-                                size='small'
-                                name='notifications-outline'
-                            ></ion-icon>
-                        </Link>
+            <div className='p-5 flex justify-between'>
+                <div className='w-2/4'>
+                    <div className='editor-container'>
+                        <CKEditor
+                            editor={InlineEditor}
+                            data={editorData}
+                            onChange={(event, editor) => {
+                                const data = editor.getData();
+                                setEditorData(data);
+                                console.log({ event, editor, data });
+                            }}
+                            config={{
+                                toolbar: [
+                                    'heading',
+                                    'bold',
+                                    'italic',
+                                    'underline',
+                                    'link',
+                                    'bulletedList',
+                                    'numberedList',
+                                ],
+                                heading: {
+                                    options: [
+                                        {
+                                            model: 'paragraph',
+                                            view: 'p',
+                                            title: 'Paragraph',
+                                            class: 'ck-heading_paragraph',
+                                        },
+                                        {
+                                            model: 'heading1',
+                                            view: 'h1',
+                                            title: 'Title',
+                                            class: 'ck-heading_heading1',
+                                        },
+                                    ],
+                                },
+                            }}
+                        />
                     </div>
 
-                    <ul role='list' className='mt-10 space-y-4'>
-                        <li>
-                            <Link
-                                to='/'
-                                className='hover:text-gray-400 flex block'
-                            >
-                                <ion-icon
-                                    size='small'
-                                    name='brush-outline'
-                                ></ion-icon>
-                                <span className='ml-3 text-base'>
-                                    Brand theme
-                                </span>
-                            </Link>
-                        </li>
-                        <li>
-                            <button
-                                className='hover:text-gray-400 flex block'
-                                onClick={togglePopup}
-                            >
-                                <ion-icon
-                                    size='small'
-                                    name='person-outline'
-                                ></ion-icon>
-                                <span className='ml-3 text-base'>
-                                    Invite members
-                                </span>
-                            </button>
-                        </li>
-                        <li>
-                            <Link
-                                to='/'
-                                className='hover:text-gray-400 flex block'
-                            >
-                                <ion-icon
-                                    size='small'
-                                    name='flash-outline'
-                                ></ion-icon>
-                                <span className='ml-3 text-base'>
-                                    Upgrade to Pro
-                                </span>
-                            </Link>
-                        </li>
-                    </ul>
+                    <p>Debug {editorData}</p>
+                    <input ref={copyRef} type='hidden' value={editorData} />
                 </div>
 
-                <div className=' flex-1 py-2 pr-6'>
-                    <div class='w-full flex items-center justify-between z-10 '>
-                        <div className='py-4  border-solid border-b-2 border-slate-200 ml-8 items-center w-full justify-between flex'>
-                            <div>
-                                <ion-icon size='small' name='search-outline'></ion-icon>
-                                <input type='text' className='w-96 ml-3 rounded border-none bg-transparent' placeholder='Search decks' />
-                            </div>
+                <div
+                    {...getRootProps({ style })}
+                    className='p-5 w-2/4 flex justify-center'
+                >
+                    <div>{selected_images}</div>
+                    <input {...getInputProps()} />
 
-                            <div>
-                                <div className='justify-between flex'>
-                                    <div>
-                                        <Link
-                                            to='/'
-                                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold'
-                                        >
-                                            <ion-icon size='small' name='help-outline'></ion-icon>
-                                        </Link>
-                                    </div>
-                                    
-                                    <button
-                                        onClick={togglePopup}
-                                        type='button'
-                                        class='ml-6 font-bold rounded border-solid border-2 border-violet-800 px-3 py-2 text-violet-800 dark:hover:bg-neutral-900 '
-                                    >
-                                        Invite team member
-                                    </button>
-
-                                    <button
-                                        type='button'
-                                        class='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 px-3 py-2 dark:hover:bg-neutral-900 bg-violet-800'
-                                    >
-                                        New deck
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='my-6 mx-auto max-w-screen-2xl'>
-                    <div class="grid grid-cols-4 gap-4">
-                        <Link to="/about" className="mt-5">
-                            <div className="flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100"><ion-icon size="large" name="add-outline"></ion-icon></div> 
-                            <p className="mt-3 text-lg font-bold">Empty Deck</p>
-                        </Link>
-
-                        {data.map((item, index) => (
-                            <Link to="/dashboard/deck" className="mt-5" key={index}>
-                                <div className="min-h-48 rounded bg-cover" style={{ backgroundImage: `url(./src/Components/Assets/${item.image})` }}></div> 
-                                <p className="mt-3 text-lg font-bold">{item.name}</p>
-                                <span>{item.group}</span>
-                            </Link>
-                        ))}
-                    </div>
-                    </div>
+                    <p>
+                        <ion-icon name='add-outline' size='large'></ion-icon>
+                    </p>
                 </div>
             </div>
         </>
     );
 };
 
-export default Tests;
+export default DropZone;

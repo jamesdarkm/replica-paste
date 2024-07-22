@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import './Deck.css';
 import './Modal.css';
 import DropZone from './DropZone.jsx';
@@ -10,20 +11,11 @@ const Deck = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
     const [toggle, setToggle] = useState(1);
+    const { id } = useParams();
 
     const updateToggle = (id) => {
         setToggle(id);
     };
-
-    /**
-     * Test data
-     */
-    useEffect(() => {
-        fetch('/src/Components/Dashboard/test-data-deck.json')
-            .then((response) => response.json())
-            .then((data) => setData(data))
-            .catch((error) => console.error('Error fetching data:', error));
-    }, []);
 
     /**
      * Modal toggle
@@ -73,7 +65,7 @@ const Deck = () => {
                     >
                         <ion-icon name='chevron-back-outline'></ion-icon>
                         <div>
-                            <h1>Pitch an Idea | Template</h1>
+                            <h1> { id } Pitch an Idea | Template</h1>
                             <span>Templates</span>
                         </div>
                     </a>

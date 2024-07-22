@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Popup from './Popup';
+import Decks from './Decks.jsx';
+
 const Tests = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
@@ -152,18 +154,12 @@ const Tests = () => {
 
                     <div className='my-6 mx-auto max-w-screen-2xl'>
                     <div className="grid grid-cols-4 gap-4">
-                        <Link to="/about" className="mt-5">
+                        <Link to="/dashboard/deck/dropzone" className="mt-5">
                             <div className="flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100"><ion-icon size="large" name="add-outline"></ion-icon></div> 
                             <p className="mt-3 text-lg font-bold">Empty Deck</p>
                         </Link>
 
-                        {data.map((item, index) => (
-                            <Link to="/dashboard/deck" className="mt-5" key={index}>
-                                <div className="min-h-48 rounded bg-cover" style={{ backgroundImage: `url(./src/Components/Assets/${item.image})` }}></div> 
-                                <p className="mt-3 text-lg font-bold">{item.name}</p>
-                                <span>{item.group}</span>
-                            </Link>
-                        ))}
+                        <Decks/>
                     </div>
                     </div>
                 </div>
