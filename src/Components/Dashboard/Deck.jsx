@@ -96,7 +96,7 @@ const Deck = () => {
                     </div>
                 </nav>
 
-                <Posts />
+                <Posts postId={id}/>
 
                 {toggle === 2 && (
                     <div className='space-between d-flex drop-container'>

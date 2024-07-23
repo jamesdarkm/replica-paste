@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {collection, onSnapshot, where, orderBy, query } from 'firebase/firestore';
+import { useParams, useSearchParams } from 'react-router-dom';
+import {collection, onSnapshot, where, orderBy, query, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 // import moment from 'moment'
 
 const Posts = () => {
     const [posts, setPosts] = useState([]);
-    const { id } = useParams();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const postId = searchParams.get('post');
+
+    // const { id } = useParams();
+    console.log(postId, searchParams)
 
     const postImages = (post) => {
+        console.log(post)
         const post_images = post.images?.map((file) => (
             <a href="/dashboard/deck/dropzone"
                 className='card-preview-deck'
@@ -26,22 +31,20 @@ const Posts = () => {
     };
 
     useEffect(() => {
-        
-
-        const collectionRef = collection(db, 'decks');
-        const q = query(collectionRef, where('heading', '==', id ), orderBy('timestamp', 'desc'));
-        
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            setPosts(
-                querySnapshot.docs.map((doc) => ({
-                    ...doc.data(),
-                    id: doc.id,
-                    timestamp: doc.data().timestamp?.toDate().getTime(),
-                }))
-            );
-        });
-
-        return unsubscribe;
+        async function getPost() {
+            const docRef = doc(db, "decks", postId);
+            const docSnap = await getDoc(docRef);
+    
+            if (docSnap.exists()) {
+                // console.log("Document data:", [docSnap.data()]);
+                setPosts([docSnap.data()])
+            } else {
+            // docSnap.data() will be undefined in this case
+                console.log("No such document!");
+            }
+        }
+    
+        getPost();
     }, []);
 
     return (
