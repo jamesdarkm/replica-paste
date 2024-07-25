@@ -1,4 +1,5 @@
 import React from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -8,8 +9,11 @@ import { useSwiper } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import onboardImage from '../Assets/onboard.png';
 import weTransferLogo from '../Assets/wetransfer-text-logo.svg';
+import { useAuth } from '../../Context/authContext';
 
 const SwiperButtonNext = ({ children }) => {
+  const navigate = useNavigate();
+
   const swiper = useSwiper();
   return (
     <button
@@ -18,7 +22,12 @@ const SwiperButtonNext = ({ children }) => {
           ? 'bg-[#4f15a6] text-white'
           : 'border border-solid border-[#4f15a6] text-[#4f15a6]'
       }`}
-      onClick={() => swiper.slideNext()}
+      onClick={() => {
+        //swiper.slideNext().then(() => {
+            navigate('/dashboard');
+            
+        //});
+      }}
     >
       {children}
     </button>
@@ -26,6 +35,11 @@ const SwiperButtonNext = ({ children }) => {
 };
 
 export default function OnboardTwo() {
+  const { currentUser } = useAuth();
+  if (!currentUser) {
+      //return <Navigate to="/" replace={true} />;
+  }
+  console.log(currentUser.photoURL)
   return (
     <Swiper
       spaceBetween={50}
@@ -48,6 +62,7 @@ export default function OnboardTwo() {
     
           <div className="py-7">
             <div className="text-center leading-7">
+            
               Now that we know a bit about you, we'd love to let you know a bit about us.
               Want in on stories <br /> about creativity and the latest WeTransfer news?
             </div>

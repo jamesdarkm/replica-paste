@@ -35,7 +35,7 @@ const SignUp = () => {
 
     return (
         <>
-            {userLoggedIn && <Navigate to={'/dashboard'} replace={true} />}
+            {userLoggedIn && <Navigate to={'/onboard'} replace={true} />}
 
             <button
                 disabled={isRegistering}

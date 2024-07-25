@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -8,6 +9,7 @@ import { useSwiper } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import OnboardTwo from './OnboardTwo';
 import weTransferLogo from '../Assets/wetransfer-text-logo.svg';
+import { useAuth } from '../../Context/authContext';
 
 const SwiperButtonNext = ({ children }) => {
   const swiper = useSwiper();
@@ -15,6 +17,13 @@ const SwiperButtonNext = ({ children }) => {
 };
 
 export default function Onboard() {
+  const { currentUser } = useAuth();
+  if (!currentUser) {
+      //return <Navigate to="/" replace={true} />;
+  }
+  const displayPhoto = currentUser.photoURL;
+  console.log(displayPhoto);
+
   const [selected, setSelected] = useState("Hmm, let's see...");
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -51,6 +60,9 @@ export default function Onboard() {
   };
 
   return (
+    <>
+      {!currentUser && <Navigate to="/" replace={true} />}
+    
     <Swiper
       spaceBetween={50}
       slidesPerView={1}
@@ -70,7 +82,8 @@ export default function Onboard() {
           </div>
     
           <p className="font-gt-super text-[3rem] text-center mt-[40px]">
-            Welcome to WeTransfer, James
+            Welcome to WeTransfer, {currentUser.displayName ? currentUser.displayName.split(' ')[0] 
+                                    : ''}{' '}
           </p>
     
           <p className="text-xl mt-16 text-center">
@@ -139,5 +152,6 @@ export default function Onboard() {
         <OnboardTwo />
       </SwiperSlide>
     </Swiper>
+    </>
   )
 }
