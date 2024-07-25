@@ -5,7 +5,10 @@ import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
+import Log from './Components/Account/LoginForm.jsx';
+import Sig from './Components/Account/SignupForm.jsx';
 
+import { AuthProvider } from "./Context/authContext";
 
 import Tests from './Tests/Tests.jsx';
 import {
@@ -18,6 +21,14 @@ const router = createBrowserRouter([
   {
     path: "/test",
     element: <Tests/>
+  },
+  {
+    path: "/log",
+    element: <Log/>
+  },
+  {
+    path: "/sig",
+    element: <Sig/>
   },
   {
     path: "/",
@@ -42,7 +53,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <AuthProvider>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+    </AuthProvider>,
 )

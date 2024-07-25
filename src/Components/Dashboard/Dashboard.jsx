@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import Popup from './Popup';
 import Decks from './Decks.jsx';
+import { useAuth } from '../../Context/authContext';
+import { doSignOut } from '../../../auth';
 
 const Tests = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
+    const { currentUser } = useAuth();
 
-    /**
-     * Test data
-     */
-    useEffect(() => {
-        fetch('./src/Components/Dashboard/test-data.json')
-            .then((response) => response.json())
-            .then((data) => setData(data))
-            .catch((error) => console.error('Error fetching data:', error));
-    }, []);
+    const navigate = useNavigate();  
+    if (!currentUser) {
+       return <Navigate to="/" replace={true} />;
+    }
 
     /**
      * Modal toggle
@@ -35,13 +33,14 @@ const Tests = () => {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const togglePopup = () => {
-    setIsPopupOpen(!isPopupOpen);
-  };
+    const togglePopup = () => {
+        setIsPopupOpen(!isPopupOpen);
+    };
 
     return (
-        <>
-        <Popup isOpen={isPopupOpen} onClose={togglePopup} />
+        <>    
+            {!currentUser && <Navigate to="/" replace={true} />}
+            <Popup isOpen={isPopupOpen} onClose={togglePopup} />
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
                     <div className='flex items-center justify-between'>
@@ -50,11 +49,17 @@ const Tests = () => {
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                N
+                                {currentUser.displayName
+                                    ? currentUser.displayName.charAt(0)
+                                    : 'My'}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                ND's Team
+                                {currentUser.displayName
+                                    ? currentUser.displayName.split(' ')[0] +
+                                      "'s"
+                                    : 'My'}{' '}
+                                Team
                             </span>
                         </Link>
                         <Link
@@ -118,8 +123,15 @@ const Tests = () => {
                     <div className='w-full flex items-center justify-between z-10 '>
                         <div className='py-4  border-solid border-b-2 border-slate-200 ml-8 items-center w-full justify-between flex'>
                             <div>
-                                <ion-icon size='small' name='search-outline'></ion-icon>
-                                <input type='text' className='w-96 ml-3 rounded border-none bg-transparent' placeholder='Search decks' />
+                                <ion-icon
+                                    size='small'
+                                    name='search-outline'
+                                ></ion-icon>
+                                <input
+                                    type='text'
+                                    className='w-96 ml-3 rounded border-none bg-transparent'
+                                    placeholder='Search decks'
+                                />
                             </div>
 
                             <div>
@@ -127,40 +139,68 @@ const Tests = () => {
                                     <div>
                                         <Link
                                             to='/'
-                                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold'
+                                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold hover:bg-slate-200'
                                         >
-                                            <ion-icon size='small' name='help-outline'></ion-icon>
+                                            <ion-icon
+                                                size='small'
+                                                name='help-outline'
+                                            ></ion-icon>
                                         </Link>
                                     </div>
-                                    
+
                                     <button
                                         onClick={togglePopup}
                                         type='button'
-                                        className='ml-6 font-bold rounded border-solid border-2 border-violet-800 px-3 py-2 text-violet-800 dark:hover:bg-neutral-900 '
+                                        className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
                                     >
                                         Invite team member
                                     </button>
 
                                     <button
                                         type='button'
-                                        className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 px-3 py-2 dark:hover:bg-neutral-900 bg-violet-800'
+                                        className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
                                     >
                                         New deck
                                     </button>
+
+                                    {currentUser && (
+                                    <>
+                                        <button
+                                            onClick={() => {
+                                                doSignOut().then(() => {
+                                                    navigate('/');
+                                                });
+                                            }}
+                                            className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-red-600 hover:border-red-900 px-3 py-2 hover:bg-red-900 bg-red-600'
+                                        >
+                                            Logout
+                                        </button>
+                                    </>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className='my-6 mx-auto max-w-screen-2xl'>
-                    <div className="grid grid-cols-4 gap-4">
-                        <Link to="/dashboard/deck/dropzone" className="mt-5">
-                            <div className="flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100"><ion-icon size="large" name="add-outline"></ion-icon></div> 
-                            <p className="mt-3 text-lg font-bold">Empty Deck</p>
-                        </Link>
+                        <div className='grid grid-cols-4 gap-4'>
+                            <Link
+                                to='/dashboard/deck/dropzone'
+                                className='mt-5'
+                            >
+                                <div className='flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100'>
+                                    <ion-icon
+                                        size='large'
+                                        name='add-outline'
+                                    ></ion-icon>
+                                </div>
+                                <p className='mt-3 text-lg font-bold'>
+                                    Empty Deck
+                                </p>
+                            </Link>
 
-                        <Decks/>
-                    </div>
+                            <Decks />
+                        </div>
                     </div>
                 </div>
             </div>
