@@ -4,10 +4,7 @@ import {
     doc,
     getDoc,
     getDocs,
-    collection,
-    onSnapshot,
-    orderBy,
-    query,
+    collection
 } from 'firebase/firestore';
 import { db } from '../../../firebase';
 // import moment from 'moment'

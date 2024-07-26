@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import Popup from './Popup';
+import Profile from './Profile';
 import Decks from './Decks.jsx';
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
@@ -40,9 +41,14 @@ const Tests = () => {
     }
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
+    };
+
+
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const toggleProfilePopup = () => {
+        setIsProfileOpen(!isProfileOpen);
     };
 
     
@@ -51,7 +57,10 @@ const Tests = () => {
     return (
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
+            
             <Popup isOpen={isPopupOpen} onClose={togglePopup} />
+            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} />
+            
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
                     <div className='flex items-center justify-between'>
@@ -146,11 +155,16 @@ const Tests = () => {
                             </div>
 
                             <div>
-                                <div className='justify-between flex'>
+                                <div className='justify-between flex content-end'>
+                                    <div className='mt-3 text-sm'>Online</div>
+                                    <div className='ml-4'>
+                                        <button onClick={toggleProfilePopup}><img className='w-10 rounded-full' src={displayPhoto} referrerPolicy="no-referrer" />
+                                        </button>
+                                    </div>
                                     <div>
                                         <Link
                                             to='/'
-                                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold hover:bg-slate-200'
+                                            className='ml-10 flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold hover:bg-slate-200'
                                         >
                                             <ion-icon
                                                 size='small'
@@ -194,13 +208,6 @@ const Tests = () => {
                     </div>
 
                     <Decks uid={uid} />
-                    <div className='my-6 mx-auto max-w-screen-2xl'>
-                        <div className='grid grid-cols-4 gap-4'>
-                            
-
-                            
-                        </div>
-                    </div>
                 </div>
             </div>
         </>
