@@ -4,6 +4,11 @@ import Popup from './Popup';
 import Decks from './Decks.jsx';
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
+import { db, storage } from '../../../firebase';
+import {
+    doc,
+    getDoc, collection, getDocs
+} from 'firebase/firestore';
 
 const Tests = () => {
     const [data, setData] = useState([]);
@@ -14,6 +19,9 @@ const Tests = () => {
     if (!currentUser) {
        return <Navigate to="/" replace={true} />;
     }
+
+    const displayPhoto = currentUser.photoURL;
+    const uid = currentUser.uid;
 
     /**
      * Modal toggle
@@ -37,8 +45,11 @@ const Tests = () => {
         setIsPopupOpen(!isPopupOpen);
     };
 
+    
+
+      
     return (
-        <>    
+        <>
             {!currentUser && <Navigate to="/" replace={true} />}
             <Popup isOpen={isPopupOpen} onClose={togglePopup} />
             <div className='flex'>
@@ -182,24 +193,12 @@ const Tests = () => {
                         </div>
                     </div>
 
+                    <Decks uid={uid} />
                     <div className='my-6 mx-auto max-w-screen-2xl'>
                         <div className='grid grid-cols-4 gap-4'>
-                            <Link
-                                to='/dashboard/deck/dropzone'
-                                className='mt-5'
-                            >
-                                <div className='flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100'>
-                                    <ion-icon
-                                        size='large'
-                                        name='add-outline'
-                                    ></ion-icon>
-                                </div>
-                                <p className='mt-3 text-lg font-bold'>
-                                    Empty Deck
-                                </p>
-                            </Link>
+                            
 
-                            <Decks />
+                            
                         </div>
                     </div>
                 </div>
