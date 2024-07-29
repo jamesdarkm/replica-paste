@@ -96,11 +96,11 @@ export default function Onboard() {
                 {selected}
                 <i className="fas fa-chevron-down ml-2"></i>
               </div>
-              <div className={`absolute left-0 right-0 top-full bg-white z-10 ${isOpen ? '' : 'hidden'}`}>
+              <div className={`absolute left-0 right-0 top-full bg-white z-10 overflow-y-scroll  h-[260px] ${isOpen ? '' : 'hidden'}`}>
                 {options.map((option, index) => (
                   <div
                     key={index}
-                    className={`p-2 cursor-pointer ${selected === option ? 'bg-gray-200' : ''}`}
+                    className={`p-5 cursor-pointer ${selected === option ? 'bg-gray-200' : ''}`}
                     onClick={() => handleOptionClick(option)}
                   >
                     {option}

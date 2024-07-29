@@ -9,6 +9,13 @@ export default {
       fontFamily: {
         'gt-super': ['GT-Super-Display-Super-Trial', 'sans-serif'],
       },
+      zIndex: {
+        '99': '99',
+        '10': '10'
+      },
+      colors: {
+        'custom-purple': '#4f15a6',
+      },
     },
   },
   plugins: [

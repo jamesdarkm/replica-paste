@@ -99,37 +99,25 @@ const DropZone = () => {
     );
     const selected_images = selectedImages?.map((file) => (
         <div>
-            <img src={file.preview} style={{ width: '200px' }} alt='' />
+            <img src={file.preview} className="w-[200px]" alt='' />
         </div>
     ));
 
     return (
-        <div>
+        <div >
             <button onClick={uploadPost}
-                style={{
-                    position: 'absolute',
-                    zIndex: '99',
-                    right: '10px',
-                    top: '10px',
-                    background: 'grey',
-                    padding: '8px 15px',
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    border: '2px solid #4f15a6',
-                    borderRadius: '5px',
-                    background: '#4f15a6'
-                }}
+                className="absolute z-99 right-[10px] top-[10px] px-[15px] py-[8px] text-[#fff] font-bold border-2 border-solid border-[#4f15a6] rounded-[5px] bg-[#4f15a6]"
             >
                Save
             </button>
 
             <div
-                className='space-between d-flex drop-container'
+                className='flex absolute top-[0] left-[0] z-10 w-full h-full bg-[grey] '
                 style={{ padding: '20px', background: '#fff' }}
             >
-                <div>
+                <div className='w-1/2'>
                     <div>
-                    <div className="editor-container">
+                    <div className="h-screen flex justify-center p-[20px]">
                         <CKEditor
                             editor={InlineEditor}
                             data={editorData}
@@ -163,12 +151,11 @@ const DropZone = () => {
                 </div>
 
                 <div
-                    style={{ padding: '20px', background: '#fff' }}
-                    className='jc-center d-flex'
+                    className='justify-center d-flex w-1/2 p-[20px] bg-[white] h-[20px]'
                 >
                     <div
                         {...getRootProps({ style })}
-                        className='jc-center d-flex'
+                        className='justify-center d-flex h-screen items-center'
                     >
                         <div>{selected_images}</div>
                         <input {...getInputProps()} />
