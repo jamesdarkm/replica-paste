@@ -6,8 +6,11 @@ import Decks from './Decks.jsx';
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
 import { db, storage } from '../../../firebase';
+
 import {
     doc,
+    addDoc,
+    setDoc,
     getDoc, collection, getDocs
 } from 'firebase/firestore';
 
@@ -52,14 +55,47 @@ const Tests = () => {
     };
 
     
+    
+    
+    const [userData, setUserData] = useState(null);
+    const UserData = async (currentUser, uid) => {
+        if (currentUser.displayName) {
+            return currentUser.displayName.split(' ')[0] + "'s";
+        }
 
+        const docRef = doc(db, 'users', uid);
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                return data;
+            } else {
+                console.log("No such document!");
+                return null;
+            }
+    };
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const data = await UserData(currentUser, uid);
+                setUserData(data);
+        };
+
+        if (currentUser && uid) {
+            fetchUserData();
+        }
+    }, [currentUser, uid]); 
+
+    console.log(userData)
+
+    
       
     return (
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
             <Popup isOpen={isPopupOpen} onClose={togglePopup} />
-            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} />
+            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} userData={userData} />
             
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
@@ -72,6 +108,7 @@ const Tests = () => {
                                 {currentUser.displayName
                                     ? currentUser.displayName.charAt(0)
                                     : 'My'}
+
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
@@ -80,6 +117,7 @@ const Tests = () => {
                                       "'s"
                                     : 'My'}{' '}
                                 Team
+                                
                             </span>
                         </Link>
                         <Link
@@ -156,9 +194,8 @@ const Tests = () => {
 
                             <div>
                                 <div className='justify-between flex content-end'>
-                                    <div className='mt-3 text-sm'>Online</div>
-                                    <div className='ml-4'>
-                                        <button onClick={toggleProfilePopup}><img className='w-10 rounded-full' src={displayPhoto} referrerPolicy="no-referrer" />
+                                    <div className='ml-4 '>
+                                        <button onClick={toggleProfilePopup} className='flex content-end'><div className='mt-3 mr-5'>Online</div> <img className='w-10 rounded-full' src={displayPhoto} referrerPolicy="no-referrer" />
                                         </button>
                                     </div>
                                     <div>

@@ -10,8 +10,19 @@ import {
     GoogleAuthProvider,
 } from 'firebase/auth';
 
-export const doCreateUserWithEmailAndPassword = async (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+export const doCreateUserWithEmailAndPassword = async (firstName, lastName, email, password) => {
+    const createUser = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = createUser.user.uid;
+
+        const docRef = doc(db, 'users', uid);
+        await setDoc(docRef, {
+            firstName: firstName,
+            lastName: lastName,
+            avatar: '',
+            subscribedToEmail: false
+        });
+
+        return createUser;
 };
 
 export const doSignInWithEmailAndPassword = (email, password) => {

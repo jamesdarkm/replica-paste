@@ -6,6 +6,8 @@ import { doSignInWithGoogle, doCreateUserWithEmailAndPassword } from '../../../a
 const SignUp = () => {
     const navigate = useNavigate();
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setconfirmPassword] = useState('');
@@ -19,7 +21,7 @@ const SignUp = () => {
         e.preventDefault();
         if (!isRegistering) {
             setIsRegistering(true);
-            await doCreateUserWithEmailAndPassword(email, password);
+            await doCreateUserWithEmailAndPassword(firstName, lastName, email, password);
         }
     };
 
@@ -32,6 +34,7 @@ const SignUp = () => {
             });
         }
     };
+    
 
     return (
         <>
@@ -64,6 +67,46 @@ const SignUp = () => {
             </div>
 
             <form onSubmit={onSubmit} className='space-y-4'>
+                <div className='relative'>
+                    <input
+                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        placeholder='First Name'
+                        type='text'
+                        required
+                        value={firstName}
+                        onChange={(e) => {
+                            setFirstName(e.target.value);
+                        }}
+                    />
+                    <div
+                        className='absolute inset-y-0 pl-3  
+                            flex items-center  
+                            pointer-events-none'
+                    >
+                        <ion-icon name="person-outline"></ion-icon>
+                    </div>
+                </div>
+
+                <div className='relative'>
+                    <input
+                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        placeholder='Last Name'
+                        type='text'
+                        required
+                        value={lastName}
+                        onChange={(e) => {
+                            setLastName(e.target.value);
+                        }}
+                    />
+                    <div
+                        className='absolute inset-y-0 pl-3  
+                            flex items-center  
+                            pointer-events-none'
+                    >
+                        <ion-icon name="person-outline"></ion-icon>
+                    </div>
+                </div>
+
                 <div className='relative'>
                     <input
                         className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
