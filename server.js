@@ -44,6 +44,38 @@ app.post('/send-email', (req, res) => {
         });
 });
 
+app.post('/subscribe-newsletter', (req, res) => {
+  const mailjet = Mailjet.apiConnect(process.env.VITE_MJ_APIKEY_PUBLIC, process.env.VITE_MJ_APIKEY_PRIVATE);
+
+  const request = mailjet
+      .post("send", { 'version': 'v3.1' })
+      .request({
+          Messages: [
+              {
+                From: {
+                  Email: 'no-reply@darkm.co.za',
+                  Name: 'Paste Replica',
+                },
+                To: [
+                  {
+                      "Email": req.body.email,
+                      "Name": "Paste Replica"
+                  }
+                ],
+                TemplateID: 6174204,
+                TemplateLanguage: true
+              },
+            ],
+          });
+  request
+      .then((result) => {
+          res.status(200).json(result.body);
+      })
+      .catch((err) => {
+          res.status(500).json({ error: err.message });
+      });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

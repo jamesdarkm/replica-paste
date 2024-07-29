@@ -10,9 +10,38 @@ import { Pagination } from 'swiper/modules';
 import onboardImage from '../Assets/onboard.png';
 import weTransferLogo from '../Assets/wetransfer-text-logo.svg';
 import { useAuth } from '../../Context/authContext';
+import { db, auth,  } from '../../../firebase';
+import { doc, setDoc } from "firebase/firestore";
+import axios from '../../../axios';
 
 const SwiperButtonNext = ({ children }) => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const currentUserEmail = currentUser.email;
+  console.log(currentUserEmail)
+
+  const subscribeToEmail = async (action) => {
+    if (action !== 'Continue') {
+      navigate('/dashboard');
+      return;
+    }
+  
+    const subscribedUserData = {
+      userEmail: currentUserEmail,
+      subscribedToEmail: true,
+    };
+  
+    try {
+      await setDoc(doc(db, "users", "user"), subscribedUserData);
+      console.log("Document successfully written!");
+  
+      await axios.post('/subscribe-newsletter', { email: currentUserEmail });
+      navigate('/dashboard');
+    } catch (error) {
+      console.error("Error writing document: ", error);
+    }
+  };
+  
 
   const swiper = useSwiper();
   return (
@@ -22,12 +51,7 @@ const SwiperButtonNext = ({ children }) => {
           ? 'bg-[#4f15a6] text-white'
           : 'border border-solid border-[#4f15a6] text-[#4f15a6]'
       }`}
-      onClick={() => {
-        //swiper.slideNext().then(() => {
-            navigate('/dashboard');
-            
-        //});
-      }}
+      onClick={() => subscribeToEmail(children)}
     >
       {children}
     </button>
