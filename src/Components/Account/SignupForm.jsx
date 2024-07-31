@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/authContext/index';
 import { doSignInWithGoogle, doCreateUserWithEmailAndPassword } from '../../../auth';
-
+import TermsOfService from '../Legal/TermsOfService';
+import PrivacyPolicy from '../Legal/PrivacyPolicy';
 const SignUp = () => {
     const navigate = useNavigate();
 
@@ -34,12 +35,24 @@ const SignUp = () => {
             });
         }
     };
-    
 
+    const [isTermsOpen, setIsTermsOpen] = useState(false);
+    const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+    const toggleTermsPopup = () => {
+        setIsTermsOpen(!isTermsOpen);
+    };
+
+    const togglePrivacyPopup = () => {
+        setIsPrivacyOpen(!isPrivacyOpen);
+    };
+    
     return (
         <>
             {userLoggedIn && <Navigate to={'/onboard'} replace={true} />}
-
+            
+            <TermsOfService isOpen={isTermsOpen} onClose={toggleTermsPopup} />
+            <PrivacyPolicy isOpen={isPrivacyOpen} onClose={togglePrivacyPopup} />
+            
             <button
                 disabled={isRegistering}
                 onClick={(e) => {
@@ -180,9 +193,9 @@ const SignUp = () => {
                 )}
 
                 <div className='text-sm text-center'>
-                    By creating an account, you agree to our <Link to={'/terms'} className='text-center text-sm underline'>Terms of Service</Link> and <Link to={'/terms'} className='text-center text-sm underline'>Privacy & Cookie Statement</Link>
+                    By creating an account, you agree to our <button type="button" onClick={toggleTermsPopup} className='text-center text-sm underline'>Terms of Service</button> and <button type="button" onClick={togglePrivacyPopup} className='text-center text-sm underline'>Privacy & Cookie Statement</button>
                 </div>
-
+            
                 <button
                     type='submit'
                     disabled={isRegistering}

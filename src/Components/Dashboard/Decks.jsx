@@ -55,7 +55,7 @@ const Posts = ({ uid }) => {
 
                 setPosts(decksArray);
             } else {
-                console.log('Parent document does not exist.');
+                // console.log('Parent document does not exist.');
             }
         };
 

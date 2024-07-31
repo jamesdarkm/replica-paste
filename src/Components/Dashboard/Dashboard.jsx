@@ -18,6 +18,7 @@ const Tests = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
     const { currentUser } = useAuth();
+    console.log(currentUser)
 
     const navigate = useNavigate();  
     if (!currentUser) {
@@ -54,48 +55,13 @@ const Tests = () => {
         setIsProfileOpen(!isProfileOpen);
     };
 
-    
-    
-    
-    const [userData, setUserData] = useState(null);
-    const UserData = async (currentUser, uid) => {
-        if (currentUser.displayName) {
-            return currentUser.displayName.split(' ')[0] + "'s";
-        }
-
-        const docRef = doc(db, 'users', uid);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                return data;
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-    };
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const data = await UserData(currentUser, uid);
-                setUserData(data);
-        };
-
-        if (currentUser && uid) {
-            fetchUserData();
-        }
-    }, [currentUser, uid]); 
-
-    console.log(userData)
-
-    
       
     return (
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
             <Popup isOpen={isPopupOpen} onClose={togglePopup} />
-            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} userData={userData} />
+            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
             
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
@@ -105,17 +71,13 @@ const Tests = () => {
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                {currentUser.displayName
-                                    ? currentUser.displayName.charAt(0)
-                                    : 'My'}
-
+                                {currentUser.displayName.charAt(0)}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {currentUser.displayName
-                                    ? currentUser.displayName.split(' ')[0] +
-                                      "'s"
-                                    : 'My'}{' '}
+                                {currentUser.displayName.split(' ')[0] +
+                                      "'s"}
+                                
                                 Team
                                 
                             </span>

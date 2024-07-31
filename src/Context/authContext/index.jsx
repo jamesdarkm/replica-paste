@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { auth } from "../../../firebase";
+import { db, auth } from "../../../firebase";
 // import { GoogleAuthProvider } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = React.createContext();
 
@@ -23,8 +24,27 @@ export function AuthProvider({ children }) {
 
   async function initializeUser(user) {
     if (user) {
+      const uid = user.uid;
+ 
+      let additionalInformation = null;
+    
+      if (!user.displayName) {
+        const docRef = doc(db, 'users', uid);
+        const docSnap = await getDoc(docRef);
+    
+        if (docSnap.exists()) {
+          additionalInformation = {
+            additionalInformation: docSnap.data()
+          };
 
-      setCurrentUser({ ...user });
+          user.displayName = docSnap.data().firstName;
+          user.photoURL = docSnap.data().avatar;
+        }
+      }
+
+      setCurrentUser({ ...user, ...additionalInformation });
+      
+      
 
       // check if provider is email and password login
       const isEmail = user.providerData.some(
@@ -51,8 +71,7 @@ export function AuthProvider({ children }) {
     userLoggedIn,
     isEmailUser,
     isGoogleUser,
-    currentUser,
-    setCurrentUser
+    currentUser
   };
 
   return (

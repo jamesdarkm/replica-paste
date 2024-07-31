@@ -18,6 +18,7 @@ const SwiperButtonNext = ({ children }) => {
 
 export default function Onboard() {
   const { currentUser } = useAuth();
+ 
   if (!currentUser) {
       //return <Navigate to="/" replace={true} />;
   }

@@ -19,7 +19,8 @@ export const doCreateUserWithEmailAndPassword = async (firstName, lastName, emai
             firstName: firstName,
             lastName: lastName,
             avatar: '',
-            subscribedToEmail: false
+            subscribedToEmail: true,
+            onBoarding: false
         });
 
         return createUser;
