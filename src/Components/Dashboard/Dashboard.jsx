@@ -173,7 +173,7 @@ const Tests = () => {
                             <div>
                                 <div className='justify-between flex content-end'>
                                     <div className='ml-4 '>
-                                        <button onClick={toggleProfilePopup} className='flex content-end'><div className='mt-3 mr-5'>Online</div> <img className='w-10 rounded-full' src={displayPhoto} referrerPolicy="no-referrer" />
+                                        <button onClick={toggleProfilePopup} className='flex content-end'><div className='mt-3 mr-5'>Online</div> <img className='w-10 rounded-full' src={avatar || displayPhoto} referrerPolicy="no-referrer" />
                                         </button>
                                     </div>
                                     <div>
