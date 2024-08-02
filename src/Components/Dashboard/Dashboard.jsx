@@ -17,6 +17,7 @@ import {
 const Tests = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
+    const [avatar, setAvatar] = useState(null);
     const { currentUser } = useAuth();
     console.log(currentUser)
 
@@ -54,6 +55,21 @@ const Tests = () => {
     const toggleProfilePopup = () => {
         setIsProfileOpen(!isProfileOpen);
     };
+
+    useEffect(() => {
+        async function getUserAvatar() {
+            const docRef = doc(db, 'users', currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const userAvatar = docSnap.data().avatar;
+                console.log(userAvatar)
+                setAvatar(userAvatar)
+            } else {
+              console.log("No such doc!");
+            }
+        }
+        getUserAvatar();
+    }, [])
 
       
     return (

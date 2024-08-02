@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from '../../../axios';
 import { db, storage } from '../../../firebase';
+import { ref, getDownloadURL } from 'firebase/storage';
 
 import {
     doc,
@@ -9,6 +10,7 @@ import {
     getDoc,
     collection,
     getDocs,
+    updateDoc
 } from 'firebase/firestore';
 
 const Profile = ({ isOpen, onClose, uid, currentUser }) => {
@@ -19,6 +21,7 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
 
     const [email, setEmail] = useState('');
     const [response, setResponse] = useState('');
+    const [avatar, setAvatar] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,6 +39,67 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
             );
         }
     };
+
+    const fileInputRef = useRef(null);
+
+    const handleDivClick = () => {
+      // Trigger the file input click
+      fileInputRef.current.click();
+    };
+  
+    const handleFileChange = async (event) => {
+      const file = event.target.files[0];
+      if (!file) {
+        alert('Please select a file first!');
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('image', file);
+  
+      try {
+        const response = await fetch('http://localhost:5000/optimize-image', {
+          method: 'POST',
+          body: formData,
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+  
+        const imageResponse = await response.json();
+        const downloadedImage = await getDownloadURL(ref(storage, `avatars/${imageResponse.firebaseImage}`));
+        const docRef = doc(db, 'users', currentUser.uid);
+        const docSnap = await getDoc(docRef);
+        console.log(downloadedImage, docRef)
+      
+        if (docSnap.exists()) {
+          await updateDoc(docRef, {avatar: downloadedImage,});
+          setAvatar(downloadedImage)
+        } else {
+          await setDoc(docRef, {avatar: downloadedImage,});
+          console.log("No such avatar!");
+        }
+        
+      } catch (error) {
+        console.error('Error uploading the image:', error);
+      }
+    };
+
+    useEffect(() => {
+        async function getUserAvatar() {
+            const docRef = doc(db, 'users', currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const userAvatar = docSnap.data().avatar;
+                console.log(userAvatar)
+                setAvatar(userAvatar)
+            } else {
+              console.log("No such doc!");
+            }
+        }
+        getUserAvatar();
+    }, [])
 
     return (
         <div className='relative z-10'>
@@ -66,9 +130,23 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                     <p className='mb-6 text-lg font-bold'>
                                         Profile
                                     </p>
-                                    <div className='flex items-center justify-center w-10 h-10 rounded-full p-10 text-3xl bg-purple-500 font-bold'>
-                                        {currentUser.displayName.charAt(0)}
+                                    <div className={avatar ? 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-white font-bold' : 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-purple-500 font-bold'}>
+                                        <input
+                                          type="file"
+                                          ref={fileInputRef}
+                                          style={{ display: 'none' }}
+                                          accept="image/png, image/jpeg"
+                                          onChange={handleFileChange}
+                                        />
+                                        {avatar ? (
+                                            <img className="block w-full h-full object-contain" src={avatar} referrerPolicy="no-referrer"/>
+                                        ): (
+                                            <ion-icon onClick={handleDivClick} name="cloud-upload-outline" style={{color: "white",  width: '25px', height: '25px'}}></ion-icon>
+                                        )}
+                                        
                                     </div>
+
+
 
                                     <form
                                         className='mt-5'

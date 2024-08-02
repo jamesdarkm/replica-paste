@@ -10,24 +10,55 @@ import { Pagination } from 'swiper/modules';
 import OnboardTwo from './OnboardTwo';
 import weTransferLogo from '../Assets/wetransfer-text-logo.svg';
 import { useAuth } from '../../Context/authContext';
+import { db, auth, storage } from '../../../firebase';
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, getDownloadURL  } from "firebase/storage";
 
-const SwiperButtonNext = ({ children }) => {
+const SwiperButtonNext = ({ children, selected, avatar }) => {
   const swiper = useSwiper();
-  return <button className='mt-20 py-6 px-12 mx-auto block cursor-pointer bg-[#4f15a6] text-xl font-bold rounded-full text-white' onClick={() => swiper.slideNext()}>{children}</button>;
+  const { currentUser } = useAuth();
+  const currentUserEmail = currentUser.email;
+
+  const saveFieldInterest = async () => {
+    const userOnboardInterestData = {
+      userEmail: currentUserEmail,
+      subscribedToEmail: false,
+      onBoarding: false,
+      fieldInterest: selected,
+      avatar
+    };
+
+    try {
+      const docRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(docRef);
+    
+      if (docSnap.exists()) {
+        await updateDoc(docRef, userOnboardInterestData);
+        console.log("Document successfully written!");
+      } else {
+        await setDoc(docRef, userOnboardInterestData);
+        console.log("No such avatar!");
+      }
+      swiper.slideNext()
+    } catch (error) {
+      console.error("Error writing document: ", error);
+    }
+  }
+
+  return <button className='mt-20 py-6 px-12 mx-auto block cursor-pointer bg-[#4f15a6] text-xl font-bold rounded-full text-white' onClick={saveFieldInterest}>{children}</button>;
 };
 
 export default function Onboard() {
   const { currentUser } = useAuth();
- 
   if (!currentUser) {
       //return <Navigate to="/" replace={true} />;
   }
-  const displayPhoto = currentUser.photoURL;
-  console.log(displayPhoto);
+  // console.log(currentUser)
 
   const [selected, setSelected] = useState("Hmm, let's see...");
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [avatar, setAvatar] = useState(null);
   
   const options = [
     'Design / Illustration',
@@ -60,9 +91,58 @@ export default function Onboard() {
     }
   };
 
+  const fileInputRef = useRef(null);
+
+  const handleDivClick = () => {
+    // Trigger the file input click
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      alert('Please select a file first!');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('http://localhost:5000/optimize-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const imageResponse = await response.json();
+      const downloadedImage = await getDownloadURL(ref(storage, `avatars/${imageResponse.firebaseImage}`));
+      const docRef = doc(db, 'users', currentUser.uid);
+      const docSnap = await getDoc(docRef);
+      console.log(downloadedImage, docRef)
+    
+      if (docSnap.exists()) {
+        await updateDoc(docRef, {avatar: downloadedImage,});
+        setAvatar(downloadedImage)
+      } else {
+        await setDoc(docRef, {avatar: downloadedImage,});
+        console.log("No such avatar!");
+      }
+      
+    } catch (error) {
+      console.error('Error uploading the image:', error);
+    }
+  };
+
+  console.log(currentUser.emailVerified)
+
+
   return (
     <>
-      {!currentUser && <Navigate to="/" replace={true} />}
+      {/* {!currentUser && <Navigate to="/" replace={true} />} */}
     
     <Swiper
       spaceBetween={50}
@@ -78,9 +158,26 @@ export default function Onboard() {
           <div className="flex justify-center">
             <img className='invert' src={weTransferLogo} alt="WeTransfer Logo" />
           </div>
-    
-          <div className="w-[140.5px] h-[127px] bg-[#000] mx-[auto] rounded-[45%] mt-[4%]">
-          </div>
+
+          {!currentUser.displayName && (
+            <div className={avatar ? "cursor-pointer w-[150.5px] h-[137px] bg-[#fff] mx-[auto] rounded-[45%] mt-[4%] flex justify-center items-center relative" : "cursor-pointer w-[150.5px] h-[137px] bg-[#000] mx-[auto] rounded-[45%] mt-[4%] flex justify-center items-center relative"}>
+            <input
+              type="file"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              accept="image/png, image/jpeg"
+              onChange={handleFileChange}
+            />
+            {(currentUser.emailVerified) ? 
+              <img className="block w-full h-full object-cover" src={currentUser.photoURL} referrerPolicy="no-referrer"/>  : 
+              <div className="flex flex-col justify-center items-center h-full w-full">
+              <ion-icon onClick={handleDivClick} name="cloud-upload-outline" style={{color: "white", width: '30px', height: '30px', display: avatar && 'none'}}></ion-icon>
+              <p onClick={handleDivClick} className={avatar ? 'hidden' : 'text-[white] mt-[15px] text-sm text-center'}>Click here to upload image</p>
+              {avatar && <img className="block w-full h-full object-contain" src={avatar} referrerPolicy="no-referrer"/>}
+              </div>
+            }
+            </div>
+          )}
     
           <p className="font-gt-super text-[3rem] text-center mt-[40px]">
             Welcome to WeTransfer, {currentUser.displayName ? currentUser.displayName.split(' ')[0] 
@@ -146,7 +243,7 @@ export default function Onboard() {
             </div>
           )}
     
-          <SwiperButtonNext>Continue</SwiperButtonNext>
+          <SwiperButtonNext selected={selected} avatar={avatar}>Continue</SwiperButtonNext>
         </main>
       </SwiperSlide>
       <SwiperSlide>

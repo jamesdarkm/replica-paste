@@ -19,7 +19,7 @@ export const doCreateUserWithEmailAndPassword = async (firstName, lastName, emai
             firstName: firstName,
             lastName: lastName,
             avatar: '',
-            subscribedToEmail: true,
+            subscribedToEmail: false,
             onBoarding: false
         });
 
@@ -35,6 +35,12 @@ export const doSignInWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
+    const docRef = doc(db, 'users', user.uid);
+    await setDoc(docRef, {
+        // c: user.displayName,
+        // avatar: '',
+        subscribedToEmail: false
+    });
 
 
     /**
