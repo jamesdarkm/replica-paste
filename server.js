@@ -123,6 +123,7 @@ app.post('/optimize-image', upload.single('image'), async (req, res) => {
 
       const uploadFile = await bucket.upload(optimizedFilePath, { destination: `avatars/${optimizedFileFirebaseName}` });
       
+      
       res.status(200).json({firebaseImage: optimizedFileFirebaseName})
     });
   } catch (error) {
