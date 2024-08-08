@@ -5,8 +5,6 @@ import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
-import Log from './Components/Account/LoginForm.jsx';
-import Sig from './Components/Account/SignupForm.jsx';
 
 import { AuthProvider } from "./Context/authContext";
 
@@ -21,14 +19,6 @@ const router = createBrowserRouter([
   {
     path: "/test",
     element: <Tests/>
-  },
-  {
-    path: "/log",
-    element: <Log/>
-  },
-  {
-    path: "/sig",
-    element: <Sig/>
   },
   {
     path: "/",

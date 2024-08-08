@@ -12,8 +12,12 @@ import {
 import { ref, getDownloadURL, uploadBytes } from '@firebase/storage';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import InlineEditor from '@ckeditor/ckeditor5-build-inline';
+import { v4 as uuidv4 } from 'uuid';
 
-const DropZone = () => {
+const DropZone = ({ isOpen, onClose, id, uid, currentUser }) => {
+    if (!isOpen) return null;
+    const uniqueId = uuidv4();
+
     const [selectedImages, setSelectedImages] = useState([]);
     const captionRef = useRef(null);
     const [editorData, setEditorData] = useState('');
@@ -47,27 +51,53 @@ const DropZone = () => {
     };
 
     const uploadPost = async () => {
-        const docRef = await addDoc(collection(db, 'posts'), {
-            caption: captionRef.current.value,
-            timestamp: serverTimestamp(),
+        if (!captionRef.current.value && selectedImages.length === 0) {
+            console.log('duh');
+            onClose();
+            return;
+        }
+
+        let lastDownloadURL = '';
+
+        // Reference to the specific document in decksSubCollection
+        const deckSubDocRef = doc(db, 'decks', uid, 'decksSubCollection', id);
+
+        // Update the deckSubDocRef document with caption
+        await updateDoc(deckSubDocRef, {
+            [`decks.${uniqueId}.caption`]: captionRef.current.value,
         });
 
+        // Handle uploading images and updating the document
         await Promise.all(
-            selectedImages.map((image) => {
+            selectedImages.map(async (image, index) => {
+                // Use a unique identifier for the image upload path
                 const imageRef = ref(
                     storage,
-                    `posts/${docRef.id}/${image.path}`
+                    `decks/${deckSubDocRef.id}/images/${image.name}`
                 );
-                uploadBytes(imageRef, image, 'data_url').then(async () => {
-                    const downloadURL = await getDownloadURL(imageRef);
-                    await updateDoc(doc(db, 'posts', docRef.id), {
-                        images: arrayUnion(downloadURL),
-                    });
+
+                await uploadBytes(imageRef, image, 'data_url');
+                const downloadURL = await getDownloadURL(imageRef);
+
+                // Update the document with the new image URL
+                await updateDoc(deckSubDocRef, {
+                    [`decks.${uniqueId}.images`]: arrayUnion(downloadURL),
                 });
+
+                lastDownloadURL = downloadURL;
+
+                // Update the thumbnail with the last uploaded image's download URL
+                if (index === selectedImages.length - 1) {
+                    await updateDoc(deckSubDocRef, {
+                        [`decks.${uniqueId}.thumbnail`]: lastDownloadURL,
+                    });
+                }
             })
         );
+
         captionRef.current.value = '';
         setSelectedImages([]);
+        onClose();
     };
 
     const onDrop = useCallback((acceptedFiles) => {
@@ -99,25 +129,24 @@ const DropZone = () => {
     );
     const selected_images = selectedImages?.map((file) => (
         <div>
-            <img src={file.preview} className="w-[200px]" alt='' />
+            <img src={file.preview} className='w-[200px]' alt='' />
         </div>
     ));
 
     return (
-        <div >
-            <button onClick={uploadPost}
-                className="absolute z-99 right-[10px] top-[10px] px-[15px] py-[8px] text-[#fff] font-bold border-2 border-solid border-[#4f15a6] rounded-[5px] bg-[#4f15a6]"
-            >
-               Save
-            </button>
-
-            <div
-                className='flex absolute top-[0] left-[0] z-10 w-full h-full bg-[grey] '
-                style={{ padding: '20px', background: '#fff' }}
-            >
-                <div className='w-1/2'>
-                    <div>
-                    <div className="h-screen flex justify-center p-[20px]">
+        <div className='p-4 w-full h-screen'>
+            <div className='h-full flex'>
+                <button
+                    onClick={uploadPost}
+                    className='absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-violet-700'
+                >
+                    <ion-icon
+                        style={{ fontSize: '30px' }}
+                        name='close-outline'
+                    ></ion-icon>
+                </button>
+                <div className='w-1/2 h-full'>
+                    <div className='flex justify-center p-4 h-full'>
                         <CKEditor
                             editor={InlineEditor}
                             data={editorData}
@@ -128,34 +157,39 @@ const DropZone = () => {
                             }}
                             config={{
                                 toolbar: [
-                                    'heading', 'bold', 'italic', 'underline', 'link', 'bulletedList', 'numberedList'
+                                    'heading',
+                                    'bold',
+                                    'italic',
+                                    'underline',
+                                    'link',
+                                    'bulletedList',
+                                    'numberedList',
                                 ],
                                 heading: {
                                     options: [
-                                        { model: 'paragraph', view: 'p', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                                        { model: 'heading1', view: 'h1', title: 'Title', class: 'ck-heading_heading1' }
-                                    ]
-                                }
+                                        {
+                                            model: 'paragraph',
+                                            view: 'p',
+                                            title: 'Paragraph',
+                                            class: 'ck-heading_paragraph',
+                                        },
+                                        {
+                                            model: 'heading1',
+                                            view: 'h1',
+                                            title: 'Title',
+                                            class: 'ck-heading_heading1',
+                                        },
+                                    ],
+                                },
                             }}
                         />
-                         </div>
-                        <p>Debug {editorData}</p>
-                   
                     </div>
-                    <input
-                        ref={captionRef}
-                        type='hidden'
-                        value={editorData}
-                    />
-                    
+                    <input ref={captionRef} type='hidden' value={editorData} />
                 </div>
-
-                <div
-                    className='justify-center d-flex w-1/2 p-[20px] bg-[white] h-[20px]'
-                >
+                <div className='p-4 flex w-1/2 '>
                     <div
                         {...getRootProps({ style })}
-                        className='justify-center d-flex h-screen items-center'
+                        className='justify-center p-4 d-flex items-center'
                     >
                         <div>{selected_images}</div>
                         <input {...getInputProps()} />

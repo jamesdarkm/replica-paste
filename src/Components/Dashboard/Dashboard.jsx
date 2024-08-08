@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
-import Popup from './Popup';
+import InviteTeamMember from './InviteTeamMember';
 import Profile from './Profile';
+import CreateDeck from './DeckCreate';
 import Decks from './Decks.jsx';
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
@@ -45,9 +46,16 @@ const Tests = () => {
         document.body.classList.remove('active-modal');
     }
 
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const togglePopup = () => {
-        setIsPopupOpen(!isPopupOpen);
+
+    const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false);
+    const toggleCreateDeckPopup = () => {
+        
+        setIsCreateDeckOpen(!isCreateDeckOpen);
+    };
+
+    const [isInviteTeamMemberPopupOpen, setIsInviteTeamMemberPopupOpen] = useState(false);
+    const toggleInviteTeamMemberPopup = () => {
+        setIsInviteTeamMemberPopupOpen(!isInviteTeamMemberPopupOpen);
     };
 
 
@@ -55,6 +63,8 @@ const Tests = () => {
     const toggleProfilePopup = () => {
         setIsProfileOpen(!isProfileOpen);
     };
+
+
 
     useEffect(() => {
         async function getUserAvatar() {
@@ -76,9 +86,10 @@ const Tests = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
-            <Popup isOpen={isPopupOpen} onClose={togglePopup} />
+            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
-            
+            <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} />
+
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
                     <div className='flex items-center justify-between'>
@@ -127,7 +138,7 @@ const Tests = () => {
                         <li>
                             <button
                                 className='hover:text-gray-400 flex block'
-                                onClick={togglePopup}
+                                onClick={toggleInviteTeamMemberPopup}
                             >
                                 <ion-icon
                                     size='small'
@@ -189,7 +200,7 @@ const Tests = () => {
                                     </div>
 
                                     <button
-                                        onClick={togglePopup}
+                                        onClick={toggleInviteTeamMemberPopup}
                                         type='button'
                                         className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
                                     >
@@ -199,6 +210,7 @@ const Tests = () => {
                                     <button
                                         type='button'
                                         className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
+                                        onClick={toggleCreateDeckPopup}
                                     >
                                         New deck
                                     </button>
@@ -222,7 +234,7 @@ const Tests = () => {
                         </div>
                     </div>
 
-                    <Decks uid={uid} />
+                    <Decks uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
                 </div>
             </div>
         </>

@@ -113,8 +113,9 @@ export default function Onboard() {
         method: 'POST',
         body: formData,
       });
-
+      console.log(response)
       if (!response.ok) {
+        
         throw new Error(`Error: ${response.statusText}`);
       }
 
@@ -158,7 +159,7 @@ export default function Onboard() {
           <div className="flex justify-center">
             <img className='invert' src={weTransferLogo} alt="WeTransfer Logo" />
           </div>
-
+      
           {!currentUser.displayName && (
             <div className={avatar ? "cursor-pointer w-[150.5px] h-[137px] bg-[#fff] mx-[auto] rounded-[45%] mt-[4%] flex justify-center items-center relative" : "cursor-pointer w-[150.5px] h-[137px] bg-[#000] mx-[auto] rounded-[45%] mt-[4%] flex justify-center items-center relative"}>
             <input

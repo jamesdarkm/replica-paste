@@ -1,0 +1,11 @@
+.deck-preview h1 {
+    margin: 1vw 0;
+    font-size: 1.3vw;
+    font-weight: 900;
+    line-height: 1.5vw;
+}
+
+.deck-preview p {
+    font-size: 1.2vw;
+    line-height: 1.5vw;
+}

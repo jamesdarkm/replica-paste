@@ -1,39 +1,52 @@
+/* CKEditor Content */
 .ck-content {
-    height: 100vh;
+    height: 100%;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling if content exceeds container height */
 }
 
+/* Ensure the editor container respects the parent container's height */
+.ck-editor__editable_inline {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Additional CSS for content styling */
 .ck-content p {
     margin-top: 15px;
     font-size: 40px;
-    color: rgb(000, 000, 000, 0.8);
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .ck-content ul li {
     font-size: 40px;
-    color: rgb(000, 000, 000, 0.8);
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .ck-content h1 {
     font-size: 80px;
 }
+
 .ck-heading_heading1 {
     font-size: 40px;
 }
 
-.ck-editor__editable_inline {
-    height: 100%;
+.ck-editor__editable_inline  {
+height: 100%;
     width: 100%;
-    display: flex;
+    display: flex;box-sizing: border-box;
     justify-content: center;
     flex-direction: column;
 }
-
+/* Adjust the CKEditor to ensure it fits within its container */
 .ck-editor__editable_inline > * {
     margin: 0 10px;
     display: flex;
     align-items: center;
 }
 
+/* .card-preview-deck-add styles remain the same */
 .card-preview-deck-add {
     position: absolute;
     top: 50%;
@@ -46,17 +59,14 @@
     padding: 22px 23px;
     color: #fff;
     font-weight: bold;
-    font-size:12px;
+    font-size: 12px;
     border: 3px solid #000;
     border-radius: 5px;
     background: #fff;
-    display:none;
+    display: none;
 }
 
 .card-preview-deck-add ion-icon {
-    color:#000;
-    font-size:30px
-}
-
-.card-preview-deck-add {
+    color: #000;
+    font-size: 30px;
 }

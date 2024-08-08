@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
-import axios from '../../../axios';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { db, storage } from '../../../firebase';
 
-const Popup = ({ isOpen, onClose }) => {
+import {
+    doc,
+    addDoc,
+    setDoc,
+    getDoc,
+    collection,
+    getDocs,
+    updateDoc,
+    serverTimestamp
+} from 'firebase/firestore';
+
+const CreateDeck = ({ isOpen, onClose, uid }) => {
     if (!isOpen) return null;
+    const navigate = useNavigate();
 
-    const [email, setEmail] = useState('');
+    const [title, setTitle] = useState('');
     const [response, setResponse] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/send-email', {
-                email: email,
+            const deckDocRef = doc(db, 'decks', uid);
+            const deckCollectionRef = collection(deckDocRef, 'decksSubCollection');
+            
+            const docRef = await addDoc(deckCollectionRef, {
+                heading: title,
+                title: 'ttle',
+                timestamp: serverTimestamp(),
             });
 
-            setEmail('');
-            setResponse('Invitation successfully sent!');
+            const newFireBaseDocId = docRef.id;
+            navigate(`/dashboard/deck/${newFireBaseDocId}`);
         } catch (error) {
             setResponse(
                 'Failed to send email, please reach out to support@paste-replica.io'
@@ -35,7 +53,7 @@ const Popup = ({ isOpen, onClose }) => {
                             <div>
                                 <div className='flex items-center justify-between pb-3  border-solid border-b-2 border-slate-200 '>
                                     <div className='text-base font-semibold leading-6 text-gray-900'>
-                                        Share this file
+                                        Create New Deck
                                     </div>
 
                                     <button
@@ -50,14 +68,16 @@ const Popup = ({ isOpen, onClose }) => {
                                 </div>
                                 <div className='mt-7'>
                                     <form onSubmit={handleSubmit}>
+                                        <p className='mb-4 font-bold'>What would you like your new deck to be called?</p>
                                         <div className='flex flex-row gap-3'>
+                                           
                                             <input
                                                 className='basis-3/4 border-slate-300 rounded'
-                                                type='email'
-                                                placeholder='Email'
-                                                value={email}
+                                                type='text'
+                                                placeholder=''
+                                                value={title}
                                                 onChange={(e) =>
-                                                    setEmail(e.target.value)
+                                                    setTitle(e.target.value)
                                                 }
                                                 required
                                             />
@@ -65,7 +85,7 @@ const Popup = ({ isOpen, onClose }) => {
                                                 type='submit'
                                                 className='basis-1/4 rounded justify-center rounded-md text-sm font-semibold shadow-sm font-bold text-slate-50 dark:hover:bg-violet-900 bg-violet-800'
                                             >
-                                                Invite
+                                                Create
                                             </button>
                                         </div>
                                     </form>
@@ -87,4 +107,4 @@ const Popup = ({ isOpen, onClose }) => {
     );
 };
 
-export default Popup;
+export default CreateDeck;

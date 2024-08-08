@@ -72,3 +72,7 @@ ul {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.active-modal {
+  overflow: Xhidden;
+}

@@ -1,114 +1,160 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import './Deck.css';
 import './Modal.css';
+import { useAuth } from '../../Context/authContext';
 import DropZone from './DropZone.jsx';
 import './DropZone.css';
 import Posts from './Posts.jsx';
 import './Posts.css';
-
+import { db, storage } from '../../../firebase';
+import {
+    doc,
+    addDoc,
+    setDoc,
+    getDoc,
+    collection,
+    getDocs,
+} from 'firebase/firestore';
 const Deck = () => {
-    const [data, setData] = useState([]);
+    const { currentUser } = useAuth();
+    const [heading, setHeading] = useState([]);
+    const [decks, setDecks] = useState([]);
     const [modal, setModal] = useState(false);
     const [toggle, setToggle] = useState(1);
     const { id } = useParams();
 
-    const updateToggle = (id) => {
-        setToggle(id);
-    };
+    if (!currentUser) {
+        return <Navigate to='/' replace={true} />;
+    }
 
-    /**
-     * Modal toggle
-     */
-    const toggleModal = () => {
-        setModal(!modal);
-    };
+    const uid = currentUser.uid;
+
+    useEffect(() => {
+        async function getDeckSubCollectionDocument() {
+            try {
+                // Reference to the main document in 'decks' collection
+                const mainDocRef = doc(
+                    db,
+                    'decks',
+                    uid
+                );
+
+                // Reference to the 'decksSubCollection' subcollection within the main document
+                const subCollectionRef = collection(
+                    mainDocRef,
+                    'decksSubCollection'
+                );
+
+                // Reference to the specific document within the 'decksSubCollection'
+                const subDocRef = doc(subCollectionRef, id);
+
+                // Fetch the document
+                const docSnap = await getDoc(subDocRef);
+
+                if (docSnap.exists()) {
+                    // Access the data in the document
+                    const data = docSnap.data();
+
+                    setDecks(data.decks)
+                    setHeading(data.heading)
+                } else {
+                    console.log('No such document!');
+                }
+            } catch (error) {
+                console.error('Error fetching document:', error);
+            }
+        }
+
+        getDeckSubCollectionDocument();
+    }, []);
+
+
 
     /**
      * Hide the scrollbar when modal is active
      */
-    if (modal) {
+    if (decks) {
         document.body.classList.add('active-modal');
     } else {
         document.body.classList.remove('active-modal');
     }
 
+    const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
+    const toggleDropZonePopup = () => {
+        console.log('here')
+        setIsDropZoneOpen(!isDropZoneOpen);
+    };
+
     return (
-        <div>
-            {modal && (
-                <div className='modal'>
-                    <div className='overlay' onClick={toggleModal}></div>
-                    <div className='modal-content'>
-                        <div className='space-between ai-center d-flex'>
-                            <h2>Invite team member</h2>
-                            <button
-                                className='close-modal'
-                                onClick={toggleModal}
-                            >
-                                <ion-icon name='close-outline'></ion-icon>
-                            </button>
+        <>
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} uid={uid} id={id} />
+
+            <div className='flex-1'>
+                <div className='w-full flex items-center justify-between z-10 '>
+                    <div className='p-4 px-6 items-center w-full justify-between flex'>
+                        <div className='flex items-center justify-center'>
+                            <Link to='/dashboard'>
+                                <ion-icon
+                                    style={{ fontSize: '20px' }}
+                                    name='chevron-back-outline'
+                                ></ion-icon>
+                            </Link>
+
+                            <div className='pl-4'>
+                                <h1 className=' text-3xl font-bold'>{heading}</h1>
+                                <span>Group</span>
+                            </div>
                         </div>
 
-                        <form method='post' action=''>
-                            <input type='email' className='email' />
-                            <button className='invite'>Invite</button>
-                        </form>
+                        <div>
+                            <div className='justify-between flex content-end'>
+                                <div className='ml-4 '>
+                                    <button className='flex content-end'>
+                                        <div className='mt-3 mr-5'>Online</div>
+                                    </button>
+                                </div>
+                                <div>
+                                    <Link
+                                        to='/'
+                                        className='ml-10 flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold hover:bg-slate-200'
+                                    >
+                                        <ion-icon
+                                            size='small'
+                                            name='help-outline'
+                                        ></ion-icon>
+                                    </Link>
+                                </div>
+
+                                <button
+                                    type='button'
+                                    className='ml-6 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
+                                >
+                                    Share deck
+                                </button>
+
+                                <button
+                                    type='button'
+                                    className='ml-4 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
+                                >
+                                    Present
+                                </button>
+
+                                <button className='ml-4'>
+                                    <ion-icon
+                                        name='ellipsis-horizontal-outline'
+                                        size='small'
+                                    ></ion-icon>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            )}
-
-            <main className='dashboard-deck'>
-                <nav className='gap-10 ai-center space-between d-flex navigation-deck'>
-                    <a
-                        href='/dashboard'
-                        className='gap-10 ai-center d-flex deck-back'
-                    >
-                        <ion-icon name='chevron-back-outline'></ion-icon>
-                        <div>
-                            <h1> { id } Pitch an Idea | Template</h1>
-                            <span>Templates</span>
-                        </div>
-                    </a>
-
-                    <div className='gap-10 d-flex'>
-                        <button
-                            type='button'
-                            className='gap-10 ai-center d-flex avatar'
-                        >
-                            <span>Online</span>
-                            <a
-                                href='https://support.paste-replica.io'
-                                target='_blank'
-                            >
-                                <ion-icon name='help-circle-outline'></ion-icon>
-                            </a>
-                        </button>
-
-                        <button type='button' className='new-deck'>
-                            Share Deck
-                        </button>
-                        <button type='button' className='invite-team-member'>
-                            Present
-                        </button>
-                        <button type='button' className='more'>
-                            <ion-icon name='ellipsis-horizontal-outline'></ion-icon>
-                        </button>
-                    </div>
-                </nav>
-
-                <Posts />
-
-                {toggle === 2 && (
-                    <div className='space-between d-flex drop-container'>
-                        <div>
-                            {' '}
-                            <DropZone />
-                        </div>
-                        <div></div>
-                    </div>
-                )}
-            </main>
-        </div>
+            </div>
+            
+            <Posts decks={decks} toggleDropZonePopup={toggleDropZonePopup} />
+        </>
     );
 };
 

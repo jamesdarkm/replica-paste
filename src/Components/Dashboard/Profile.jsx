@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from '../../../axios';
 import { db, storage } from '../../../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
+import { getAuth, updateEmail } from 'firebase/auth';
 
 import {
     doc,
@@ -15,23 +16,37 @@ import {
 
 const Profile = ({ isOpen, onClose, uid, currentUser }) => {
     if (!isOpen) return null;
-
-    console.log(currentUser)
-
-
-    const [email, setEmail] = useState('');
+    
+    const [firstName, setFirstName] = useState(currentUser.additionalInformation.firstName);
+    const [lastName, setLastName] = useState(currentUser.additionalInformation.lastName);
+    const [email, setEmail] = useState(currentUser.reloadUserInfo.email);
     const [response, setResponse] = useState('');
     const [avatar, setAvatar] = useState(null);
 
+    // Verify the email first
+    // const auth = getAuth();
+    // const user = auth.currentUser;
+    // updateEmail(user, 'jacktraler@gmail.com').then(() => {
+    //     console.log('Email updated successfully');
+    // }).catch((error) => {
+    //     console.error('Error updating email:', error);
+    // });
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await axios.post('/send-email', {
-                email: email,
-            });
+        const docRef = doc(db, 'users', uid);
+        await updateDoc(docRef, {
+            firstName: firstName,
+            lastName: lastName
+        });
 
-            setEmail('');
+
+        try {
+            // const response = await axios.post('/send-email', {
+            //     email: email,
+            // });
+
+            // setEmail('');
             setResponse('Invitation successfully sent!');
         } catch (error) {
             setResponse(
@@ -166,7 +181,10 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                                                     placeholder='John'
                                                     required
-                                                    value={currentUser.additionalInformation.firstName}
+                                                    value={firstName}
+                                                    onChange={(e) => {
+                                                        setFirstName(e.target.value);
+                                                    }}
                                                 />
                                             </div>
                                             <div>
@@ -182,7 +200,10 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                                     className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                                                     placeholder='Doe'
                                                     required
-                                                    value={currentUser.additionalInformation.lastName}
+                                                    value={lastName}
+                                                    onChange={(e) => {
+                                                        setLastName(e.target.value);
+                                                    }}
                                                 />
                                             </div>
                                         </div>
@@ -199,7 +220,10 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                                 className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                                                 placeholder='john.doe@company.com'
                                                 required
-                                                value={currentUser.reloadUserInfo.email}
+                                                value={email}
+                                                onChange={(e) => {
+                                                    setEmail(e.target.value);
+                                                }}
                                             />
                                         </div>
                                         <div className='flex flex-row gap-3'>

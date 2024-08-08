@@ -37,8 +37,7 @@ export function AuthProvider({ children }) {
             additionalInformation: docSnap.data()
           };
 
-          // user.displayName = docSnap.data().firstName;
-          user.displayName = '';
+          user.displayName = docSnap.data().firstName;
           user.photoURL = docSnap.data().avatar;
         }
       }

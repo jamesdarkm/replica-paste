@@ -9,30 +9,33 @@ import {
 import { db } from '../../../firebase';
 // import moment from 'moment'
 
-const Posts = ({ uid }) => {
+const Decks = ({ uid, toggleCreateDeckPopup  }) => {
     const [posts, setPosts] = useState([]);
-    const postId = 'n3tWI15E2V4YPihl8PRE';
 
+    console.log(toggleCreateDeckPopup)
     const postImages = (post) => {
+        const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
+        const imageUrl = post.thumbnail || placeholderImage;
+
         return (
             <>
-                {post.images?.map((file, index) => (
-                    <Link
-                        to={`/dashboard/deck/${post.heading}?post=${post.id}`}
-                        className='mt-5'
-                        key={`${post.id}-${index}`} // Ensure unique keys
-                    >
-                        <div
-                            className='min-h-48 rounded bg-cover'
-                            style={{ backgroundImage: `url(${file})` }}
-                        ></div>
-                        <p className='mt-3 text-lg font-bold'>{post.heading}</p>
-                        <span>{post.id} | Group placeholder</span>
-                    </Link>
-                ))}
+                {post.heading && (
+                <Link
+                    to={`/dashboard/deck/${post.id}`}
+                    className='mt-5'
+                    key={post.id} // Use the post ID as the key
+                >
+                    <div
+                        className='min-h-48 rounded bg-center bg-cover'
+                        style={{ backgroundImage: `url(${imageUrl})` }}
+                    ></div>
+                    <p className='mt-3 text-lg font-bold'>{post.heading}</p>
+                </Link>
+                )}
             </>
         );
     };
+
 
     useEffect(() => {
         const fetchDecks = async (uid) => {
@@ -45,6 +48,7 @@ const Posts = ({ uid }) => {
                     'decksSubCollection'
                 );
 
+                
                 // Retrieve all documents from the decksSubCollection sub-collection
                 const subCollectionSnapshot = await getDocs(subCollectionRef);
 
@@ -53,15 +57,15 @@ const Posts = ({ uid }) => {
                     ...doc.data(),
                 }));
 
+                console.log(decksArray)
                 setPosts(decksArray);
             } else {
-                // console.log('Parent document does not exist.');
+               console.log('Parent document does not exist.');
             }
         };
 
         // Call the function with a specific uid
         fetchDecks(uid);
-        // fetchDecks(uid + 'n3tWI15E2V4YPihl8PRE');
     }, []);
 
     return (
@@ -78,21 +82,20 @@ const Posts = ({ uid }) => {
                             Ready to make beautiful slides in seconds?
                         </p>
 
-                        <Link
-                            to='deck/dropzone'
+                        <button
                             type='button'
                             className='font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-5 py-4 hover:bg-violet-900 bg-violet-800'
+                            onClick={toggleCreateDeckPopup}
                         >
                             Create new deck
-                        </Link>
+                        </button>
                     </div>
                 </div>
             ) : (
                 <>
                     <div className='my-6 mx-auto max-w-screen-2xl'>
                         <div className='grid grid-cols-4 gap-4'>
-                            <Link
-                                to='/dashboard/deck/dropzone'
+                            <button type="button" onClick={toggleCreateDeckPopup}
                                 className='mt-5'
                             >
                                 <div className='flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100'>
@@ -104,7 +107,7 @@ const Posts = ({ uid }) => {
                                 <p className='mt-3 text-lg font-bold'>
                                     Empty Deck
                                 </p>
-                            </Link>
+                            </button>
 
                             {posts.map((post) => (
                                 <React.Fragment key={post.id}>
@@ -119,4 +122,4 @@ const Posts = ({ uid }) => {
     );
 };
 
-export default Posts;
+export default Decks;
