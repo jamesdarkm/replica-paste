@@ -60,7 +60,7 @@ const Login = () => {
                 <img src='./src/Components/Assets/google-logo.svg' className="w-5" />
                 {isSigningIn ? 'Signing In...' : 'Continue with Google'}
             </button>
-
+{/* 
             <button
                 disabled={isSigningIn}
                 onClick={(e) => {
@@ -74,7 +74,7 @@ const Login = () => {
             >
                 <img src='./src/Components/Assets/apple-logo.png' className="w-8.5 h-5 -ml-5" />
                 {isSigningIn ? 'Signing In...' : 'Continue with Apple'}
-            </button>
+            </button> */}
 
             <div className="my-5 flex items-center"> 
                 <hr className="flex-grow border-t border-gray-300" /> 
