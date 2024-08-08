@@ -4,6 +4,7 @@ import LoginSignup from './Components/Account/LoginSignup.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
+import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
 
 import { AuthProvider } from "./Context/authContext";
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/deck/dropzone",
     element: <DropZone/>
+  },
+  {
+    path: "/comments",
+    element: <CommentsTest/>
   },
 ]);
 

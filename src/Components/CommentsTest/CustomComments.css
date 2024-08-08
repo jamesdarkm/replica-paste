@@ -1,0 +1,27 @@
+.overlay{
+    background: transparent !important;
+    width: 100%;
+    height: auto;
+}
+
+.comment-title {
+    margin-bottom: 10px;
+}
+
+.form .postComment:focus{
+    outline-style: double;
+    appearance: none;
+    outline-offset: 0px;
+    box-shadow: 3px 3px 10px 3px rgba(255, 255, 255, 0);
+    -webkit-appearance: none;
+    -webkit-box-shadow: 3px 3px 10px 3px rgba(255, 255, 255, 0);
+    -moz-box-shadow: 3px 3px 10px 3px rgba(255, 255, 255, 0);
+    padding-left: 0;
+    margin-left: 10px;
+}
+
+.form .postBtn {
+    border: none;
+    border-radius: 5px;
+    background-color: #4F15A6;;
+}
