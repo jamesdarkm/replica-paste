@@ -3,6 +3,7 @@ import { Navigate, Link } from 'react-router-dom';
 import {
     doSignInWithEmailAndPassword,
     doSignInWithGoogle,
+    doSignInWithApple
 } from '../../../auth';
 import { useAuth } from '../../Context/authContext/index';
 
@@ -33,6 +34,14 @@ const Login = () => {
         }
     };
 
+    const onAppleSignIn = (e) => {
+        e.preventDefault();
+        if (!isSigningIn) {
+            setIsSigningIn(true);
+            doSignInWithApple();
+        }
+    }
+
     return (
         <>
             {userLoggedIn && <Navigate to={'/onboard'} replace={true} />}
@@ -50,6 +59,21 @@ const Login = () => {
             >
                 <img src='./src/Components/Assets/google-logo.svg' className="w-5" />
                 {isSigningIn ? 'Signing In...' : 'Continue with Google'}
+            </button>
+
+            <button
+                disabled={isSigningIn}
+                onClick={(e) => {
+                    onAppleSignIn(e);
+                }}
+                className={`mt-5 w-full flex items-center justify-center gap-x-3 py-4 border rounded-full border-gray-200 border-solid text-sm font-bold ${
+                    isSigningIn
+                        ? 'cursor-not-allowed'
+                        : 'hover:border-gray-600 transition duration-300 active:bg-gray-100'
+                }`}
+            >
+                <img src='./src/Components/Assets/apple-logo.png' className="w-8.5 h-5 -ml-5" />
+                {isSigningIn ? 'Signing In...' : 'Continue with Apple'}
             </button>
 
             <div className="my-5 flex items-center"> 

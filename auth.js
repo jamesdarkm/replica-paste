@@ -8,7 +8,11 @@ import {
     updatePassword,
     signInWithPopup,
     GoogleAuthProvider,
+    OAuthProvider,
+    getAuth,
 } from 'firebase/auth';
+
+const provider = new OAuthProvider('apple.com');
 
 export const doCreateUserWithEmailAndPassword = async (firstName, lastName, email, password) => {
     const createUser = await createUserWithEmailAndPassword(auth, email, password);
@@ -64,6 +68,41 @@ export const doSignInWithGoogle = async () => {
 
     createUserDocument();
 };
+
+export const doSignInWithApple = async () => {
+    const auth = getAuth();
+    signInWithRedirect(auth, provider);
+
+    getRedirectResult(auth)
+        .then(async (result) => {
+          const credential = OAuthProvider.credentialFromResult(result);
+          if (credential) {
+            // You can also get the Apple OAuth Access and ID Tokens.
+            const accessToken = credential.accessToken;
+            const idToken = credential.idToken;
+          }
+          // The signed-in user info.
+          const user = result.user;
+          const docRef = doc(db, 'users', user.uid);
+          await setDoc(docRef, {
+              // c: user.displayName,
+              // avatar: '',
+              subscribedToEmail: false
+          });
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.customData.email;
+          console.log('APPLE ERROR:', error, errorCode, errorMessage);
+          // The credential that was used.
+          const credential = OAuthProvider.credentialFromError(error);
+      
+          // ...
+        });
+}
 
 export const doSignOut = () => {
     return auth.signOut();
