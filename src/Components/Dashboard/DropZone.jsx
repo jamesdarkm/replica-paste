@@ -14,7 +14,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import InlineEditor from '@ckeditor/ckeditor5-build-inline';
 import { v4 as uuidv4 } from 'uuid';
 
-const DropZone = ({ isOpen, onClose, id, uid, currentUser }) => {
+const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     if (!isOpen) return null;
     const uniqueId = uuidv4();
 
@@ -97,6 +97,7 @@ const DropZone = ({ isOpen, onClose, id, uid, currentUser }) => {
 
         captionRef.current.value = '';
         setSelectedImages([]);
+        changeUploadState();
         onClose();
     };
 
@@ -143,6 +144,7 @@ const DropZone = ({ isOpen, onClose, id, uid, currentUser }) => {
                     <ion-icon
                         style={{ fontSize: '30px' }}
                         name='close-outline'
+                        // onClick={changeUploadState}
                     ></ion-icon>
                 </button>
                 <div className='w-1/2 h-full'>

@@ -21,18 +21,25 @@ const Deck = () => {
     const { currentUser } = useAuth();
     const [heading, setHeading] = useState([]);
     const [decks, setDecks] = useState([]);
+    const [didUploadDeck, setDidUploadDeck] = useState(false);
     const [modal, setModal] = useState(false);
     const [toggle, setToggle] = useState(1);
     const { id } = useParams();
+    const uid = currentUser.uid;
 
     if (!currentUser) {
         return <Navigate to='/' replace={true} />;
     }
 
-    const uid = currentUser.uid;
+
+    const changeUploadState = () => {
+        setDidUploadDeck(!didUploadDeck)
+    }
+    
 
     useEffect(() => {
         async function getDeckSubCollectionDocument() {
+            console.log('reached')
             try {
                 // Reference to the main document in 'decks' collection
                 const mainDocRef = doc(
@@ -68,7 +75,7 @@ const Deck = () => {
         }
 
         getDeckSubCollectionDocument();
-    }, []);
+    }, [didUploadDeck]);
 
 
 
@@ -89,7 +96,7 @@ const Deck = () => {
 
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} uid={uid} id={id} />
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} uid={uid} id={id} changeUploadState={changeUploadState}/>
 
             <div className='flex-1'>
                 <div className='w-full flex items-center justify-between z-10 '>
