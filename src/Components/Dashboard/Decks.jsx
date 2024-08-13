@@ -4,16 +4,19 @@ import {
     doc,
     getDoc,
     getDocs,
-    collection
+    collection,
+    query,
+    where
 } from 'firebase/firestore';
 import { db } from '../../../firebase';
 // import moment from 'moment'
 
 const Decks = ({ uid, toggleCreateDeckPopup  }) => {
     const [posts, setPosts] = useState([]);
+    const [teams, setTeams] = useState('');
 
-    console.log(toggleCreateDeckPopup)
-    const postImages = (post) => {
+    
+    const PostImages = ({ post }) => {
         const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
         const imageUrl = post.thumbnail || placeholderImage;
 
@@ -36,36 +39,42 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
         );
     };
 
+    
 
     useEffect(() => {
-        const fetchDecks = async (uid) => {
-            const docRef = doc(db, 'decks', uid);
-            const docSnap = await getDoc(docRef);
+        //fetch decks based on team Id
+        const fetchDecks = async () => {
+            const teamsRef = collection(db, 'teams');
 
-            if (docSnap.exists()) {
-                const subCollectionRef = collection(
-                    docRef,
-                    'decksSubCollection'
-                );
+            // Fetch teams where the user is either owner or shared with
+            const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
+            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
+    
+            const ownerSnapshot = await getDocs(ownerQuery);
+            const sharedSnapshot = await getDocs(sharedQuery);
 
-                
-                // Retrieve all documents from the decksSubCollection sub-collection
-                const subCollectionSnapshot = await getDocs(subCollectionRef);
+            const ownerTeams = ownerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            const sharedTeams = sharedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+            const allTeams = [...ownerTeams, ...sharedTeams];
+            const teamId = allTeams[0].id;
 
-                const decksArray = subCollectionSnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+            const decksRef = collection(db, `decks/${uid}/decksSubCollection`,);
+            const q = query(decksRef, where('teamId', '==', teamId));
 
-                console.log(decksArray)
-                setPosts(decksArray);
-            } else {
-               console.log('Parent document does not exist.');
-            }
+            const querySnapshot = await getDocs(q);
+            const decksData = querySnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+
+            console.log(allTeams, teamId, 'DECKS DARA:', decksData)
+            setTeams(allTeams)
+            setPosts(decksData)
+            
         };
 
-        // Call the function with a specific uid
-        fetchDecks(uid);
+        fetchDecks();
     }, []);
 
     return (
@@ -95,7 +104,7 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
                 <>
                     <div className='my-6 mx-auto max-w-screen-2xl'>
                         <div className='grid grid-cols-4 gap-4'>
-                            <button type="button" onClick={toggleCreateDeckPopup}
+                            <button type='button' onClick={toggleCreateDeckPopup}
                                 className='mt-5'
                             >
                                 <div className='flex justify-center items-center min-h-48 rounded border-2 border-solid border-slate-100'>
@@ -111,7 +120,7 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
 
                             {posts.map((post) => (
                                 <React.Fragment key={post.id}>
-                                    {postImages(post)}
+                                    {<PostImages post={post}/>}
                                 </React.Fragment>
                             ))}
                         </div>

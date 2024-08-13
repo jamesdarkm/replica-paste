@@ -52,7 +52,7 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
 
     const uploadPost = async () => {
         if (!captionRef.current.value && selectedImages.length === 0) {
-            console.log('duh');
+            // console.log('duh');
             onClose();
             return;
         }

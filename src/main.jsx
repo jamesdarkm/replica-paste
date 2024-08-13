@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import LoginSignup from './Components/Account/LoginSignup.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
+import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
@@ -30,8 +31,12 @@ const router = createBrowserRouter([
     element: <Onboard/>
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/decks",
     element: <Dashboard/>
+  },
+  {
+    path: "/dashboard/",
+    element: <DashboardTeams/>
   },
   {
     path: "/dashboard/deck/:id",

@@ -102,7 +102,7 @@ const Deck = () => {
                 <div className='w-full flex items-center justify-between z-10 '>
                     <div className='p-4 px-6 items-center w-full justify-between flex'>
                         <div className='flex items-center justify-center'>
-                            <Link to='/dashboard'>
+                            <Link to='/dashboard/decks'>
                                 <ion-icon
                                     style={{ fontSize: '20px' }}
                                     name='chevron-back-outline'

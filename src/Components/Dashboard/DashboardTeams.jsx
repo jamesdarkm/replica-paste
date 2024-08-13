@@ -7,14 +7,19 @@ import Decks from './Decks.jsx';
 import Teams from './Teams.jsx'
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
-import { db } from '../../../firebase';
-import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { db, storage } from '../../../firebase';
 
-const Tests = () => {
+import {
+    doc,
+    addDoc,
+    setDoc,
+    getDoc, collection, getDocs
+} from 'firebase/firestore';
+
+const DashboardTeams = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
-    const [teams, setTeams] = useState([]);
     const { currentUser } = useAuth();
     console.log(currentUser)
 
@@ -78,30 +83,7 @@ const Tests = () => {
     }, [])
 
 
-    useEffect(() => {
-        const fetchDecks = async () => {
-            const teamsRef = collection(db, 'teams');
 
-            // Fetch teams where the user is either owner or shared with
-            const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
-            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
-    
-            const ownerSnapshot = await getDocs(ownerQuery);
-            const sharedSnapshot = await getDocs(sharedQuery);
-
-            const ownerTeams = ownerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const sharedTeams = sharedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-            const allTeams = [...ownerTeams, ...sharedTeams];
-            const teamId = allTeams[0].id;   
-
-            console.log(allTeams, teamId)
-            setTeams(allTeams)
-            
-        };
-
-        fetchDecks();
-    }, [avatar]);
       
     return (
         <>
@@ -109,7 +91,7 @@ const Tests = () => {
             
             <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
-            <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
+            <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team"/>
 
             <div className='flex'>
                 <div className='h-screen w-64 p-4 z-5'>
@@ -255,11 +237,11 @@ const Tests = () => {
                         </div>
                     </div>
 
-                    <Decks uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
+                    <Teams uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
                 </div>
             </div>
         </>
     );
 };
 
-export default Tests;
+export default DashboardTeams;
