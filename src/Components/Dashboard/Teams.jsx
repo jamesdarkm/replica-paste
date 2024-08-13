@@ -18,13 +18,13 @@ export default function Teams({ uid, toggleCreateDeckPopup  }) {
         const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
         const imageUrl = team.thumbnail || placeholderImage;
 
-        console.log(team)
+        // console.log(team)
 
         return (
             <>
                 {team.name && (
                 <Link
-                    to={`/dashboard/decks`}
+                    to={`/dashboard/${team.id}`}
                     className='mt-5'
                     key={team.id} // Use the post ID as the key
                 >
@@ -56,7 +56,7 @@ export default function Teams({ uid, toggleCreateDeckPopup  }) {
             const allTeams = [...ownerTeams, ...sharedTeams];
     
 
-            console.log(allTeams)
+            // console.log(allTeams)
             setTeams(allTeams)
 
         };

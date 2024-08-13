@@ -31,7 +31,7 @@ const router = createBrowserRouter([
     element: <Onboard/>
   },
   {
-    path: "/dashboard/decks",
+    path: "/dashboard/:teamId",
     element: <Dashboard/>
   },
   {
