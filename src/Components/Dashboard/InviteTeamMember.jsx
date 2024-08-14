@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { db } from '../../../firebase';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import axios from '../../../axios';
 
-const InviteTeamMember = ({ isOpen, onClose }) => {
+const InviteTeamMember = ({ isOpen, onClose, teams }) => {
     if (!isOpen) return null;
 
     const [email, setEmail] = useState('');
     const [response, setResponse] = useState('');
+    const { teamId } = useParams();
+    console.log( teamId )
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -23,6 +28,39 @@ const InviteTeamMember = ({ isOpen, onClose }) => {
             );
         }
     };
+
+    // we need to invite a user to a specific team
+    // meaning, when a user selects a team, we need that teams id, update its shared With array
+    // thus we need to find a team that matches that id from the teams collection
+    // then when they login they will see teams where their email is set, or their user id exists on the ownerId field
+    const inviteMember = async () => {
+        const teamsRef = doc(db, 'teams', teamId);
+        const teamDoc = await getDoc(teamsRef);
+        const teamData = teamDoc.data();
+        const sharedMembersData = teamData.sharedWith;
+
+        const verifyEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(verifyEmailRegex.test(email)){
+            
+            if (!sharedMembersData.includes(email)) {
+                sharedMembersData.push(email);
+    
+                try {
+                    await updateDoc(teamsRef, { sharedWith: sharedMembersData });
+                } catch (error) {
+                    alert('error uploading the doc:', error)
+                }
+    
+            } else {
+                throw new Error('There was an error. A team member with that email already exists.')
+            }
+
+        } else{
+            throw new Error('There was an error. Please ensure that you have entered the correct email.')
+        }
+
+    }
 
     return (
         <div className='relative z-10'>
@@ -63,6 +101,7 @@ const InviteTeamMember = ({ isOpen, onClose }) => {
                                             />
                                             <button
                                                 type='submit'
+                                                onClick={inviteMember}
                                                 className='basis-1/4 rounded justify-center rounded-md text-sm font-semibold shadow-sm font-bold text-slate-50 dark:hover:bg-violet-900 bg-violet-800'
                                             >
                                                 Invite

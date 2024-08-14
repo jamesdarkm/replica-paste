@@ -14,7 +14,7 @@ import { db } from '../../../firebase';
 const Decks = ({ uid, toggleCreateDeckPopup  }) => {
     const [posts, setPosts] = useState([]);
     const { teamId } = useParams();
-    console.log( teamId )
+    // console.log( teamId )
 
     
     const PostImages = ({ post }) => {
@@ -53,7 +53,7 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
               ...doc.data()
             }));
 
-            console.log('DECKS DATA:', decksData)
+            // console.log('DECKS DATA:', decksData)
             setPosts(decksData)
             
         };

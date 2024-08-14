@@ -22,8 +22,8 @@ const Deck = () => {
     const [heading, setHeading] = useState([]);
     const [decks, setDecks] = useState([]);
     const [didUploadDeck, setDidUploadDeck] = useState(false);
-    const [modal, setModal] = useState(false);
-    const [toggle, setToggle] = useState(1);
+
+    const navigate = useNavigate();
     const { id } = useParams();
     const uid = currentUser.uid;
 
@@ -35,6 +35,10 @@ const Deck = () => {
     const changeUploadState = () => {
         setDidUploadDeck(!didUploadDeck)
     }
+
+    const goBack = () => {
+        navigate(-1);
+    };
     
 
     useEffect(() => {
@@ -102,12 +106,12 @@ const Deck = () => {
                 <div className='w-full flex items-center justify-between z-10 '>
                     <div className='p-4 px-6 items-center w-full justify-between flex'>
                         <div className='flex items-center justify-center'>
-                            <Link to='/dashboard/decks'>
+                            <div onClick={goBack}>
                                 <ion-icon
                                     style={{ fontSize: '20px' }}
                                     name='chevron-back-outline'
                                 ></ion-icon>
-                            </Link>
+                            </div>
 
                             <div className='pl-4'>
                                 <h1 className=' text-3xl font-bold'>{heading}</h1>
