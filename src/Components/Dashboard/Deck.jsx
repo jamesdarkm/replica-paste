@@ -49,24 +49,25 @@ const Deck = () => {
                 const mainDocRef = doc(
                     db,
                     'decks',
-                    uid
+                    id
                 );
 
                 // Reference to the 'decksSubCollection' subcollection within the main document
-                const subCollectionRef = collection(
-                    mainDocRef,
-                    'decksSubCollection'
-                );
+                // const subCollectionRef = collection(
+                //     mainDocRef,
+                //     'decksSubCollection'
+                // );
 
                 // Reference to the specific document within the 'decksSubCollection'
-                const subDocRef = doc(subCollectionRef, id);
+                // const subDocRef = collection(mainDocRef);
 
                 // Fetch the document
-                const docSnap = await getDoc(subDocRef);
+                const docSnap = await getDoc(mainDocRef);
 
                 if (docSnap.exists()) {
                     // Access the data in the document
                     const data = docSnap.data();
+                    console.log(uid, data)
 
                     setDecks(data.decks)
                     setHeading(data.heading)

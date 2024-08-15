@@ -42,7 +42,7 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
     
 
     useEffect(() => {
-        //fetch decks based on team Id
+        //fetch decks associated with a user based on team Id
         const fetchDecks = async () => {
             const decksRef = collection(db, `decks/`,);
             const q = query(decksRef, where('teamId', '==', teamId));

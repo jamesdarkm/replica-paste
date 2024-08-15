@@ -1,4 +1,5 @@
 import React from 'react';
+import CommentsTest from '../CommentsTest/CommentsTest';
 import './Posts.css';
 
 const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
@@ -48,6 +49,8 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                     </button>
                 </div>
             </div>
+
+            <CommentsTest/>
         </>
     );
 };
