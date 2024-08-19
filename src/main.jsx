@@ -5,6 +5,7 @@ import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
+import Card from './Components/Dashboard/Card.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
 
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/deck/dropzone",
     element: <DropZone/>
+  },
+  {
+    path: "/dashboard/deck/card/:id",
+    element: <Card/>
   },
   {
     path: "/comments",

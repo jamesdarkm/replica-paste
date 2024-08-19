@@ -1,108 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { useParams, useSearchParams } from 'react-router-dom';
-import './Deck.css';
-import './Modal.css';
-import { useAuth } from '../../Context/authContext';
-import DropZone from './DropZone.jsx';
-import './DropZone.css';
-import Posts from './Posts.jsx';
-import './Posts.css';
+import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react';
+import { useParams, useLocation, Link, useNavigate } from 'react-router-dom';
 import { db, storage } from '../../../firebase';
-import {
-    doc,
-    addDoc,
-    setDoc,
-    getDoc,
-    collection,
-    getDocs,
-} from 'firebase/firestore';
-const Deck = () => {
-    const { currentUser } = useAuth();
-    const [heading, setHeading] = useState([]);
-    const [decks, setDecks] = useState([]);
-    const [didUploadDeck, setDidUploadDeck] = useState(false);
+import { doc, addDoc, getDoc, updateDoc, setDoc, collection } from 'firebase/firestore';
+import CommentsTest from '../CommentsTest/CommentsTest';
 
-    const navigate = useNavigate();
+
+export default function Card() {
     const { id } = useParams();
-    const uid = currentUser.uid;
-
-    if (!currentUser) {
-        return <Navigate to='/' replace={true} />;
-    }
-
-
-    const changeUploadState = () => {
-        setDidUploadDeck(!didUploadDeck)
-    }
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { caption, thumbnail } = location.state.card;
+    const { cardId } = location.state;
+    console.log(id, location.state.card)
 
     const goBack = () => {
         navigate(-1);
     };
-    
 
     useEffect(() => {
-        async function getDeckSubCollectionDocument() {
-            // console.log('reached')
-            try {
-                // Reference to the main document in 'decks' collection
-                const mainDocRef = doc(
-                    db,
-                    'decks',
-                    id
-                );
-
-                // Reference to the 'decksSubCollection' subcollection within the main document
-                // const subCollectionRef = collection(
-                //     mainDocRef,
-                //     'decksSubCollection'
-                // );
-
-                // Reference to the specific document within the 'decksSubCollection'
-                // const subDocRef = collection(mainDocRef);
-
-                // Fetch the document
-                const docSnap = await getDoc(mainDocRef);
-
-                if (docSnap.exists()) {
-                    // Access the data in the document
-                    const data = docSnap.data();
-                    // console.log(uid, data)
-
-                    setDecks(data.decks)
-                    setHeading(data.heading)
-                } else {
-                    console.log('No such document!');
-                }
-            } catch (error) {
-                console.error('Error fetching document:', error);
-            }
+        const getDeck = async () => {
+            const docRef = doc(db, 'decks', deckId);
+            const docSnap = await getDoc(docRef);
         }
 
-        getDeckSubCollectionDocument();
-    }, [didUploadDeck]);
-
-
-
-    /**
-     * Hide the scrollbar when modal is active
-     */
-    if (decks) {
-        document.body.classList.add('active-modal');
-    } else {
-        document.body.classList.remove('active-modal');
-    }
-
-    const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
-    const toggleDropZonePopup = () => {
-        console.log('here')
-        setIsDropZoneOpen(!isDropZoneOpen);
-    };
-
+    }, [])
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} uid={uid} id={id} changeUploadState={changeUploadState}/>
-
             <div className='flex-1'>
                 <div className='w-full flex items-center justify-between z-10 '>
                     <div className='p-4 px-6 items-center w-full justify-between flex'>
@@ -115,7 +38,13 @@ const Deck = () => {
                             </div>
 
                             <div className='pl-4'>
-                                <h1 className=' text-3xl font-bold'>{heading}</h1>
+                                <h1 className=' text-3xl font-bold'
+                                    dangerouslySetInnerHTML={{
+                                        __html: caption,
+                                    }}
+                                >
+                                    
+                                </h1>
                                 <span>Group</span>
                             </div>
                         </div>
@@ -164,10 +93,16 @@ const Deck = () => {
                     </div>
                 </div>
             </div>
-            
-            <Posts decks={decks} toggleDropZonePopup={toggleDropZonePopup} />
-        </>
-    );
-};
 
-export default Deck;
+
+            <div className="h-[100vh]">
+                <div className="h-[70%]">
+                  <img src={thumbnail} alt="" className="banner w-full h-full object-cover" />
+                </div>
+
+                <CommentsTest deckId={id} cardId={cardId}/>
+            </div>
+
+        </>
+    )
+}
