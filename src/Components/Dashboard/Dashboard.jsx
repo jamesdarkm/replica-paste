@@ -16,13 +16,8 @@ const Tests = () => {
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const [teams, setTeams] = useState([]);
-<<<<<<< HEAD
-    const { currentUser, setCurrentUser } = useAuth();
-    console.log(currentUser)
-=======
     const { currentUser } = useAuth();
     // console.log(currentUser)
->>>>>>> f6e386cb074c7f17f0e128f48f70b822a53b1cd5
 
     const navigate = useNavigate();  
     if (!currentUser) {
@@ -130,13 +125,8 @@ const Tests = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
-<<<<<<< HEAD
             <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
-=======
-            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} teams={teams}/>
-            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
->>>>>>> f6e386cb074c7f17f0e128f48f70b822a53b1cd5
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
 
             <div className='flex'>

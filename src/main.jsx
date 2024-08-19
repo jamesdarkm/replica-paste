@@ -32,11 +32,7 @@ const router = createBrowserRouter([
     element: <Onboard/>
   },
   {
-<<<<<<< HEAD
     path: "/dashboard",
-=======
-    path: "/dashboard/:teamId",
->>>>>>> f6e386cb074c7f17f0e128f48f70b822a53b1cd5
     element: <Dashboard/>
   },
   {
