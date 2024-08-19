@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
  
       let additionalInformation = null;
     
-      if (!user.displayName) {
+     
         const docRef = doc(db, 'users', uid);
         const docSnap = await getDoc(docRef);
     
@@ -38,9 +38,13 @@ export function AuthProvider({ children }) {
           };
 
           user.displayName = docSnap.data().firstName;
-          user.photoURL = docSnap.data().avatar;
+
+          if (docSnap.data().avatar) {
+            user.photoURL = docSnap.data().avatar;
+          }
+          
         }
-      }
+  
 
       setCurrentUser({ ...user, ...additionalInformation });
       

@@ -3,7 +3,7 @@ import axios from '../../../axios';
 import { db, storage } from '../../../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateEmail } from 'firebase/auth';
-
+import { useAuth } from '../../Context/authContext';
 import {
     doc,
     addDoc,
@@ -11,14 +11,22 @@ import {
     getDoc,
     collection,
     getDocs,
-    updateDoc
+    updateDoc,
 } from 'firebase/firestore';
 
-const Profile = ({ isOpen, onClose, uid, currentUser }) => {
+const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
     if (!isOpen) return null;
-    
-    const [firstName, setFirstName] = useState(currentUser.additionalInformation.firstName);
-    const [lastName, setLastName] = useState(currentUser.additionalInformation.lastName);
+
+    const [firstName, setFirstName] = useState(
+        currentUser.additionalInformation?.firstName?.trim() ||
+            currentUser.displayName.split(' ')[0]
+    );
+
+    const [lastName, setLastName] = useState(
+        currentUser.additionalInformation?.lastName?.trim() ||
+            currentUser.displayName.split(' ')[1]
+    );
+
     const [email, setEmail] = useState(currentUser.reloadUserInfo.email);
     const [response, setResponse] = useState('');
     const [avatar, setAvatar] = useState(null);
@@ -35,18 +43,35 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
         e.preventDefault();
 
         const docRef = doc(db, 'users', uid);
-        await updateDoc(docRef, {
-            firstName: firstName,
-            lastName: lastName
-        });
-
 
         try {
+            await updateDoc(docRef, {
+                firstName: firstName,
+                lastName: lastName,
+            });
+    
+            // Assuming you want to update the local state with the new names
+            setFirstName(firstName);
+            setLastName(lastName);
+            
+            // Update the currentUser state with the new information
+            const updatedUser = {
+                ...currentUser,
+                additionalInformation: {
+                    ...currentUser.additionalInformation,
+                    firstName: firstName,
+                    lastName: lastName,
+                }
+            };
+
+            setCurrentUser(updatedUser);
+    
+            // Uncomment and configure if you're sending an email
             // const response = await axios.post('/send-email', {
             //     email: email,
             // });
-
-            // setEmail('');
+    
+            // setEmail(''); // Uncomment if you want to reset the email state
             setResponse('Invitation successfully sent!');
         } catch (error) {
             setResponse(
@@ -58,47 +83,51 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
     const fileInputRef = useRef(null);
 
     const handleDivClick = () => {
-      // Trigger the file input click
-      fileInputRef.current.click();
+        // Trigger the file input click
+        fileInputRef.current.click();
     };
-  
+
     const handleFileChange = async (event) => {
-      const file = event.target.files[0];
-      if (!file) {
-        alert('Please select a file first!');
-        return;
-      }
-  
-      const formData = new FormData();
-      formData.append('image', file);
-  
-      try {
-        const response = await fetch('http://localhost:5000/optimize-image', {
-          method: 'POST',
-          body: formData,
-        });
-  
-        if (!response.ok) {
-          throw new Error(`Error: ${response.statusText}`);
+        const file = event.target.files[0];
+        if (!file) {
+            alert('Please select a file first!');
+            return;
         }
-  
-        const imageResponse = await response.json();
-        const downloadedImage = await getDownloadURL(ref(storage, `avatars/${imageResponse.firebaseImage}`));
-        const docRef = doc(db, 'users', currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        console.log(downloadedImage, docRef)
-      
-        if (docSnap.exists()) {
-          await updateDoc(docRef, {avatar: downloadedImage,});
-          setAvatar(downloadedImage)
-        } else {
-          await setDoc(docRef, {avatar: downloadedImage,});
-          console.log("No such avatar!");
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            const response = await fetch(
+                'http://localhost:5000/optimize-image',
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
+            }
+
+            const imageResponse = await response.json();
+            const downloadedImage = await getDownloadURL(
+                ref(storage, `avatars/${imageResponse.firebaseImage}`)
+            );
+            const docRef = doc(db, 'users', currentUser.uid);
+            const docSnap = await getDoc(docRef);
+            console.log(downloadedImage, docRef);
+
+            if (docSnap.exists()) {
+                await updateDoc(docRef, { avatar: downloadedImage });
+                setAvatar(downloadedImage);
+            } else {
+                await setDoc(docRef, { avatar: downloadedImage });
+                console.log('No such avatar!');
+            }
+        } catch (error) {
+            console.error('Error uploading the image:', error);
         }
-        
-      } catch (error) {
-        console.error('Error uploading the image:', error);
-      }
     };
 
     useEffect(() => {
@@ -107,14 +136,14 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const userAvatar = docSnap.data().avatar;
-                console.log(userAvatar)
-                setAvatar(userAvatar)
+                console.log(userAvatar);
+                setAvatar(userAvatar);
             } else {
-              console.log("No such doc!");
+                console.log('No such doc!');
             }
         }
         getUserAvatar();
-    }, [])
+    }, []);
 
     return (
         <div className='relative z-10'>
@@ -145,23 +174,38 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                     <p className='mb-6 text-lg font-bold'>
                                         Profile
                                     </p>
-                                    <div className={avatar ? 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-white font-bold' : 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-purple-500 font-bold'}>
+                                    <div
+                                        className={
+                                            avatar
+                                                ? 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-white font-bold'
+                                                : 'flex items-center justify-center w-[80px] h-[80px] rounded-full text-3xl bg-purple-500 font-bold'
+                                        }
+                                    >
                                         <input
-                                          type="file"
-                                          ref={fileInputRef}
-                                          style={{ display: 'none' }}
-                                          accept="image/png, image/jpeg"
-                                          onChange={handleFileChange}
+                                            type='file'
+                                            ref={fileInputRef}
+                                            style={{ display: 'none' }}
+                                            accept='image/png, image/jpeg'
+                                            onChange={handleFileChange}
                                         />
                                         {avatar ? (
-                                            <img className="block w-full h-full object-contain" src={avatar} referrerPolicy="no-referrer"/>
-                                        ): (
-                                            <ion-icon onClick={handleDivClick} name="cloud-upload-outline" style={{color: "white",  width: '25px', height: '25px'}}></ion-icon>
+                                            <img
+                                                className='block w-full h-full object-contain'
+                                                src={avatar}
+                                                referrerPolicy='no-referrer'
+                                            />
+                                        ) : (
+                                            <ion-icon
+                                                onClick={handleDivClick}
+                                                name='cloud-upload-outline'
+                                                style={{
+                                                    color: 'white',
+                                                    width: '25px',
+                                                    height: '25px',
+                                                }}
+                                            ></ion-icon>
                                         )}
-                                        
                                     </div>
-
-
 
                                     <form
                                         className='mt-5'
@@ -183,7 +227,9 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                                     required
                                                     value={firstName}
                                                     onChange={(e) => {
-                                                        setFirstName(e.target.value);
+                                                        setFirstName(
+                                                            e.target.value
+                                                        );
                                                     }}
                                                 />
                                             </div>
@@ -202,7 +248,9 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                                     required
                                                     value={lastName}
                                                     onChange={(e) => {
-                                                        setLastName(e.target.value);
+                                                        setLastName(
+                                                            e.target.value
+                                                        );
                                                     }}
                                                 />
                                             </div>
@@ -245,7 +293,8 @@ const Profile = ({ isOpen, onClose, uid, currentUser }) => {
                                     <p className='mb-5 leading-8'>
                                         Need a little (password) change? We got
                                         you. Just hit the button below and we’ll
-                                        send an email to {currentUser.reloadUserInfo.email} with
+                                        send an email to{' '}
+                                        {currentUser.reloadUserInfo.email} with
                                         a link to change your password.
                                     </p>
 

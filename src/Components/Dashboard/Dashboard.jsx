@@ -8,14 +8,15 @@ import Teams from './Teams.jsx'
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
 import { db } from '../../../firebase';
-import { doc, getDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, 
+    setDoc, query, where } from 'firebase/firestore';
 
 const Tests = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const [teams, setTeams] = useState([]);
-    const { currentUser } = useAuth();
+    const { currentUser, setCurrentUser } = useAuth();
     console.log(currentUser)
 
     const navigate = useNavigate();  
@@ -25,6 +26,23 @@ const Tests = () => {
 
     const displayPhoto = currentUser.photoURL;
     const uid = currentUser.uid;
+
+    const createUserDocumentXXX = async () => {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+
+        console.log('her')
+        console.log(docSnap);
+        if (!docSnap.exists()) {
+            const datax = {
+                creationDate: serverTimestamp(),
+            };
+
+            //await setDoc(docRef, datax);
+        }
+    };
+
+    createUserDocumentXXX();
 
     /**
      * Modal toggle
@@ -108,7 +126,7 @@ const Tests = () => {
             {!currentUser && <Navigate to="/" replace={true} />}
             
             <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
-            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
+            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
 
             <div className='flex'>

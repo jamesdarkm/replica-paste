@@ -21,7 +21,6 @@ const DashboardTeams = () => {
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const { currentUser } = useAuth();
-    console.log(currentUser)
 
     const navigate = useNavigate();  
     if (!currentUser) {
@@ -30,6 +29,8 @@ const DashboardTeams = () => {
 
     const displayPhoto = currentUser.photoURL;
     const uid = currentUser.uid;
+
+
 
     /**
      * Modal toggle
@@ -73,7 +74,6 @@ const DashboardTeams = () => {
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const userAvatar = docSnap.data().avatar;
-                console.log(userAvatar)
                 setAvatar(userAvatar)
             } else {
               console.log("No such doc!");
@@ -89,7 +89,6 @@ const DashboardTeams = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
-            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
             <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team"/>
 
@@ -105,11 +104,7 @@ const DashboardTeams = () => {
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {currentUser.displayName.split(' ')[0] +
-                                      "'s"}
-                                
-                                Team
-                                
+                                {currentUser.displayName.split(' ')[0]}
                             </span>
                         </Link>
                         <Link
@@ -137,20 +132,6 @@ const DashboardTeams = () => {
                                     Brand theme
                                 </span>
                             </Link>
-                        </li>
-                        <li>
-                            <button
-                                className='hover:text-gray-400 flex block'
-                                onClick={toggleInviteTeamMemberPopup}
-                            >
-                                <ion-icon
-                                    size='small'
-                                    name='person-outline'
-                                ></ion-icon>
-                                <span className='ml-3 text-base'>
-                                    Invite members
-                                </span>
-                            </button>
                         </li>
                         <li>
                             <Link
@@ -203,19 +184,11 @@ const DashboardTeams = () => {
                                     </div>
 
                                     <button
-                                        onClick={toggleInviteTeamMemberPopup}
-                                        type='button'
-                                        className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
-                                    >
-                                        Invite team member
-                                    </button>
-
-                                    <button
                                         type='button'
                                         className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
                                         onClick={toggleCreateDeckPopup}
                                     >
-                                        New deck
+                                        New team
                                     </button>
 
                                     {currentUser && (

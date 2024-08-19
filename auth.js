@@ -40,11 +40,28 @@ export const doSignInWithGoogle = async () => {
     const user = result.user;
 
     const docRef = doc(db, 'users', user.uid);
-    await setDoc(docRef, {
-        // c: user.displayName,
-        // avatar: '',
-        subscribedToEmail: false
-    });
+
+    const docSnapx = await getDoc(docRef);
+
+    if (docSnapx.exists()) {
+        const dataAdditionalUser = docSnapx.data(); 
+
+        await setDoc(docRef, {
+            firstName: dataAdditionalUser.firstName,
+            lastName: dataAdditionalUser.lastName,
+            avatar: 'base64',
+            subscribedToEmail: dataAdditionalUser.subscribedToEmail
+        });
+    } else {
+        await setDoc(docRef, {
+            // c: user.displayName,
+            firstName: user.displayName.split(' ')[0],
+            lastName: user.displayName.split(' ')[1],
+            avatar: 'ss',
+            subscribedToEmail: false
+        });
+    }
+    
 
 
     /**
