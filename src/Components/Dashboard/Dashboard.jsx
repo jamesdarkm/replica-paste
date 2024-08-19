@@ -125,7 +125,6 @@ const Tests = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
-            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
 
@@ -173,20 +172,6 @@ const Tests = () => {
                                     Brand theme
                                 </span>
                             </Link>
-                        </li>
-                        <li>
-                            <button
-                                className='hover:text-gray-400 flex block'
-                                onClick={toggleInviteTeamMemberPopup}
-                            >
-                                <ion-icon
-                                    size='small'
-                                    name='person-outline'
-                                ></ion-icon>
-                                <span className='ml-3 text-base'>
-                                    Invite members
-                                </span>
-                            </button>
                         </li>
                         <li>
                             <Link
@@ -237,14 +222,6 @@ const Tests = () => {
                                             ></ion-icon>
                                         </Link>
                                     </div>
-
-                                    <button
-                                        onClick={toggleInviteTeamMemberPopup}
-                                        type='button'
-                                        className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
-                                    >
-                                        Invite team member
-                                    </button>
 
                                     <button
                                         type='button'
