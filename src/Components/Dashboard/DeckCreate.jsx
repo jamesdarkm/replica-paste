@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { db, storage } from '../../../firebase';
 
 import {
@@ -14,6 +14,8 @@ import {
 } from 'firebase/firestore';
 
 const CreateDeck = ({ isOpen, teams, onClose, uid, popupType }) => {
+    const { teamId } = useParams();
+    console.log(teams, teamId)
     if (!isOpen) return null;
     const navigate = useNavigate();
 
@@ -24,18 +26,20 @@ const CreateDeck = ({ isOpen, teams, onClose, uid, popupType }) => {
         e.preventDefault();
 
         try {
-            const deckDocRef = doc(db, 'decks', uid);
-            const deckCollectionRef = collection(deckDocRef, 'decksSubCollection');
+            // const deckDocRef = doc(db, 'decks');
+            console.log(uid)
+            const deckCollectionRef = collection(db, 'decks');
             
             const docRef = await addDoc(deckCollectionRef, {
                 heading: title,
-                teamId: teams[0].id,
+                teamId: teamId,
                 timestamp: serverTimestamp(),
             });
 
             const newFireBaseDocId = docRef.id;
             navigate(`/dashboard/deck/${newFireBaseDocId}`);
         } catch (error) {
+            console.log(error)
             setResponse(
                 'Failed to send email, please reach out to support@paste-replica.io'
             );

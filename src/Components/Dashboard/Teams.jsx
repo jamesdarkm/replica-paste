@@ -8,23 +8,24 @@ import {
     query, 
     where,
 } from 'firebase/firestore';
+import { useAuth } from '../../Context/authContext';
 import { db } from '../../../firebase';
 
 export default function Teams({ uid, toggleCreateDeckPopup  }) {
-    const [posts, setPosts] = useState([]);
+    const { currentUser } = useAuth();
     const [teams, setTeams] = useState([]);
     
     const Team = ({ team }) => {
         const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
         const imageUrl = team.thumbnail || placeholderImage;
 
-        console.log(team)
+        // console.log(team)
 
         return (
             <>
                 {team.name && (
                 <Link
-                    to={`/dashboard/decks`}
+                    to={`/dashboard/${team.id}`}
                     className='mt-5'
                     key={team.id} // Use the post ID as the key
                 >
@@ -45,7 +46,7 @@ export default function Teams({ uid, toggleCreateDeckPopup  }) {
 
             // Fetch teams where the user is either owner or shared with
             const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
-            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
+            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', currentUser.email));
     
             const ownerSnapshot = await getDocs(ownerQuery);
             const sharedSnapshot = await getDocs(sharedQuery);
@@ -56,7 +57,7 @@ export default function Teams({ uid, toggleCreateDeckPopup  }) {
             const allTeams = [...ownerTeams, ...sharedTeams];
     
 
-            console.log(allTeams)
+            console.log(sharedTeams)
             setTeams(allTeams)
 
         };

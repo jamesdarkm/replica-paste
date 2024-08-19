@@ -1,8 +1,17 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import CommentsTest from '../CommentsTest/CommentsTest';
+import { useParams, useNavigate } from 'react-router-dom';
 import './Posts.css';
 
 const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
+    const navigate = useNavigate();
+    const { id: deckId } = useParams();
     const hasDecks = Object.keys(decks).length !== 0;
+
+    const viewCard = (item, cardId) => {
+        console.log(item, decks, cardId)
+        navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } })
+    }
 
     return (
         <>
@@ -12,6 +21,7 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                         ? Object.entries(decks).map(([id, item]) => (
                               <div
                                   key={id}
+                                  onClick={() => viewCard(item, id)}
                                   className='min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
                               >
                                   <div
@@ -48,6 +58,8 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                     </button>
                 </div>
             </div>
+
+            <CommentsTest id={deckId}/>
         </>
     );
 };

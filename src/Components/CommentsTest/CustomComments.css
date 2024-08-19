@@ -2,6 +2,7 @@
     background: transparent !important;
     width: 100%;
     height: auto;
+    position: static;
 }
 
 .comment-title {

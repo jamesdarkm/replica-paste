@@ -89,6 +89,7 @@ const DashboardTeams = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
+            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
             <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team"/>
 
@@ -182,6 +183,14 @@ const DashboardTeams = () => {
                                             ></ion-icon>
                                         </Link>
                                     </div>
+
+                                    <button
+                                        onClick={toggleInviteTeamMemberPopup}
+                                        type='button'
+                                        className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
+                                    >
+                                        Invite team member
+                                    </button>
 
                                     <button
                                         type='button'

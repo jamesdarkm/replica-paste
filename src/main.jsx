@@ -5,6 +5,7 @@ import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
+import Card from './Components/Dashboard/Card.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
 
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
     element: <Onboard/>
   },
   {
+<<<<<<< HEAD
     path: "/dashboard",
+=======
+    path: "/dashboard/:teamId",
+>>>>>>> f6e386cb074c7f17f0e128f48f70b822a53b1cd5
     element: <Dashboard/>
   },
   {
@@ -45,6 +50,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard/deck/dropzone",
     element: <DropZone/>
+  },
+  {
+    path: "/dashboard/deck/card/:id",
+    element: <Card/>
   },
   {
     path: "/comments",

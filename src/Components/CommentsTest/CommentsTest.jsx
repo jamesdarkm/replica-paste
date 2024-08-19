@@ -6,7 +6,7 @@ import 'react-comments-section/dist/index.css'
 import { useAuth } from '../../Context/authContext';
 import './CustomComments.css'
 
-const CommentsTest = () => {
+const CommentsTest = ({ deckId, cardId }) => {
     const [postCommentsData, setPostCommentsData] = useState([]);
     const { currentUser } = useAuth();
     const isGoogleProvider = currentUser.providerData[0].providerId === 'google.com';
@@ -26,12 +26,13 @@ const CommentsTest = () => {
     // then we set and display the comments of that post.
     useEffect(() => {
         async function getPostComments(){
-            const docRef = doc(db, 'posts', '7eg1D1siRDhZ23ljlfUI');
+            const docRef = doc(db, 'decks', deckId);
             const docSnap = await getDoc(docRef);
           
             if (docSnap.exists()) {
                 const documentData = docSnap.data();
-                const comments = documentData.comments;
+                const comments = documentData.decks[cardId].comments;
+                console.log(comments)
                 const validComments = (comments && Array.isArray(comments) && comments.length === 0) ? [] : comments;
                 setPostCommentsData(validComments);
             }
@@ -42,13 +43,13 @@ const CommentsTest = () => {
 
     },[])
 
-    // when a user adds, edits, deletes a comment, we update the comments data of the post then send that data to firebase
+    // when a user adds, edits, deletes a comment, we update the comments data of the card then send that data to firebase
     const processComments = async (data) => {
       if(data.length > 0){
-          console.log('currentData is:', data)
+          console.log('currentData is:', data, deckId)
   
-          const docRef = doc(db, 'posts', '7eg1D1siRDhZ23ljlfUI');
-          const modifiedCommentsData =  { comments: data}
+          const docRef = doc(db, 'decks', deckId);
+          const modifiedCommentsData =  { [`decks.${cardId}.comments`]: data}
           await updateDoc(docRef, modifiedCommentsData);
           setPostCommentsData(data);
           console.log('Document successfully written!');

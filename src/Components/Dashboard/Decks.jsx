@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
     doc,
     getDoc,
@@ -13,7 +13,8 @@ import { db } from '../../../firebase';
 
 const Decks = ({ uid, toggleCreateDeckPopup  }) => {
     const [posts, setPosts] = useState([]);
-    const [teams, setTeams] = useState('');
+    const { teamId } = useParams();
+    // console.log( teamId )
 
     
     const PostImages = ({ post }) => {
@@ -38,28 +39,12 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
             </>
         );
     };
-
     
 
     useEffect(() => {
-        //fetch decks based on team Id
+        //fetch decks associated with a user based on team Id
         const fetchDecks = async () => {
-            const teamsRef = collection(db, 'teams');
-
-            // Fetch teams where the user is either owner or shared with
-            const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
-            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
-    
-            const ownerSnapshot = await getDocs(ownerQuery);
-            const sharedSnapshot = await getDocs(sharedQuery);
-
-            const ownerTeams = ownerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const sharedTeams = sharedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-            const allTeams = [...ownerTeams, ...sharedTeams];
-            const teamId = allTeams[0].id;
-
-            const decksRef = collection(db, `decks/${uid}/decksSubCollection`,);
+            const decksRef = collection(db, `decks/`,);
             const q = query(decksRef, where('teamId', '==', teamId));
 
             const querySnapshot = await getDocs(q);
@@ -68,8 +53,7 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
               ...doc.data()
             }));
 
-            console.log(allTeams, teamId, 'DECKS DARA:', decksData)
-            setTeams(allTeams)
+            // console.log('DECKS DATA:', decksData)
             setPosts(decksData)
             
         };

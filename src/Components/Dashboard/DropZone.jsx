@@ -60,7 +60,8 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
         let lastDownloadURL = '';
 
         // Reference to the specific document in decksSubCollection
-        const deckSubDocRef = doc(db, 'decks', uid, 'decksSubCollection', id);
+        // const deckSubDocRef = doc(db, 'decks', uid, 'decksSubCollection', id);
+        const deckSubDocRef = doc(db, 'decks', id);
 
         // Update the deckSubDocRef document with caption
         await updateDoc(deckSubDocRef, {
