@@ -2,32 +2,47 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
     doc,
-    getDoc,
     getDocs,
     collection,
     query,
-    where
+    where,
+    updateDoc,
+    deleteDoc,
+    addDoc
 } from 'firebase/firestore';
 import { db } from '../../../firebase';
-// import moment from 'moment'
+import RenameDeckPopup from './RenameDeckPopup';
 
-const Decks = ({ uid, toggleCreateDeckPopup  }) => {
+const Decks = ({ uid, toggleCreateDeckPopup }) => {
     const [posts, setPosts] = useState([]);
     const { teamId } = useParams();
-    // console.log( teamId )
+    const [menuOpen, setMenuOpen] = useState(null);
+    const [renamePopupOpen, setRenamePopupOpen] = useState(false);
+    const [selectedDeck, setSelectedDeck] = useState(null);
 
-    
     const PostImages = ({ post }) => {
         const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
         const imageUrl = post.thumbnail || placeholderImage;
 
+        // Function to handle menu actions
+        const handleMenuClick = (action) => {
+            if (action === 'duplicate') {
+                duplicateDeck(post);
+            } else if (action === 'rename') {
+                setSelectedDeck(post);  // Set the selected deck for renaming
+                setRenamePopupOpen(true);  // Open the rename popup
+            } else if (action === 'delete') {
+                deleteDeck(post.id);
+            }
+            setMenuOpen(null); // Close menu after action
+        };
+
         return (
-            <>
-                {post.heading && (
+            <div className='relative'>
                 <Link
                     to={`/dashboard/deck/${post.id}`}
                     className='mt-5'
-                    key={post.id} // Use the post ID as the key
+                    key={post.id}
                 >
                     <div
                         className='min-h-48 rounded bg-center bg-cover'
@@ -35,29 +50,68 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
                     ></div>
                     <p className='mt-3 text-lg font-bold'>{post.heading}</p>
                 </Link>
+                {/* Three dots menu */}
+                <button
+                    className='absolute top-2 right-2'
+                    onClick={() => setMenuOpen(menuOpen === post.id ? null : post.id)}
+                >
+                    <ion-icon name="ellipsis-vertical"></ion-icon>
+                </button>
+                {/* Dropdown Menu */}
+                {menuOpen === post.id && (
+                    <div className='absolute top-10 right-2 bg-white shadow-md rounded'>
+                        <button onClick={() => handleMenuClick('duplicate')} className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>Duplicate</button>
+                        <button onClick={() => handleMenuClick('rename')} className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>Rename</button>
+                        <button onClick={() => handleMenuClick('delete')} className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>Delete</button>
+                    </div>
                 )}
-            </>
+            </div>
         );
     };
-    
+
+    // Function to duplicate a deck and prompt for renaming
+    const duplicateDeck = async (post) => {
+        const newName = prompt('Enter a name for the duplicated deck:', `${post.heading} (Copy)`);
+        if (newName) {
+            const newDeck = {
+                ...post,
+                heading: newName,
+                createdAt: new Date(), // Update creation date
+            };
+
+            delete newDeck.id; // Remove the ID so Firestore generates a new one
+
+            await addDoc(collection(db, 'decks'), newDeck);
+            fetchDecks(); // Refresh the decks
+        }
+    };
+
+
+    // Function to delete a deck
+    const deleteDeck = async (deckId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this deck?');
+        if (confirmDelete) {
+            const deckRef = doc(db, 'decks', deckId);
+            await deleteDoc(deckRef);
+            fetchDecks(); // Refresh the decks
+        }
+    };
+
+    // Function to fetch decks associated with a user based on team Id
+    const fetchDecks = async () => {
+        const decksRef = collection(db, `decks/`);
+        const q = query(decksRef, where('teamId', '==', teamId));
+
+        const querySnapshot = await getDocs(q);
+        const decksData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        setPosts(decksData);
+    };
 
     useEffect(() => {
-        //fetch decks associated with a user based on team Id
-        const fetchDecks = async () => {
-            const decksRef = collection(db, `decks/`,);
-            const q = query(decksRef, where('teamId', '==', teamId));
-
-            const querySnapshot = await getDocs(q);
-            const decksData = querySnapshot.docs.map(doc => ({
-              id: doc.id,
-              ...doc.data()
-            }));
-
-            // console.log('DECKS DATA:', decksData)
-            setPosts(decksData)
-            
-        };
-
         fetchDecks();
     }, []);
 
@@ -104,12 +158,22 @@ const Decks = ({ uid, toggleCreateDeckPopup  }) => {
 
                             {posts.map((post) => (
                                 <React.Fragment key={post.id}>
-                                    {<PostImages post={post}/>}
+                                    <PostImages post={post}/>
                                 </React.Fragment>
                             ))}
                         </div>
                     </div>
                 </>
+            )}
+
+            {/* RenameDeckPopup Component */}
+            {renamePopupOpen && (
+                <RenameDeckPopup
+                    isOpen={renamePopupOpen}
+                    onClose={() => setRenamePopupOpen(false)}
+                    deckId={selectedDeck.id}
+                    currentName={selectedDeck.heading}
+                />
             )}
         </>
     );
