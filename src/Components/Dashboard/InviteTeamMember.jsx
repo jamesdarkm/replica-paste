@@ -31,13 +31,6 @@ const InviteTeamMember = ({ isOpen, onClose, teams }) => {
     };
 
     // we need to invite a user to a specific team
-    // meaning, when a user selects a team, we need that teams id, update its shared With array
-    // thus we need to find a team that matches that id from the teams collection
-    // then when they login they will see teams where their email is set, or their user id exists on the ownerId field
-
-
-
-    // we need to invite a user to a specific team
     // meaning, when a user selects a team, we need that teams id, update its invitatons  array
     // in the invitaions array is an object that contains the invited memebers email, the token that attached to a member
     // we are then going to send the email, token and folderId to the server to send out the email to the member

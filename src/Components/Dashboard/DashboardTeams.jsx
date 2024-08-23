@@ -100,11 +100,11 @@ const DashboardTeams = () => {
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                {currentUser.displayName.charAt(0)}
+                                {/* {currentUser.displayName.charAt(0)} */}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {currentUser.displayName.split(' ')[0]}
+                                {/* {currentUser.displayName.split(' ')[0]} */}
                             </span>
                         </Link>
                         <Link

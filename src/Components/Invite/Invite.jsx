@@ -49,6 +49,7 @@ export default function Invite() {
                 } else {
                     alert('invalid token')
                     console.error("Token not found");
+                    navigate('/dashboard')
                     throw new Error("Invalid token");
                 }
 

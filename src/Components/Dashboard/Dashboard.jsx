@@ -125,6 +125,7 @@ const Tests = () => {
         <>
             {!currentUser && <Navigate to="/" replace={true} />}
             
+            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
 
@@ -136,12 +137,12 @@ const Tests = () => {
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                {currentUser.displayName.charAt(0)}
+                                {/* {currentUser.displayName.charAt(0)} */}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {currentUser.displayName.split(' ')[0] +
-                                      "'s"}
+                                {/* {currentUser.displayName.split(' ')[0] +
+                                      "'s"} */}
                                 
                                 Team
                                 
@@ -172,6 +173,15 @@ const Tests = () => {
                                     Brand theme
                                 </span>
                             </Link>
+                        </li>
+                        <li>
+                        <button
+                            onClick={toggleInviteTeamMemberPopup}
+                            type='button'
+                            className='ml-6 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
+                        >
+                            Invite team member
+                        </button>
                         </li>
                         <li>
                             <Link
