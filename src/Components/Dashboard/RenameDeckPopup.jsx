@@ -3,23 +3,25 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
 const RenameDeckPopup = ({ isOpen, onClose, deckId, currentName }) => {
-    const [title, setTitle] = useState(currentName || '');
+    const [newName, setNewName] = useState(currentName);
     const [response, setResponse] = useState('');
 
-    const handleDeckRename = async (e) => {
+    const handleRename = async (e) => {
         e.preventDefault();
 
-        try {
-            const deckDocRef = doc(db, 'decks', deckId);
-            await updateDoc(deckDocRef, {
-                heading: title,
-            });
-
-            setResponse('Deck renamed successfully.');
-            onClose(); // Close the popup after renaming
-        } catch (error) {
-            console.error(error);
-            setResponse('Failed to rename the deck, please try again.');
+        if (newName.trim()) {
+            try {
+                const deckRef = doc(db, 'decks', deckId);
+                await updateDoc(deckRef, {
+                    heading: newName,
+                });
+                setResponse('Deck renamed successfully!');
+                window.location.reload(); // Refresh the page to show the name change
+            } catch (error) {
+                setResponse('Failed to rename the deck. Please try again.');
+            }
+        } else {
+            setResponse('Deck name cannot be empty.');
         }
     };
 
@@ -48,7 +50,7 @@ const RenameDeckPopup = ({ isOpen, onClose, deckId, currentName }) => {
                                     </button>
                                 </div>
                                 <div className='mt-7'>
-                                    <form onSubmit={handleDeckRename}>
+                                    <form onSubmit={handleRename}>
                                         <p className='mb-4 font-bold'>
                                             What would you like your deck to be renamed to?
                                         </p>
@@ -56,9 +58,10 @@ const RenameDeckPopup = ({ isOpen, onClose, deckId, currentName }) => {
                                             <input
                                                 className='basis-3/4 border-slate-300 rounded'
                                                 type='text'
-                                                placeholder=''
-                                                value={title}
-                                                onChange={(e) => setTitle(e.target.value)}
+                                                value={newName}
+                                                onChange={(e) =>
+                                                    setNewName(e.target.value)
+                                                }
                                                 required
                                             />
                                             <button
@@ -71,7 +74,7 @@ const RenameDeckPopup = ({ isOpen, onClose, deckId, currentName }) => {
                                     </form>
                                     {response && (
                                         <div
-                                            className='mt-4 bg-green-500 text-sm text-white text-center rounded-lg p-4'
+                                            className={`mt-4 text-sm text-center rounded-lg p-4 ${response.includes('successfully') ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
                                             role='alert'
                                         >
                                             {response}
