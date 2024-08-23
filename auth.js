@@ -15,20 +15,28 @@ import {
 const provider = new OAuthProvider('apple.com');
 
 export const doCreateUserWithEmailAndPassword = async (firstName, lastName, email, password) => {
-    const createUser = await createUserWithEmailAndPassword(auth, email, password);
-        const uid = createUser.user.uid;
-
-        const docRef = doc(db, 'users', uid);
-        await setDoc(docRef, {
-            firstName: firstName,
-            lastName: lastName,
-            avatar: '',
-            subscribedToEmail: false,
-            onBoarding: false
-        });
-
-        return createUser;
-};
+    try {
+      const createUser = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = createUser.user.uid;
+  
+      // Send email verification using async/await
+      await sendEmailVerification(createUser.user);
+  
+      const docRef = doc(db, 'users', uid);
+      await setDoc(docRef, {
+        firstName: firstName,
+        lastName: lastName,
+        avatar: '',
+        subscribedToEmail: false,
+        onBoarding: false
+      });
+  
+      return createUser;
+    } catch (error) {
+      console.error("Error creating user:", error);
+      // Handle the error (e.g., show a message to the user)
+    }
+  };
 
 export const doSignInWithEmailAndPassword = (email, password) => {
     return signInWithEmailAndPassword(auth, email, password);

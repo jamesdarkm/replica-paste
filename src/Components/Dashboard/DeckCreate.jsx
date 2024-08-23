@@ -56,6 +56,7 @@ const CreateDeck = ({ isOpen, teams, onClose, uid, popupType }) => {
                 name: title,
                 ownerId: uid,
                 sharedWith: [],
+                invitations: [],
                 timestamp: serverTimestamp(),
             });
 

@@ -8,7 +8,7 @@ import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
 import { initializeApp, cert } from 'firebase-admin/app';
-import { getStorage, getDownloadURL } from 'firebase-admin/storage';
+import { getStorage } from 'firebase-admin/storage';
 import serviceAccount from './serviceAccount.json' assert { type: 'json' };
 
 initializeApp({
@@ -16,12 +16,13 @@ initializeApp({
   storageBucket: 'gs://replica-paste.appspot.com',
 });
 
-const bucket = getStorage().bucket();
-
-dotenv.config();
-
 const app = express();
 const PORT = 5000;
+
+const bucket = getStorage().bucket();
+// var db = admin.database();
+
+dotenv.config();
 
 tinify.key = process.env.VITE_TINYPNG_APIKEY;
 
@@ -129,6 +130,46 @@ app.post('/optimize-image', upload.single('image'), async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+//sending invite to a potential team member
+app.post('/send-invite', (req, res) => {
+  const { email, token, teamId } = req.body;
+  console.log(email, token, teamId)
+
+  const mailjet = Mailjet.apiConnect(process.env.VITE_MJ_APIKEY_PUBLIC, process.env.VITE_MJ_APIKEY_PRIVATE);
+  const inviteLink = `http://localhost:5173/invite?token=${token}&team=${teamId}`;
+
+  const request = mailjet
+      .post("send", { 'version': 'v3.1' })
+      .request({
+          Messages: [
+              {
+                From: {
+                  Email: 'no-reply@darkm.co.za',
+                  Name: 'Paste Replica',
+                },
+                To: [
+                  {
+                      "Email": email,
+                      "Name": "Paste Replica Member"
+                  }
+                ],
+                Subject: "Team Invitation",
+                TextPart: "Dear user, you have been invited to a team on paste replica. Click the link below to accept the invite.",
+                HTMLPart: `<a href=${inviteLink}>Accept Invite</a>`,
+                // TemplateID: 6147342,
+                // TemplateLanguage: true
+              },
+            ],
+          });
+  request
+      .then((result) => {
+          res.status(200).json(result.body);
+      })
+      .catch((err) => {
+          res.status(500).json({ error: err.message });
+      });
 });
 
 

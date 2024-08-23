@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { db } from '../../../firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import axios from '../../../axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const InviteTeamMember = ({ isOpen, onClose, teams }) => {
     if (!isOpen) return null;
@@ -33,21 +34,41 @@ const InviteTeamMember = ({ isOpen, onClose, teams }) => {
     // meaning, when a user selects a team, we need that teams id, update its shared With array
     // thus we need to find a team that matches that id from the teams collection
     // then when they login they will see teams where their email is set, or their user id exists on the ownerId field
+
+
+
+    // we need to invite a user to a specific team
+    // meaning, when a user selects a team, we need that teams id, update its invitatons  array
+    // in the invitaions array is an object that contains the invited memebers email, the token that attached to a member
+    // we are then going to send the email, token and folderId to the server to send out the email to the member
     const inviteMember = async () => {
         const teamsRef = doc(db, 'teams', teamId);
         const teamDoc = await getDoc(teamsRef);
         const teamData = teamDoc.data();
-        const sharedMembersData = teamData.sharedWith;
+        const invitations = teamData.invitations;
+        const uniqueId = uuidv4(); // Generate a unique token
+        // console.log(invitations)
 
         const verifyEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if(verifyEmailRegex.test(email)){
-            
-            if (!sharedMembersData.includes(email)) {
-                sharedMembersData.push(email);
+            const memberToInvite = { email, token: uniqueId, teamId: teamDoc.id }
+
+            if (!invitations.includes(email)) {
+                invitations.push(memberToInvite);
     
                 try {
-                    await updateDoc(teamsRef, { sharedWith: sharedMembersData });
+                    await updateDoc(teamsRef, { invitations });
+                    const response = await fetch('http://localhost:5000/send-invite', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(memberToInvite),
+                      });
+                      console.log(response)
+                      if (!response.ok) {
+                        
+                        throw new Error(`Error: ${response.statusText}`);
+                    }
                 } catch (error) {
                     alert('error uploading the doc:', error)
                 }

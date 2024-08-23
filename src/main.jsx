@@ -8,6 +8,7 @@ import DropZone from './Components/Dashboard/DropZone.jsx';
 import Card from './Components/Dashboard/Card.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
+import Invite from './Components/Invite/Invite.jsx';
 
 import { AuthProvider } from "./Context/authContext";
 
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path: "/comments",
     element: <CommentsTest/>
+  },
+  {
+    path: "/invite",
+    element: <Invite/>
   },
 ]);
 
