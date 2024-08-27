@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import CommentsTest from '../CommentsTest/CommentsTest';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Posts.css';
+import { db } from "../../../firebase";
+import { doc, updateDoc, deleteField } from "firebase/firestore";
 
 const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
     const navigate = useNavigate();
@@ -9,9 +11,17 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
     const hasDecks = Object.keys(decks).length !== 0;
 
     const viewCard = (item, cardId) => {
-        console.log(item, decks, cardId)
-        navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } })
-    }
+        console.log(item, decks, cardId);
+        navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } });
+    };
+
+    const deleteCard = async (cardId) => {
+        const docRef = doc(db, "decks", deckId);
+      
+        await updateDoc(docRef, {
+          [`decks.${cardId}`]: deleteField(),
+        });
+    };
 
     return (
         <>
@@ -21,9 +31,17 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                         ? Object.entries(decks).map(([id, item]) => (
                               <div
                                   key={id}
-                                  onClick={() => viewCard(item, id)}
-                                  className='min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
+                                  className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
                               >
+                                <button
+                                    onClick={() => deleteCard(id)}
+                                    className="absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-red-500"
+                                >
+                                    <ion-icon
+                                        style={{ fontSize: "30px" }}
+                                        name="trash-outline"
+                                    ></ion-icon>
+                                </button>
                                   <div
                                       className={`p-6 w-1/2 text-2xl ${
                                           !item.thumbnail && 'mx-auto'
@@ -58,8 +76,6 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                     </button>
                 </div>
             </div>
-
-            <CommentsTest id={deckId}/>
         </>
     );
 };

@@ -13,12 +13,16 @@ import { ref, getDownloadURL, uploadBytes } from '@firebase/storage';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import InlineEditor from '@ckeditor/ckeditor5-build-inline';
 import { v4 as uuidv4 } from 'uuid';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Thumbs } from 'swiper/modules';
 
 const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     if (!isOpen) return null;
     const uniqueId = uuidv4();
 
     const [selectedImages, setSelectedImages] = useState([]);
+    const [imageNumber, setimageNumber] = useState('');
+
     const captionRef = useRef(null);
     const [editorData, setEditorData] = useState('');
 
@@ -103,14 +107,24 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     };
 
     const onDrop = useCallback((acceptedFiles) => {
+        setimageNumber(acceptedFiles.length);
+
         setSelectedImages(
             acceptedFiles.map((file) =>
                 Object.assign(file, {
                     preview: URL.createObjectURL(file),
+                    uniqueId: uuidv4(),
+                    count: imageNumber,
                 })
             )
         );
     }, []);
+
+    const removeImage = (id) => {
+        setSelectedImages((prevImages) =>
+            prevImages.filter((image) => image.uniqueId !== id)
+        );
+    };
 
     const {
         getRootProps,
@@ -129,14 +143,56 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
         }),
         [isFocused, isDragAccept, isDragReject]
     );
-    const selected_images = selectedImages?.map((file) => (
-        <div>
-            <img src={file.preview} className='w-[200px]' alt='' />
+    const selected_images = selectedImages?.map((file, index) => (
+        <div
+            key={file.uniqueId}
+            className={`bg-cover bg-center bg-blue-500 h-full w-full ${
+                index > 3 ? 'hidden' : ''
+            }`}
+            style={{
+                backgroundImage: `url(${file.preview})`,
+            }}
+            data-index={index}
+        >
+            <div
+                className={`w-full h-full bg-stone-950 opacity-70 flex flex justify-center items-center ${
+                    index > 2 ? '' : 'hidden'
+                }`}
+            >
+                <button
+                    type='button'
+                    onClick={() => removeImage(file.uniqueId)}
+                >
+                    <ion-icon
+                        name='search-outline'
+                        style={{ color: 'white', fontSize: '50px' }}
+                    ></ion-icon>{' '}
+                    <span className='text-white font-bold text-2xl'>
+                        {' '}
+                        {index + 1}+
+                    </span>
+                </button>
+            </div>
+            <button
+                type='button'
+                className={`mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500 ${
+                    index > 2 ? 'hidden' : ''
+                }`}
+                onClick={() => removeImage(file.uniqueId)}
+            >
+                <ion-icon
+                    style={{ fontSize: '20px' }}
+                    name='trash-outline'
+                ></ion-icon>
+            </button>
         </div>
     ));
 
+    const [thumbsSwiper, setThumbsSwiper] = useState(null);
+
     return (
         <div className='p-4 w-full h-screen'>
+            <div></div>
             <div className='h-full flex'>
                 <button
                     onClick={uploadPost}
@@ -166,7 +222,6 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
                                     'underline',
                                     'link',
                                     'bulletedList',
-                                    'numberedList',
                                 ],
                                 heading: {
                                     options: [
@@ -189,15 +244,100 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
                     </div>
                     <input ref={captionRef} type='hidden' value={editorData} />
                 </div>
-                <div className='p-4 flex w-1/2 '>
+                <div className='p-4 fle flex flex-wrap w-1/2'>
                     <div
                         {...getRootProps({ style })}
-                        className='justify-center p-4 d-flex items-center'
+                        className='justify-center p-4 w-full items-center'
                     >
-                        <div>{selected_images}</div>
+                        <div className='w-full h-full basis-1/2'>
+                            <Swiper
+                                modules={[Navigation, Thumbs]}
+                                spaceBetween={10}
+                                slidesPerView={1}
+                                thumbs={{ swiper: thumbsSwiper }}
+                                style={{ width: '100%', height: '60vh' }}
+                            >
+                                {selectedImages.map((file, index) => (
+                                    <SwiperSlide key={index}>
+                                        <div
+                                            key={file.uniqueId}
+                                            className={`bg-cover bg-center bg-blue-500 h-full w-full ${
+                                                index > 3 ? 'hidden' : ''
+                                            }`}
+                                            style={{
+                                                backgroundImage: `url(${file.preview})`,
+                                            }}
+                                            data-index={index}
+                                        >
+                                            <button
+                                                type='button'
+                                                className='mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500'
+                                                onClick={() =>
+                                                    removeImage(file.uniqueId)
+                                                }
+                                            >
+                                                <ion-icon
+                                                    style={{ fontSize: '20px' }}
+                                                    name='trash-outline'
+                                                ></ion-icon>
+                                            </button>
+                                        </div>
+
+                                        <img
+                                            src={file.preview}
+                                            alt={`Slide ${index + 1}`}
+                                            className='object-cover'
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                            }}
+                                        />
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+
+                            <Swiper
+                                onSwiper={setThumbsSwiper}
+                                modules={[Thumbs]}
+                                spaceBetween={10}
+                                slidesPerView={3}
+                                freeMode
+                                watchSlidesProgress
+                                style={{ marginTop: '10px', height: '30vh' }} // Adjust height as needed
+                            >
+                                {selectedImages.map((file, index) => (
+                                    <SwiperSlide key={index} className="group relative">
+                                        <>
+                                            <img
+                                                src={file.preview}
+                                                alt={`Thumbnail ${index + 1}`}
+                                                className='object-cover'
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    cursor: 'pointer',
+                                                }}
+                                            />
+                                            <button
+                                                type='button'
+                                                className='fixed left-[10px] top-[10px] z-99 p-4 text-white font-bold rounded-full bg-red-500 hidden group-hover:block'
+                                                onClick={() =>
+                                                    removeImage(file.uniqueId)
+                                                }
+                                            >
+                                                <ion-icon
+                                                    style={{ fontSize: '20px' }}
+                                                    name='trash-outline'
+                                                ></ion-icon>
+                                            </button>
+                                        </>
+                                    </SwiperSlide>
+                                ))}
+                            </Swiper>
+                        </div>
                         <input {...getInputProps()} />
 
-                        <p>
+                        <p className='fixed'>
                             <ion-icon
                                 name='add-outline'
                                 size='large'
