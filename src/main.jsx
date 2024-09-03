@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import LoginSignup from './Components/Account/LoginSignup.jsx';
+import ForgotPassword from './Components/Account/ForgotPassword.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <LoginSignup/>
+  }, 
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword/>
   }, 
   {
     path: "/onboard",

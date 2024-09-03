@@ -46,7 +46,7 @@ export const doSignInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-
+    
     const docRef = doc(db, 'users', user.uid);
 
     const docSnapx = await getDoc(docRef);
@@ -77,7 +77,7 @@ export const doSignInWithGoogle = async () => {
      * If the document does not exist, it creates a new document with the current timestamp.
      *
      * @return {Promise<void>} A promise that resolves when the post is uploaded successfully.
-     */
+    */
     const createUserDocument = async () => {
         const docRef = doc(db, 'decks', user.uid);
         const docSnap = await getDoc(docRef);
@@ -129,12 +129,13 @@ export const doSignInWithApple = async () => {
         });
 }
 
-export const doSignOut = () => {
-    return auth.signOut();
+export const doSignOut = async() => {
+   auth.signOut();
 };
 
 export const doPasswordReset = (email) => {
-    return sendPasswordResetEmail(auth, email);
+    sendPasswordResetEmail(auth, email);
+    // await auth.signOut()
 };
 
 export const doPasswordChange = (password) => {

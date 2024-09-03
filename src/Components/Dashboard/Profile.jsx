@@ -3,6 +3,7 @@ import axios from '../../../axios';
 import { db, storage } from '../../../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateEmail } from 'firebase/auth';
+import { doPasswordReset } from '../../../auth';
 import { useAuth } from '../../Context/authContext';
 import {
     doc,
@@ -18,13 +19,13 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
     if (!isOpen) return null;
 
     const [firstName, setFirstName] = useState(
-        currentUser.additionalInformation?.firstName?.trim() ||
-            currentUser.displayName.split(' ')[0]
+        // currentUser.additionalInformation?.firstName?.trim() ||
+        //     currentUser.displayName.split(' ')[0]
     );
 
     const [lastName, setLastName] = useState(
-        currentUser.additionalInformation?.lastName?.trim() ||
-            currentUser.displayName.split(' ')[1]
+        // currentUser.additionalInformation?.lastName?.trim() ||
+        //     currentUser.displayName.split(' ')[1]
     );
 
     const [email, setEmail] = useState(currentUser.reloadUserInfo.email);
@@ -129,6 +130,10 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
             console.error('Error uploading the image:', error);
         }
     };
+
+    const PasswordReset = () => {
+        doPasswordReset(currentUser.email)
+    }
 
     useEffect(() => {
         async function getUserAvatar() {
@@ -262,17 +267,19 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
                                             >
                                                 Email address
                                             </label>
-                                            <input
-                                                type='email'
+                                            <p
+                                                // type='email'
                                                 id='email'
                                                 className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                                                placeholder='john.doe@company.com'
-                                                required
-                                                value={email}
-                                                onChange={(e) => {
-                                                    setEmail(e.target.value);
-                                                }}
-                                            />
+                                                // placeholder='john.doe@company.com'
+                                                // required
+                                                // value={email}
+                                                // onChange={(e) => {
+                                                //     setEmail(e.target.value);
+                                                // }}
+                                            >
+                                                {email}
+                                            </p>
                                         </div>
                                         <div className='flex flex-row gap-3'>
                                             <button
@@ -300,6 +307,7 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
 
                                     <button
                                         type='submit'
+                                        onClick={PasswordReset}
                                         className='py-4 px-8 basis-1/4 rounded justify-center rounded-md text-sm font-semibold shadow-sm font-bold text-slate-50 dark:hover:bg-violet-900 bg-violet-800'
                                     >
                                         Send email

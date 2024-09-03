@@ -145,6 +145,13 @@ const Login = () => {
                     {isSigningIn ? 'Logging In...' : 'Log in with Paste Replica'}
                 </button>
             </form>
+            <div className="my-5 flex items-center"> 
+                <hr className="flex-grow border-t border-gray-300" /> 
+                <Link to='/forgot-password' className="px-3 text-sm text-blue-500"> 
+                    Forgot Password? 
+                </Link> 
+                <hr className="flex-grow border-t border-gray-300" /> 
+            </div>
         </>
     );
 };
