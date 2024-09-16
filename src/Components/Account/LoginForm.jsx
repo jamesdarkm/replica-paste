@@ -148,7 +148,7 @@ const Login = () => {
             <div className="my-5 flex items-center"> 
                 <hr className="flex-grow border-t border-gray-300" /> 
                 <Link to='/forgot-password' className="px-3 text-sm text-blue-500"> 
-                    Forgot Password? 
+                    Forgot Your Password? Click Here To Reset 
                 </Link> 
                 <hr className="flex-grow border-t border-gray-300" /> 
             </div>

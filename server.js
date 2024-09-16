@@ -10,6 +10,7 @@ import path from 'path';
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 import serviceAccount from './serviceAccount.json' assert { type: 'json' };
+import crypto from 'crypto';
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -172,6 +173,34 @@ app.post('/send-invite', (req, res) => {
       });
 });
 
+app.post('/checkout', (req, res) => {
+  console.log(req.body)
+  const formData = req.body;
+  const passPhrase = formData.passPhrase;
+
+  // Create parameter string
+  let pfOutput = '';
+  for (const key in formData) {
+    if (formData.hasOwnProperty(key)) {
+      if (formData[key] !== '') {
+        pfOutput += `${key}=${encodeURIComponent(formData[key].trim()).replace(/%20/g, '+')}&`;
+      }
+    }
+  }
+
+  // Remove the last ampersand
+  pfOutput = pfOutput.slice(0, -1);
+
+  // Add the passphrase
+  pfOutput += `&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, '+')}`;
+  console.log(pfOutput)
+
+  // Generate the MD5 signature
+  const signature = crypto.createHash('md5').update(pfOutput).digest('hex');
+  console.log(signature)
+  // Return the signature as a response
+  res.status(200).send({ signature });
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

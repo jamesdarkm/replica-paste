@@ -10,6 +10,10 @@ import Card from './Components/Dashboard/Card.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
 import Onboard from './Components/Onboard/Onboard.jsx';
 import Invite from './Components/Invite/Invite.jsx';
+import Notify from './Components/Payments/Notify.jsx'
+import Return from './Components/Payments/Return.jsx'
+import Cancel from './Components/Payments/Cancel.jsx'
+import Checkout from './Components/Payments/Checkout.jsx';
 
 import { AuthProvider } from "./Context/authContext";
 
@@ -60,6 +64,22 @@ const router = createBrowserRouter([
   {
     path: "/comments",
     element: <CommentsTest/>
+  },
+  {
+    path: "/return",
+    element: <Return/>
+  },
+  {
+    path: "/notify",
+    element: <Notify/>
+  },
+  {
+    path: "/cancel",
+    element: <Cancel/>
+  },
+  {
+    path: "/checkout",
+    element: <Checkout/>
   },
   {
     path: "/invite",

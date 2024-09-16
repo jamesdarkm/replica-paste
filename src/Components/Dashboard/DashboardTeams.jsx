@@ -107,15 +107,6 @@ const DashboardTeams = () => {
                                 {/* {currentUser.displayName.split(' ')[0]} */}
                             </span>
                         </Link>
-                        <Link
-                            to='/'
-                            className='flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold'
-                        >
-                            <ion-icon
-                                size='small'
-                                name='notifications-outline'
-                            ></ion-icon>
-                        </Link>
                     </div>
 
                     <ul role='list' className='mt-10 space-y-4'>

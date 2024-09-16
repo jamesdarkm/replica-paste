@@ -163,28 +163,6 @@ const SignUp = () => {
                     </div>
                 </div>
 
-                <div className='mt-3 relative'>
-                    <input
-                        disabled={isRegistering}
-                        type='password'
-                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
-                        autoComplete='current-password'
-                        required
-                        value={confirmPassword}
-                        onChange={(e) => {
-                            setconfirmPassword(e.target.value);
-                        }}
-                        placeholder='Confirm Password'
-                    />
-                    <div
-                        className='absolute inset-y-0 pl-3  
-                            flex items-center  
-                            pointer-events-none'
-                    >
-                        <ion-icon name="lock-closed-outline"></ion-icon>
-                    </div>
-                </div>
-
 
                 {errorMessage && (
                     <span className='text-red-600 font-bold'>
