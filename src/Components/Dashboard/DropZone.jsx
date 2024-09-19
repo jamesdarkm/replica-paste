@@ -20,6 +20,7 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     if (!isOpen) return null;
     const uniqueId = uuidv4();
 
+    
     const [selectedImages, setSelectedImages] = useState([]);
     const [imageNumber, setimageNumber] = useState('');
 

@@ -52,12 +52,12 @@ app.post('/send-email', (req, res) => {
                 {
                   From: {
                     Email: 'no-reply@darkm.co.za',
-                    Name: 'Paste Replica',
+                    Name: 'SocialPaste',
                   },
                   To: [
                     {
                         "Email": req.body.email,
-                        "Name": "Paste Replica"
+                        "Name": "SocialPaste"
                     }
                   ],
                   TemplateID: 6147342,
@@ -84,12 +84,12 @@ app.post('/subscribe-newsletter', (req, res) => {
               {
                 From: {
                   Email: 'no-reply@darkm.co.za',
-                  Name: 'Paste Replica',
+                  Name: 'SocialPaste',
                 },
                 To: [
                   {
                       "Email": req.body.email,
-                      "Name": "Paste Replica"
+                      "Name": "SocialPaste"
                   }
                 ],
                 TemplateID: 6174204,
@@ -148,16 +148,16 @@ app.post('/send-invite', (req, res) => {
               {
                 From: {
                   Email: 'no-reply@darkm.co.za',
-                  Name: 'Paste Replica',
+                  Name: 'SocialPaste',
                 },
                 To: [
                   {
                       "Email": email,
-                      "Name": "Paste Replica Member"
+                      "Name": "SocialPaste Member"
                   }
                 ],
                 Subject: "Team Invitation",
-                TextPart: "Dear user, you have been invited to a team on paste replica. Click the link below to accept the invite.",
+                TextPart: "Dear user, you have been invited to a team on SocialPaste. Click the link below to accept the invite.",
                 HTMLPart: `<a href=${inviteLink}>Accept Invite</a>`,
                 // TemplateID: 6147342,
                 // TemplateLanguage: true

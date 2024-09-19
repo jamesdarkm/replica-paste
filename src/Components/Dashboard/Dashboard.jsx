@@ -17,13 +17,13 @@ const Tests = () => {
     const [avatar, setAvatar] = useState(null);
     const [teams, setTeams] = useState([]);
     const { currentUser } = useAuth();
-    // console.log(currentUser)
 
     const navigate = useNavigate();  
     if (!currentUser) {
        return <Navigate to="/" replace={true} />;
     }
 
+    
     const displayPhoto = currentUser.photoURL;
     const uid = currentUser.uid;
 

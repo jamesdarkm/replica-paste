@@ -30,6 +30,7 @@ const DashboardTeams = () => {
     const displayPhoto = currentUser.photoURL;
     const uid = currentUser.uid;
 
+    console.log(currentUser)
 
 
     /**
@@ -83,7 +84,11 @@ const DashboardTeams = () => {
     }, [])
 
 
-
+    if (avatar == '' && displayPhoto == null) {
+        console.log('here')
+    }
+console.log('AVATAR: '+avatar)
+console.log('DISPLAY: '+displayPhoto)
       
     return (
         <>
@@ -100,11 +105,11 @@ const DashboardTeams = () => {
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                {/* {currentUser.displayName.charAt(0)} */}
+                                {currentUser.displayName.charAt(0)}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {/* {currentUser.displayName.split(' ')[0]} */}
+                                {currentUser.displayName.split(' ')[0]}
                             </span>
                         </Link>
                     </div>
@@ -160,6 +165,8 @@ const DashboardTeams = () => {
                                 <div className='justify-between flex content-end'>
                                     <div className='ml-4 '>
                                         <button onClick={toggleProfilePopup} className='flex content-end'><div className='mt-3 mr-5'>Online</div> <img className='w-10 rounded-full' src={avatar || displayPhoto} referrerPolicy="no-referrer" />
+
+                                        {avatar == '' && displayPhoto == null && <ion-icon className='mr-5' name='person-circle-outline' style={{ fontSize: '40px' }}></ion-icon>}
                                         </button>
                                     </div>
                                     <div>

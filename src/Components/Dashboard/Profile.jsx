@@ -3,8 +3,9 @@ import axios from '../../../axios';
 import { db, storage } from '../../../firebase';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { getAuth, updateEmail } from 'firebase/auth';
-import { doPasswordReset } from '../../../auth';
+import { doSignOut } from '../../../auth';
 import { useAuth } from '../../Context/authContext';
+
 import {
     doc,
     addDoc,
@@ -18,19 +19,20 @@ import {
 const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
     if (!isOpen) return null;
 
-    const [firstName, setFirstName] = useState(
+    const [firstName, setFirstName] =
+        useState();
         // currentUser.additionalInformation?.firstName?.trim() ||
         //     currentUser.displayName.split(' ')[0]
-    );
 
-    const [lastName, setLastName] = useState(
+    const [lastName, setLastName] =
+        useState();
         // currentUser.additionalInformation?.lastName?.trim() ||
         //     currentUser.displayName.split(' ')[1]
-    );
 
     const [email, setEmail] = useState(currentUser.reloadUserInfo.email);
     const [response, setResponse] = useState('');
     const [avatar, setAvatar] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
 
     // Verify the email first
     // const auth = getAuth();
@@ -50,11 +52,11 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
                 firstName: firstName,
                 lastName: lastName,
             });
-    
+
             // Assuming you want to update the local state with the new names
             setFirstName(firstName);
             setLastName(lastName);
-            
+
             // Update the currentUser state with the new information
             const updatedUser = {
                 ...currentUser,
@@ -62,16 +64,16 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
                     ...currentUser.additionalInformation,
                     firstName: firstName,
                     lastName: lastName,
-                }
+                },
             };
 
             setCurrentUser(updatedUser);
-    
+
             // Uncomment and configure if you're sending an email
             // const response = await axios.post('/send-email', {
             //     email: email,
             // });
-    
+
             // setEmail(''); // Uncomment if you want to reset the email state
             setResponse('Invitation successfully sent!');
         } catch (error) {
@@ -131,9 +133,36 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
         }
     };
 
-    const PasswordReset = () => {
-        doPasswordReset(currentUser.email)
-    }
+    const PasswordReset = async () => {
+        setErrorMessage('');
+        setResponse('Sending password reset link to ' + currentUser.email + ', please wait...');
+    
+        try {
+            const res = await fetch('http://localhost:5001/generate-reset-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: currentUser.email }), // Correct JSON structure
+            });
+    
+            if (!res.ok) {
+                throw new Error('Failed to send reset link');
+            }
+    
+            setResponse('We have sent you a password reset link to: ' + currentUser.email + '. You will be logged out in a few seconds.');
+
+            setTimeout(() => {
+                doSignOut().then(() => {
+                    navigate('/');
+                });
+            }, 3000);
+        } catch (error) {
+            setResponse('');
+            setErrorMessage('There was an error trying to reset the password. Please try again.');
+        }
+    };
+    
 
     useEffect(() => {
         async function getUserAvatar() {
@@ -195,7 +224,7 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
                                         />
                                         {avatar ? (
                                             <img
-                                                className='block w-full h-full object-contain'
+                                                className='block w-full h-full object-contain rounded-full'
                                                 src={avatar}
                                                 referrerPolicy='no-referrer'
                                             />
@@ -304,7 +333,9 @@ const Profile = ({ isOpen, onClose, uid, currentUser, setCurrentUser }) => {
                                         {currentUser.reloadUserInfo.email} with
                                         a link to change your password.
                                     </p>
-
+                                    <p className='mb-4 text-red-600 font-bold'>
+                                        {errorMessage}
+                                    </p>
                                     <button
                                         type='submit'
                                         onClick={PasswordReset}

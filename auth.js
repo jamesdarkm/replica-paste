@@ -57,15 +57,14 @@ export const doSignInWithGoogle = async () => {
         await setDoc(docRef, {
             firstName: dataAdditionalUser.firstName,
             lastName: dataAdditionalUser.lastName,
-            avatar: 'base64',
-            subscribedToEmail: dataAdditionalUser.subscribedToEmail
+            subscribedToEmail: dataAdditionalUser.subscribedToEmail,
+            avatar: dataAdditionalUser.avatar
         });
     } else {
         await setDoc(docRef, {
-            // c: user.displayName,
             firstName: user.displayName.split(' ')[0],
             lastName: user.displayName.split(' ')[1],
-            avatar: 'ss',
+            avatar: user.photoURL,
             subscribedToEmail: false
         });
     }
