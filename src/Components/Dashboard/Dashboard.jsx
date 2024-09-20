@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
+import { Navigate, useNavigate, Link, useParams } from 'react-router-dom';
 import InviteTeamMember from './InviteTeamMember';
 import Profile from './Profile';
 import CreateDeck from './DeckCreate';
@@ -16,7 +16,11 @@ const Tests = () => {
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const [teams, setTeams] = useState([]);
+    const [posts, setPosts] = useState([]);
     const { currentUser } = useAuth();
+    const { teamId } = useParams();
+
+    // console.log(teamId)
 
     const navigate = useNavigate();  
     if (!currentUser) {
@@ -27,29 +31,22 @@ const Tests = () => {
     const displayPhoto = currentUser.photoURL;
     const uid = currentUser.uid;
 
-    const createUserDocumentXXX = async () => {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
+    // const createUserDocumentXXX = async () => {
+    //     const docRef = doc(db, 'users', user.uid);
+    //     const docSnap = await getDoc(docRef);
 
-        console.log('her')
-        console.log(docSnap);
-        if (!docSnap.exists()) {
-            const datax = {
-                creationDate: serverTimestamp(),
-            };
+    //     console.log('her')
+    //     console.log(docSnap);
+    //     if (!docSnap.exists()) {
+    //         const datax = {
+    //             creationDate: serverTimestamp(),
+    //         };
 
-            //await setDoc(docRef, datax);
-        }
-    };
+    //         //await setDoc(docRef, datax);
+    //     }
+    // };
 
-    createUserDocumentXXX();
-
-    /**
-     * Modal toggle
-     */
-    const toggleModal = () => {
-        setModal(!modal);
-    };
+    // createUserDocumentXXX();
 
     /**
      * Hide the scrollbar when modal is active
@@ -78,48 +75,64 @@ const Tests = () => {
         setIsProfileOpen(!isProfileOpen);
     };
 
+    // Function to fetch decks associated with a user based on team Id
+    const fetchDecks = async () => {
+        const decksRef = collection(db, `decks/`);
+        const q = query(decksRef, where('teamId', '==', teamId));
 
+        const querySnapshot = await getDocs(q);
+        const decksData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // console.log(decksData)
+
+        setPosts(decksData);
+    };
+
+    // const fetchTeam = async () => {
+    //     const teamsRef = collection(db, 'teams');
+
+    //     // Fetch teams where the user is either owner or shared with
+    //     const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
+    //     const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
+
+    //     const ownerSnapshot = await getDocs(ownerQuery);
+    //     const sharedSnapshot = await getDocs(sharedQuery);
+
+    //     const ownerTeams = ownerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //     const sharedTeams = sharedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    //     const allTeams = [...ownerTeams, ...sharedTeams];
+    //     const teamId = allTeams[0].id;   
+    //     // console.log(allTeams)
+
+    //     // console.log(allTeams, teamId)
+    //     setTeams(allTeams)
+        
+    // };
 
     useEffect(() => {
-        async function getUserAvatar() {
+        //function gets the users avatar, associated data about teams and their associated decks
+        async function getAvatarTeamsDecks() {
             const docRef = doc(db, 'users', currentUser.uid);
             const docSnap = await getDoc(docRef);
             if (docSnap.exists()) {
                 const userAvatar = docSnap.data().avatar;
-                console.log(userAvatar)
-                setAvatar(userAvatar)
+
+                setAvatar(userAvatar);
+                
+                
+                fetchDecks();
+
             } else {
               console.log("No such doc!");
             }
         }
-        getUserAvatar();
+
+        getAvatarTeamsDecks();
     }, [])
-
-
-    useEffect(() => {
-        const fetchDecks = async () => {
-            const teamsRef = collection(db, 'teams');
-
-            // Fetch teams where the user is either owner or shared with
-            const ownerQuery = query(teamsRef, where('ownerId', '==', uid));
-            const sharedQuery = query(teamsRef, where('sharedWith', 'array-contains', uid));
-    
-            const ownerSnapshot = await getDocs(ownerQuery);
-            const sharedSnapshot = await getDocs(sharedQuery);
-
-            const ownerTeams = ownerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const sharedTeams = sharedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-            const allTeams = [...ownerTeams, ...sharedTeams];
-            const teamId = allTeams[0].id;   
-
-            console.log(allTeams, teamId)
-            setTeams(allTeams)
-            
-        };
-
-        fetchDecks();
-    }, [avatar]);
       
     return (
         <>
@@ -251,7 +264,7 @@ const Tests = () => {
                         </div>
                     </div>
 
-                    <Decks uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
+                    <Decks posts={posts} uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
                 </div>
             </div>
         </>

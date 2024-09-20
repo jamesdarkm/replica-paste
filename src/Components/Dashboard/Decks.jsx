@@ -13,16 +13,15 @@ import {
 import { db } from '../../../firebase';
 import RenameDeckPopup from './RenameDeckPopup';
 
-const Decks = ({ uid, toggleCreateDeckPopup }) => {
-    const [posts, setPosts] = useState([]);
-    const { teamId } = useParams();
+const Decks = ({ uid, toggleCreateDeckPopup, posts }) => {
     const [menuOpen, setMenuOpen] = useState(null);
     const [renamePopupOpen, setRenamePopupOpen] = useState(false);
     const [selectedDeck, setSelectedDeck] = useState(null);
 
     const PostImages = ({ post }) => {
-        const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
-        const imageUrl = post.thumbnail || placeholderImage;
+        const decksDataBannerProperty = Object.keys(post?.decks || {});
+        const decksDataBanner = post?.decks?.[decksDataBannerProperty];
+        const banner = typeof decksDataBanner === 'undefined' ? { thumbnail: '/src/Components/Assets/placeholder-deck-image.jpg' } : decksDataBanner;
 
         // Function to handle menu actions
         const handleMenuClick = (action) => {
@@ -46,7 +45,7 @@ const Decks = ({ uid, toggleCreateDeckPopup }) => {
                 >
                     <div
                         className='min-h-48 rounded bg-center bg-cover'
-                        style={{ backgroundImage: `url(${imageUrl})` }}
+                        style={{ backgroundImage: `url(${banner.thumbnail})` }}
                     ></div>
                     <p className='mt-3 text-lg font-bold'>{post.heading}</p>
                 </Link>
@@ -86,7 +85,6 @@ const Decks = ({ uid, toggleCreateDeckPopup }) => {
         }
     };
 
-
     // Function to delete a deck
     const deleteDeck = async (deckId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this deck?');
@@ -108,12 +106,10 @@ const Decks = ({ uid, toggleCreateDeckPopup }) => {
             ...doc.data()
         }));
 
+        // console.log(decksData)
+
         setPosts(decksData);
     };
-
-    useEffect(() => {
-        fetchDecks();
-    }, []);
 
     return (
         <>
@@ -156,11 +152,14 @@ const Decks = ({ uid, toggleCreateDeckPopup }) => {
                                 </p>
                             </button>
 
-                            {posts.map((post) => (
-                                <React.Fragment key={post.id}>
-                                    <PostImages post={post}/>
-                                </React.Fragment>
-                            ))}
+                            {posts.map((post, i) => {
+                                return (
+                                    <React.Fragment key={post.id}>
+                                        <PostImages post={post}/>
+                                    </React.Fragment>
+                                )
+                            })}
+                            
                         </div>
                     </div>
                 </>

@@ -12,7 +12,7 @@ export default function Checkout() {
       e.preventDefault();
 
       try {
-          const response = await fetch('http://localhost:5000/checkout', {
+          const response = await fetch('https://pink-days-send.loca.lt/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({passPhrase: passPhrase})
@@ -20,7 +20,7 @@ export default function Checkout() {
           if (response.ok) {
               const signatureResponse = await response.json();
               setPayFastSignature(signatureResponse.signature)
-              // console.log(signatureResponse.signature)
+              console.log(signatureResponse)
               console.log(payFastSignature)
               paymentForm.current.submit();
           } else {
@@ -42,10 +42,18 @@ export default function Checkout() {
         <input type="hidden" name="merchant_key" value={platformMerchantKey} />
         <input type="hidden" name="amount" value={amount} />
         <input type="hidden" name="item_name" value="Social Paste" />
-        <input type="hidden" name="return_url" value="https://f96a-197-184-176-59.ngrok-free.app/return" />
-        <input type="hidden" name="cancel_url" value="https://f96a-197-184-176-59.ngrok-free.app/cancel" />
-        <input type="hidden" name="notify_url" value="https://webhook.site/7e8f25b8-b293-424b-9bb3-7b2a6784def3" />
+        <input type="hidden" name="return_url" value="https://4e65-197-184-183-219.ngrok-free.app/return" />
+        <input type="hidden" name="cancel_url" value="https://4e65-197-184-183-219.ngrok-free.app/cancel" />
+        <input type="hidden" name="notify_url" value="https://pink-days-send.loca.lt/notify" />
         <input type="hidden" name="signature" value={payFastSignature} />
+        <input type="hidden" name="subscription_type" value="1"/>
+        <input type="hidden" name="billing_date" value="2024-09-18"/>
+        <input type="hidden" name="recurring_amount" value={amount}/>
+        <input type="hidden" name="frequency" value="3"/>
+        <input type="hidden" name="cycles" value="12"/>
+        <input type="hidden" name="subscription_notify_email" value="true"/>
+        <input type="hidden" name="subscription_notify_webhook" value="true"/>
+        <input type="hidden" name="subscription_notify_buyer" value="true"/>
         <input type="submit" value="Pay Now"/>
       </form>
     )

@@ -15,7 +15,7 @@ import {
 
 const CreateDeck = ({ isOpen, teams, onClose, uid, popupType }) => {
     const { teamId } = useParams();
-    console.log(teams, teamId)
+    // console.log(teams, teamId)
     if (!isOpen) return null;
     const navigate = useNavigate();
 

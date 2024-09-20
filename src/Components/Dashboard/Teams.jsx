@@ -7,38 +7,57 @@ import {
     collection,
     query, 
     where,
+    limit
 } from 'firebase/firestore';
 import { useAuth } from '../../Context/authContext';
 import { db } from '../../../firebase';
 
+const Team = ({ team }) => {
+    const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
+    const [teamBanner, setTeamBanner] = useState(placeholderImage)
+    // console.log(team.id)
+
+    // Function to fetch decks associated with a user based on team Id
+    const fetchDecks = async () => {
+        const decksRef = collection(db, `decks/`);
+        const q = query(decksRef, where('teamId', '==', team.id), limit(1));    
+        const querySnapshot = await getDocs(q);
+        const decksData = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));   
+
+        // Get banner images for the first deck that'll be displayed as a banner
+        const decksDataBannerProperty = Object.keys(decksData[0].decks);
+        const decksDataBanner = decksData[0].decks[decksDataBannerProperty];
+        // console.log(decksDataBanner.thumbnail)
+        setTeamBanner(decksDataBanner.thumbnail)
+    };
+
+    fetchDecks();
+
+    return (
+       <>
+            {team.name && (
+            <Link
+                to={`/dashboard/${team.id}`}
+                className='mt-5'
+                key={team.id} // Use the post ID as the key
+            >
+                <div
+                    className='min-h-48 rounded bg-center bg-cover'
+                    style={{ backgroundImage: `url(${teamBanner})` }}
+                ></div>
+                <p className='mt-3 text-lg font-bold'>{team.name}</p>
+            </Link>
+            )}
+        </>
+    );
+};
+
 export default function Teams({ uid, toggleCreateDeckPopup  }) {
     const { currentUser } = useAuth();
     const [teams, setTeams] = useState([]);
-    
-    const Team = ({ team }) => {
-        const placeholderImage = '/src/Components/Assets/placeholder-deck-image.jpg';
-        const imageUrl = team.thumbnail || placeholderImage;
-
-        // console.log(team)
-
-        return (
-            <>
-                {team.name && (
-                <Link
-                    to={`/dashboard/${team.id}`}
-                    className='mt-5'
-                    key={team.id} // Use the post ID as the key
-                >
-                    <div
-                        className='min-h-48 rounded bg-center bg-cover'
-                        style={{ backgroundImage: `url(${imageUrl})` }}
-                    ></div>
-                    <p className='mt-3 text-lg font-bold'>{team.name}</p>
-                </Link>
-                )}
-            </>
-        );
-    };;
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -57,7 +76,7 @@ export default function Teams({ uid, toggleCreateDeckPopup  }) {
             const allTeams = [...ownerTeams, ...sharedTeams];
     
 
-            console.log(sharedTeams)
+            // console.log(allTeams)
             setTeams(allTeams)
 
         };
