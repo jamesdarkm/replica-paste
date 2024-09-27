@@ -1,14 +1,14 @@
 /* CKEditor Content */
 .ck-content {
-    height: 100%;
+    /* height: 100%; */
     box-sizing: border-box;
     overflow-y: auto; /* Allow scrolling if content exceeds container height */
 }
 
 /* Ensure the editor container respects the parent container's height */
 .ck-editor__editable_inline {
-    height: 100%;
-    width: 100%;
+    /* height: 100%;
+    width: 100%; */
     box-sizing: border-box;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .ck-editor__editable_inline  {
-height: 100%;
+/* height: 100%; */
     width: 100%;
     display: flex;box-sizing: border-box;
     justify-content: center;

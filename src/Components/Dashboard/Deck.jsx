@@ -21,6 +21,7 @@ const Deck = () => {
     const { currentUser } = useAuth();
     const [heading, setHeading] = useState([]);
     const [decks, setDecks] = useState([]);
+    const [deckCount, setDeckCount  ] = useState([]);
     const [didUploadDeck, setDidUploadDeck] = useState(false);
 
     const navigate = useNavigate();
@@ -71,6 +72,7 @@ const Deck = () => {
 
                     setDecks(data.decks)
                     setHeading(data.heading)
+                    setDeckCount(Object.keys(data.decks).length)
                 } else {
                     console.log('No such document!');
                 }
@@ -99,9 +101,10 @@ const Deck = () => {
         setIsDropZoneOpen(!isDropZoneOpen);
     };
 
+
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} uid={uid} id={id} changeUploadState={changeUploadState}/>
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState}/>
 
             <div className='flex-1'>
                 <div className='w-full flex items-center justify-between z-10 '>

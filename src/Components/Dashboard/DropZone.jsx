@@ -16,11 +16,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
 
-const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
+const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState }) => {
     if (!isOpen) return null;
     const uniqueId = uuidv4();
 
-    
     const [selectedImages, setSelectedImages] = useState([]);
     const [imageNumber, setimageNumber] = useState('');
 
@@ -147,7 +146,7 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     const selected_images = selectedImages?.map((file, index) => (
         <div
             key={file.uniqueId}
-            className={`bg-cover bg-center bg-blue-500 h-full w-full ${
+            className={`bg-cover bg-center bg-blue-500 w-full ${
                 index > 3 ? 'hidden' : ''
             }`}
             style={{
@@ -156,7 +155,7 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
             data-index={index}
         >
             <div
-                className={`w-full h-full bg-stone-950 opacity-70 flex flex justify-center items-center ${
+                className={`w-full bg-stone-950 opacity-70 flex flex justify-center items-center ${
                     index > 2 ? '' : 'hidden'
                 }`}
             >
@@ -190,23 +189,51 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
     ));
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const [color, setColor] = useState('#ffffff'); // default color is white
+    const [textColor, setTextColor] = useState('#000000');
+    
+    const calculateLuminance = (hex) => {
+        const rgb = parseInt(hex.substring(1), 16); // Convert hex to RGB
+        const r = (rgb >> 16) & 255;
+        const g = (rgb >> 8) & 255;
+        const b = (rgb >> 0) & 255;
 
+        // Calculate luminance using the formula
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        return luminance;
+    };
+
+    // Function to handle color change
+    const handleColorChange = (e) => {
+        const newColor = e.target.value;
+        setColor(newColor);
+
+        const luminance = calculateLuminance(newColor);
+        if (luminance < 128) {
+            // Dark color: log "dark" and set text color to white
+            console.log('dark');
+            setTextColor('#ffffff');
+        } else {
+            // Light color: log "light" and set text color to black
+            console.log('light');
+            setTextColor('#000000');
+        }
+    };
+
+    const [menuOpen, setMenuOpen] = useState(null);
     return (
-        <div className='p-4 w-full h-screen'>
-            <div></div>
-            <div className='h-full flex'>
-                <button
-                    onClick={uploadPost}
-                    className='absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-violet-700'
-                >
+        <div className="p-4 w-full h-screen" style={{ backgroundColor: color }}>
+            <div className='flex justify-end'>
+                <button className='p-2' onClick={onClose}>
                     <ion-icon
                         style={{ fontSize: '30px' }}
                         name='close-outline'
-                        // onClick={changeUploadState}
                     ></ion-icon>
                 </button>
-                <div className='w-1/2 h-full'>
-                    <div className='flex justify-center p-4 h-full'>
+            </div>
+            <div className='flex'>
+                <div className='w-1/2'>
+                    <div className='flex justify-center p-4 text-white text-[#ffffff]'>
                         <CKEditor
                             editor={InlineEditor}
                             data={editorData}
@@ -247,22 +274,21 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
                 </div>
                 <div className='p-4 fle flex flex-wrap w-1/2'>
                     <div
-                        {...getRootProps({ style })}
-                        className='justify-center p-4 w-full items-center'
+                        className='justify-center p-4 w-full items-center border-2 border-solid'
                     >
-                        <div className='w-full h-full basis-1/2'>
+                        <div className='w-full basis-1/2'>
                             <Swiper
                                 modules={[Navigation, Thumbs]}
                                 spaceBetween={10}
                                 slidesPerView={1}
                                 thumbs={{ swiper: thumbsSwiper }}
-                                style={{ width: '100%', height: '60vh' }}
+                                style={{ width: '100%' }}
                             >
                                 {selectedImages.map((file, index) => (
                                     <SwiperSlide key={index}>
                                         <div
                                             key={file.uniqueId}
-                                            className={`bg-cover bg-center bg-blue-500 h-full w-full ${
+                                            className={`bg-cover bg-center bg-blue-500 w-full ${
                                                 index > 3 ? 'hidden' : ''
                                             }`}
                                             style={{
@@ -307,7 +333,10 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
                                 style={{ marginTop: '10px', height: '30vh' }} // Adjust height as needed
                             >
                                 {selectedImages.map((file, index) => (
-                                    <SwiperSlide key={index} className="group relative">
+                                    <SwiperSlide
+                                        key={index}
+                                        className='group relative'
+                                    >
                                         <>
                                             <img
                                                 src={file.preview}
@@ -336,14 +365,104 @@ const DropZone = ({ isOpen, onClose, id, uid, changeUploadState }) => {
                                 ))}
                             </Swiper>
                         </div>
-                        <input {...getInputProps()} />
+                    </div>
+                </div>
+            </div>
 
-                        <p className='fixed'>
-                            <ion-icon
-                                name='add-outline'
-                                size='large'
-                            ></ion-icon>
-                        </p>
+            {/* Dropdown Menu */}
+
+            <div className='flex justify-between'>
+                <div></div>
+                <div className='flex gap-8'>
+                    <button {...getRootProps({ style })}>
+                    <input {...getInputProps()} />
+                        <img src='/src/Components/Assets/image upload.svg' />
+                    </button>
+                    <button>
+                    <button
+                    className='absolute top-2 right-2'
+                    onClick={() => setMenuOpen(true)}
+                >
+                    <ion-icon name="ellipsis-vertical"></ion-icon>
+                </button>
+                {/* Dropdown Menu */}
+                {menuOpen && (
+                    <div className='absolute top-10 right-2 bg-white shadow-md rounded'>
+                        <button className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'>Delete</button>
+                    </div>
+                )}
+                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                    </button>
+
+                    <label className='relative'>
+                        <input
+                            type='color'
+                            className='relative opacity-0 absolute top-0 left-0'
+                            value={color}
+                            onChange={handleColorChange} // update color on change
+                        />
+
+                        <svg
+                            width='22'
+                            height='32'
+                            viewBox='0 0 22 32'
+                            fill='none'
+                            xmlns='http://www.w3.org/2000/svg'
+                            className='relative -top-3'
+                        >
+                            <path
+                                d='M10.9918 1.11363L19.538 14.9366C20.4988 16.6079 21 18.5006 21 20.436C21 26.3075 16.4667 31 11 31C5.53332 31 1 26.3075 1 20.435C1 18.501 1.50023 16.6113 2.4414 14.9708L10.9918 1.11363Z'
+                                fill='#ffffff'
+                                stroke='#676B5F'
+                                strokeWidth='2'
+                            />
+                        </svg>
+                    </label>
+                </div>
+                <div className='flex gap-8'>
+                    <button
+                        className='font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
+                        onClick={uploadPost}
+                    >
+                        Done
+                    </button>
+
+                    <div className='flex items-center gap-2'>
+                        <button className='p-3'>
+                            <svg
+                                width='10'
+                                height='18'
+                                viewBox='0 0 10 18'
+                                fill='none'
+                                xmlns='http://www.w3.org/2000/svg'
+                            >
+                                <path
+                                    d='M9 1L1 9L9 17'
+                                    stroke='black'
+                                    stroke-width='2'
+                                    stroke-linecap='round'
+                                    stroke-linejoin='round'
+                                />
+                            </svg>
+                        </button>
+                        <div>{deckCount}</div>
+                        <button className='p-3'>
+                            <svg
+                                width='10'
+                                height='18'
+                                viewBox='0 0 10 18'
+                                fill='none'
+                                xmlns='http://www.w3.org/2000/svg'
+                            >
+                                <path
+                                    d='M1 17L9 9L1 0.999999'
+                                    stroke='black'
+                                    stroke-width='2'
+                                    stroke-linecap='round'
+                                    stroke-linejoin='round'
+                                />
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
