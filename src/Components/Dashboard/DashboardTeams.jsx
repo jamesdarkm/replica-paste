@@ -8,37 +8,17 @@ import Teams from './Teams.jsx'
 import { useAuth } from '../../Context/authContext';
 import { doSignOut } from '../../../auth';
 import { db, storage } from '../../../firebase';
-
-import {
-    doc,
-    addDoc,
-    setDoc,
-    getDoc, collection, getDocs
-} from 'firebase/firestore';
+import { doc, addDoc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 
 const DashboardTeams = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
     const [avatar, setAvatar] = useState(null);
     const { currentUser } = useAuth();
-
     const navigate = useNavigate();  
-    if (!currentUser) {
-       return <Navigate to="/" replace={true} />;
-    }
-
-    const displayPhoto = currentUser.photoURL;
-    const uid = currentUser.uid;
-
+    const displayPhoto = currentUser?.photoURL;
+    const uid = currentUser?.uid;
     console.log(currentUser)
-
-
-    /**
-     * Modal toggle
-     */
-    const toggleModal = () => {
-        setModal(!modal);
-    };
 
     /**
      * Hide the scrollbar when modal is active
@@ -49,16 +29,9 @@ const DashboardTeams = () => {
         document.body.classList.remove('active-modal');
     }
 
-
     const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false);
     const toggleCreateDeckPopup = () => {
-        
         setIsCreateDeckOpen(!isCreateDeckOpen);
-    };
-
-    const [isInviteTeamMemberPopupOpen, setIsInviteTeamMemberPopupOpen] = useState(false);
-    const toggleInviteTeamMemberPopup = () => {
-        setIsInviteTeamMemberPopupOpen(!isInviteTeamMemberPopupOpen);
     };
 
 
@@ -67,33 +40,31 @@ const DashboardTeams = () => {
         setIsProfileOpen(!isProfileOpen);
     };
 
-
-
     useEffect(() => {
-        async function getUserAvatar() {
-            const docRef = doc(db, 'users', currentUser.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const userAvatar = docSnap.data().avatar;
-                setAvatar(userAvatar)
-            } else {
-              console.log("No such doc!");
+        if (!currentUser) {
+            navigate('/');
+        } else {
+            async function getUserAvatar() {
+                const docRef = doc(db, 'users', currentUser.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const userAvatar = docSnap.data().avatar;
+                    setAvatar(userAvatar)
+                } else {
+                  console.log("No such doc!");
+                }
             }
+            getUserAvatar();
         }
-        getUserAvatar();
-    }, [])
+    }, [currentUser, navigate])
 
 
     if (avatar == '' && displayPhoto == null) {
         console.log('here')
     }
-console.log('AVATAR: '+avatar)
-console.log('DISPLAY: '+displayPhoto)
       
     return (
-        <>
-            {!currentUser && <Navigate to="/" replace={true} />}
-            
+        <>          
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
             <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team"/>
 
@@ -105,11 +76,11 @@ console.log('DISPLAY: '+displayPhoto)
                             className='flex items-center justify-between'
                         >
                             <div className='flex items-center justify-center w-10 h-10 rounded-md p-6 bg-purple-500 font-bold'>
-                                {currentUser.displayName.charAt(0)}
+                                {currentUser?.displayName.charAt(0)}
                             </div>
 
                             <span className='ml-3 text-base font-bold'>
-                                {currentUser.displayName.split(' ')[0]}
+                                {currentUser?.displayName.split(' ')[0]}
                             </span>
                         </Link>
                     </div>
@@ -192,11 +163,7 @@ console.log('DISPLAY: '+displayPhoto)
                                     {currentUser && (
                                     <>
                                         <button
-                                            onClick={() => {
-                                                doSignOut().then(() => {
-                                                    navigate('/');
-                                                });
-                                            }}
+                                            onClick={() => doSignOut()}
                                             className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-red-600 hover:border-red-900 px-3 py-2 hover:bg-red-900 bg-red-600'
                                         >
                                             Logout

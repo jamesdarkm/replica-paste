@@ -19,17 +19,9 @@ const Tests = () => {
     const [posts, setPosts] = useState([]);
     const { currentUser } = useAuth();
     const { teamId } = useParams();
-
-    // console.log(teamId)
-
     const navigate = useNavigate();  
-    if (!currentUser) {
-       return <Navigate to="/" replace={true} />;
-    }
-
-    
-    const displayPhoto = currentUser.photoURL;
-    const uid = currentUser.uid;
+    const displayPhoto = currentUser?.photoURL;
+    const uid = currentUser?.uid;
 
     // const createUserDocumentXXX = async () => {
     //     const docRef = doc(db, 'users', user.uid);
@@ -114,30 +106,32 @@ const Tests = () => {
     // };
 
     useEffect(() => {
-        //function gets the users avatar, associated data about teams and their associated decks
-        async function getAvatarTeamsDecks() {
-            const docRef = doc(db, 'users', currentUser.uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const userAvatar = docSnap.data().avatar;
-
-                setAvatar(userAvatar);
-                
-                
-                fetchDecks();
-
-            } else {
-              console.log("No such doc!");
+        if (!currentUser) {
+            navigate('/');
+        } else {
+            //function gets the users avatar, associated data about teams and their associated decks
+            async function getAvatarTeamsDecks() {
+                const docRef = doc(db, 'users', currentUser.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const userAvatar = docSnap.data().avatar;
+    
+                    setAvatar(userAvatar);
+                    
+                    
+                    fetchDecks();
+    
+                } else {
+                  console.log("No such doc!");
+                }
             }
+    
+            getAvatarTeamsDecks();
         }
-
-        getAvatarTeamsDecks();
-    }, [])
+    }, [currentUser, navigate])
       
     return (
-        <>
-            {!currentUser && <Navigate to="/" replace={true} />}
-            
+        <>            
             <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>
@@ -248,11 +242,7 @@ const Tests = () => {
                                     {currentUser && (
                                     <>
                                         <button
-                                            onClick={() => {
-                                                doSignOut().then(() => {
-                                                    navigate('/');
-                                                });
-                                            }}
+                                            onClick={() => doSignOut()}
                                             className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-red-600 hover:border-red-900 px-3 py-2 hover:bg-red-900 bg-red-600'
                                         >
                                             Logout
