@@ -323,6 +323,62 @@ app.post('/notify', async (req, res) => {
   } 
 });
 
+// generate signature
+app.get('/signature-generation', (req, res) => {
+
+  console.log('received')
+
+// Example data for a payment request
+let data = {
+    'merchant_id': '10031040',
+    'amount': '500.00',
+    'currency': 'ZAR',
+    'item_name': 'Product A',
+    'email_address': 'mandla@darkm.co.za',
+    'return_url': 'https://570d-41-216-202-85.ngrok-free.app/return',
+    'cancel_url': 'https://570d-41-216-202-85.ngrok-free.app/cancel',
+    'notify_url': 'https://570d-41-216-202-85.ngrok-free.app/notify'
+};
+
+// Passphrase used for salting the signature (set in PayFast settings)
+let passPhrase = 'LionelMess10';
+
+// Signature generation function
+const generateAPISignature = (data, passPhrase) => {
+    // Arrange the array by key alphabetically for API calls
+    let ordered_data = {};
+    Object.keys(data).sort().forEach(key => {
+        ordered_data[key] = data[key];
+    });
+    data = ordered_data;
+
+    // Create the get string
+    let getString = '';
+    for (let key in data) {
+        getString += key + '=' + encodeURIComponent(data[key]).replace(/%20/g,'+') + '&';
+    }
+
+    // Remove the last '&'
+    getString = getString.substring(0, getString.length - 1);
+
+    // Append the passphrase to the getString, if provided
+    if (passPhrase !== null) {
+        getString += `&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, "+")}`;
+    }
+
+    // Hash the data and create the signature
+    return crypto.createHash("md5").update(getString).digest("hex");
+}
+
+// Generate the signature for the API request
+const signature = generateAPISignature(data, passPhrase);
+
+// Output the generated signature
+console.log('Generated Signature:', signature);
+res.send(signature)
+
+})
+
 app.get('/', (req, res) => {
   console.log('yass')
   res.send('yasss')

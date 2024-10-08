@@ -5,7 +5,7 @@ export default function Notify() {
     async function confirmPaymentStatus() {
       console.log('gii')
       try {
-        const response = await fetch('https://pink-days-send.loca.lt/notify', {
+        const response = await fetch('http://localhost:5000/notify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json'},
           body: JSON.stringify({passPhrase: 'jt7NOE43FZPn'})

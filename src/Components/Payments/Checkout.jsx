@@ -7,12 +7,13 @@ export default function Checkout() {
     const [passPhrase, setPassphrase] = useState(import.meta.env.VITE_PASSPHRASE);
     const [payFastSignature, setPayFastSignature] = useState('');
     const paymentForm = useRef(null);
+    const baseURL = 'https://570d-41-216-202-85.ngrok-free.app';
 
     const generatePayFastSignature = async (e) => {
       e.preventDefault();
 
       try {
-          const response = await fetch('https://pink-days-send.loca.lt/checkout', {
+          const response = await fetch('http://localhost:5000/checkout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({passPhrase: passPhrase})
@@ -42,9 +43,9 @@ export default function Checkout() {
         <input type="hidden" name="merchant_key" value={platformMerchantKey} />
         <input type="hidden" name="amount" value={amount} />
         <input type="hidden" name="item_name" value="Social Paste" />
-        <input type="hidden" name="return_url" value="https://4e65-197-184-183-219.ngrok-free.app/return" />
-        <input type="hidden" name="cancel_url" value="https://4e65-197-184-183-219.ngrok-free.app/cancel" />
-        <input type="hidden" name="notify_url" value="https://pink-days-send.loca.lt/notify" />
+        <input type="hidden" name="return_url" value={`${baseURL}/return`} />
+        <input type="hidden" name="cancel_url" value={`${baseURL}/cancel`} />
+        <input type="hidden" name="notify_url" value={`${baseURL}/notify`} />
         <input type="hidden" name="signature" value={payFastSignature} />
         <input type="hidden" name="subscription_type" value="1"/>
         <input type="hidden" name="billing_date" value="2024-09-18"/>
