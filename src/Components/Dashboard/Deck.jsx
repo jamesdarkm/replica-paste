@@ -21,6 +21,7 @@ const Deck = () => {
     const { currentUser } = useAuth();
     const [heading, setHeading] = useState([]);
     const [decks, setDecks] = useState([]);
+    const [deckID, setDeckID] = useState('');
     const [deckCount, setDeckCount  ] = useState([]);
     const [didUploadDeck, setDidUploadDeck] = useState(false);
 
@@ -104,7 +105,7 @@ const Deck = () => {
 
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState}/>
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID} />
 
             <div className='flex-1'>
                 <div className='w-full flex items-center justify-between z-10 '>
@@ -168,7 +169,7 @@ const Deck = () => {
                 </div>
             </div>
             
-            <Posts decks={decks} toggleDropZonePopup={toggleDropZonePopup} />
+            <Posts decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} />
         </>
     );
 };

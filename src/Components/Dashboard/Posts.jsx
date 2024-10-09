@@ -5,7 +5,7 @@ import './Posts.css';
 import { db } from "../../../firebase";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
 
-const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
+const Posts = ({ decks = {}, toggleDropZonePopup, uid, id, setDeckID }) => {
     const navigate = useNavigate();
     const { id: deckId } = useParams();
     const hasDecks = Object.keys(decks).length !== 0;
@@ -17,9 +17,9 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
 
     const deleteCard = async (cardId) => {
         const docRef = doc(db, "decks", deckId);
-      
+
         await updateDoc(docRef, {
-          [`decks.${cardId}`]: deleteField(),
+            [`decks.${cardId}`]: deleteField(),
         });
     };
 
@@ -29,12 +29,19 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                 <div className='grid grid-cols-3'>
                     {hasDecks
                         ? Object.entries(decks).map(([id, item]) => (
-                              <div
-                                  key={id}
-                                  className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
-                              >
+                            <div
+                                key={id}
+                                className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
+                                onClick={(e) => {
+                                    setDeckID(id);
+                                    toggleDropZonePopup();
+                                }}
+                            >
                                 <button
-                                    onClick={() => deleteCard(id)}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        deleteCard(id);
+                                    }}
                                     className="absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-red-500"
                                 >
                                     <ion-icon
@@ -42,28 +49,27 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id }) => {
                                         name="trash-outline"
                                     ></ion-icon>
                                 </button>
-                                  <div
-                                      className={`p-6 w-1/2 text-2xl ${
-                                          !item.thumbnail && 'mx-auto'
-                                      }`}
-                                  >
-                                      <div
-                                          dangerouslySetInnerHTML={{
-                                              __html: item.caption,
-                                          }}
-                                      />
-                                  </div>
+                                <div
+                                    className={`p-6 w-1/2 text-2xl ${!item.thumbnail && 'mx-auto'
+                                        }`}
+                                >
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: item.caption,
+                                        }}
+                                    />
+                                </div>
 
-                                  {item.thumbnail && (
-                                      <div
-                                          className='w-1/2 h-full bg-center bg-cover'
-                                          style={{
-                                              backgroundImage: `url(${item.thumbnail})`,
-                                          }}
-                                      ></div>
-                                  )}
-                              </div>
-                          ))
+                                {item.thumbnail && (
+                                    <div
+                                        className='w-1/2 h-full bg-center bg-cover'
+                                        style={{
+                                            backgroundImage: `url(${item.thumbnail})`,
+                                        }}
+                                    ></div>
+                                )}
+                            </div>
+                        ))
                         : ''}
 
                     <button type='button' onClick={toggleDropZonePopup}>
