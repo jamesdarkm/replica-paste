@@ -76,3 +76,9 @@ ul {
 .active-modal {
   overflow: Xhidden;
 }
+
+@layer base {
+  img {
+    display:initial
+  }
+}

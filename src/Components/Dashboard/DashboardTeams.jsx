@@ -102,7 +102,7 @@ const DashboardTeams = () => {
                         </li>
                         <li>
                             <Link
-                                to='/'
+                                to='/checkout'
                                 className='hover:text-gray-400 flex block'
                             >
                                 <ion-icon

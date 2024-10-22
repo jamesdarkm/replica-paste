@@ -14,7 +14,12 @@ import Notify from './Components/Payments/Notify.jsx';
 import Return from './Components/Payments/Return.jsx';
 import Cancel from './Components/Payments/Cancel.jsx';
 import Checkout from './Components/Payments/Checkout.jsx';
+
+
 import BillingOverview from './Components/Payments/Billing Overview.jsx';
+
+import { PDFViewer } from '@react-pdf/renderer';
+import Invoice from './Components/Payments/InvoicePDF.jsx';
 
 import { AuthProvider } from './Context/authContext';
 
@@ -92,6 +97,10 @@ const router = createBrowserRouter([
     {
         path: '/billing-overview',
         element: <BillingOverview />,
+    },
+    {
+        path: '/invoice/:id',
+        element: <Invoice />,
     },
     {
         path: '/invite',
