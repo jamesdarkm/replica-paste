@@ -377,11 +377,6 @@ res.send(signature)
 
 })
 
-app.get('/', (req, res) => {
-  console.log('yass')
-  res.send('yasss')
-})
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
