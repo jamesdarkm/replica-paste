@@ -235,8 +235,6 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [color, setColor] = useState('#ffffff'); // default color is white
     const [textColor, setTextColor] = useState('dark');
-    const [color, setColor] = useState('light'); // default color is white
-    const [textColor, setTextColor] = useState('#000000');
 
     const calculateLuminance = (hex) => {
         const rgb = parseInt(hex.substring(1), 16); // Convert hex to RGB
