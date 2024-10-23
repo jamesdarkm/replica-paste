@@ -28,7 +28,9 @@ export const doCreateUserWithEmailAndPassword = async (firstName, lastName, emai
         lastName: lastName,
         avatar: '',
         subscribedToEmail: false,
-        onBoarding: false
+        onBoarding: false,
+        plan: 'FREE',
+        subscriptionToken: ''
       });
   
       return createUser;

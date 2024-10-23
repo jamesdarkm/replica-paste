@@ -71,10 +71,11 @@
     font-size: 30px;
 }
 
+
 .dark * {
-    color: white !important;
+    color:yellow!important;
 }
 
 .light * {
-    color: black !important;
+    color:blue!important;
 }

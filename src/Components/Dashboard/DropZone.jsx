@@ -233,6 +233,8 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     // ));
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
+    const [color, setColor] = useState('#ffffff'); // default color is white
+    const [textColor, setTextColor] = useState('dark');
     const [color, setColor] = useState('light'); // default color is white
     const [textColor, setTextColor] = useState('#000000');
 
@@ -291,7 +293,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
                 <div className={`${layout === 'top' ? 'flex flex-col' : layout === 'bottom' ? '' : 'flex'}`}>
                     <div className={`${layout === 'right' ? 'w-1/2 order-2' : layout === 'left' ? 'w-1/2 order-1' : layout === 'bottom' ? 'w-full flex-1 order-1' : layout === 'top' ? 'w-full flex-1 order-2' : 'w-full order-1'}`}>
-                        <div className={`flex justify-center p-4 text-white ${textColor} text-[#ffffff]`}>
+                        <div className='flex justify-center p-4 text-white '>
                             <CKEditor
                                 editor={InlineEditor}
                                 data={cardItems.caption}

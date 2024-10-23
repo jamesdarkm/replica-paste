@@ -13,6 +13,9 @@ import serviceAccount from './serviceAccount.json' assert { type: 'json' };
 import crypto from 'crypto';
 import dns from 'dns';
 
+import { db } from './firebase.js';
+import { addDoc, doc, updateDoc, collection } from 'firebase/firestore';
+
 
 initializeApp({
   credential: cert(serviceAccount),
@@ -43,70 +46,73 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(express.json()); // Check which version this should be defined on (test on v18.20.4 and 20.* not working)
+app.use(express.urlencoded({ extended: true })); // Check which version this should be defined on (test on v18.20.4 and 20.* not working)
 
 app.post('/send-email', (req, res) => {
-    const mailjet = Mailjet.apiConnect(process.env.VITE_MJ_APIKEY_PUBLIC, process.env.VITE_MJ_APIKEY_PRIVATE);
+  const mailjet = Mailjet.apiConnect(process.env.VITE_MJ_APIKEY_PUBLIC, process.env.VITE_MJ_APIKEY_PRIVATE);
 
-    const request = mailjet
-        .post("send", { 'version': 'v3.1' })
-        .request({
-            Messages: [
-                {
-                  From: {
-                    Email: 'no-reply@darkm.co.za',
-                    Name: 'SocialPaste',
-                  },
-                  To: [
-                    {
-                        "Email": req.body.email,
-                        "Name": "SocialPaste"
-                    }
-                  ],
-                  TemplateID: 6147342,
-                  TemplateLanguage: true
-                },
-              ],
-            });
-    request
-        .then((result) => {
-            res.status(200).json(result.body);
-        })
-        .catch((err) => {
-            res.status(500).json({ error: err.message });
-        });
+  const request = mailjet
+    .post("send", { 'version': 'v3.1' })
+    .request({
+      Messages: [
+        {
+          From: {
+            Email: 'no-reply@darkm.co.za',
+            Name: 'SocialPaste',
+          },
+          To: [
+            {
+              "Email": req.body.email,
+              "Name": "SocialPaste"
+            }
+          ],
+          TemplateID: 6147342,
+          TemplateLanguage: true
+        },
+      ],
+    });
+  request
+    .then((result) => {
+      res.status(200).json(result.body);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
 });
 
 app.post('/subscribe-newsletter', (req, res) => {
   const mailjet = Mailjet.apiConnect(process.env.VITE_MJ_APIKEY_PUBLIC, process.env.VITE_MJ_APIKEY_PRIVATE);
 
   const request = mailjet
-      .post("send", { 'version': 'v3.1' })
-      .request({
-          Messages: [
-              {
-                From: {
-                  Email: 'no-reply@darkm.co.za',
-                  Name: 'SocialPaste',
-                },
-                To: [
-                  {
-                      "Email": req.body.email,
-                      "Name": "SocialPaste"
-                  }
-                ],
-                TemplateID: 6174204,
-                TemplateLanguage: true
-              },
-            ],
-          });
+    .post("send", { 'version': 'v3.1' })
+    .request({
+      Messages: [
+        {
+          From: {
+            Email: 'no-reply@darkm.co.za',
+            Name: 'SocialPaste',
+          },
+          To: [
+            {
+              "Email": req.body.email,
+              "Name": "SocialPaste"
+            }
+          ],
+          TemplateID: 6174204,
+          TemplateLanguage: true
+        },
+      ],
+    });
   request
-      .then((result) => {
-          res.status(200).json(result.body);
-      })
-      .catch((err) => {
-          res.status(500).json({ error: err.message });
-      });
+    .then((result) => {
+      res.status(200).json(result.body);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
 });
 
 
@@ -127,9 +133,9 @@ app.post('/optimize-image', upload.single('image'), async (req, res) => {
       const optimizedFileFirebaseName = optimizedFilePath.replace('uploads\\', '');
 
       const uploadFile = await bucket.upload(optimizedFilePath, { destination: `avatars/${optimizedFileFirebaseName}` });
-      
-      
-      res.status(200).json({firebaseImage: optimizedFileFirebaseName})
+
+
+      res.status(200).json({ firebaseImage: optimizedFileFirebaseName })
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -145,42 +151,41 @@ app.post('/send-invite', (req, res) => {
   const inviteLink = `http://localhost:5173/invite?token=${token}&team=${teamId}`;
 
   const request = mailjet
-      .post("send", { 'version': 'v3.1' })
-      .request({
-          Messages: [
-              {
-                From: {
-                  Email: 'no-reply@darkm.co.za',
-                  Name: 'SocialPaste',
-                },
-                To: [
-                  {
-                      "Email": email,
-                      "Name": "SocialPaste Member"
-                  }
-                ],
-                Subject: "Team Invitation",
-                TextPart: "Dear user, you have been invited to a team on SocialPaste. Click the link below to accept the invite.",
-                HTMLPart: `<a href=${inviteLink}>Accept Invite</a>`,
-                // TemplateID: 6147342,
-                // TemplateLanguage: true
-              },
-            ],
-          });
+    .post("send", { 'version': 'v3.1' })
+    .request({
+      Messages: [
+        {
+          From: {
+            Email: 'no-reply@darkm.co.za',
+            Name: 'SocialPaste',
+          },
+          To: [
+            {
+              "Email": email,
+              "Name": "SocialPaste Member"
+            }
+          ],
+          Subject: "Team Invitation",
+          TextPart: "Dear user, you have been invited to a team on SocialPaste. Click the link below to accept the invite.",
+          HTMLPart: `<a href=${inviteLink}>Accept Invite</a>`,
+          // TemplateID: 6147342,
+          // TemplateLanguage: true
+        },
+      ],
+    });
   request
-      .then((result) => {
-          res.status(200).json(result.body);
-      })
-      .catch((err) => {
-          res.status(500).json({ error: err.message });
-      });
+    .then((result) => {
+      res.status(200).json(result.body);
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.message });
+    });
 });
 
 app.post('/checkout', (req, res) => {
-  console.log(req.body)
   const formData = req.body;
-  const passPhrase = formData.passPhrase;
-
+  // const passPhrase = formData.passPhrase;
+  const passPhrase = process.env.VITE_PASSPHRASE;
   // Create parameter string
   let pfOutput = '';
   for (const key in formData) {
@@ -206,50 +211,51 @@ app.post('/checkout', (req, res) => {
 })
 
 // Notify URL endpoint
-app.post('/notify', async (req, res) => {
+const notify = multer();
+
+app.post('/notify', notify.none(), async (req, res) => {
   const testingMode = true;
   const pfHost = testingMode ? "sandbox.payfast.co.za" : "www.payfast.co.za";
-  console.log('gii')
-  
   const pfData = JSON.parse(JSON.stringify(req.body));
-  
+
+  console.log('ITN')
   let pfParamString = "";
   for (let key in pfData) {
-    if(pfData.hasOwnProperty(key) && key !== "signature"){
-      pfParamString +=`${key}=${encodeURIComponent(pfData[key].trim()).replace(/%20/g, "+")}&`;
+    if (pfData.hasOwnProperty(key) && key !== "signature") {
+      pfParamString += `${key}=${encodeURIComponent(pfData[key].trim()).replace(/%20/g, "+")}&`;
     }
   }
-  
+
   // Remove last ampersand
   pfParamString = pfParamString.slice(0, -1);
-  
 
-  const pfValidSignature = (pfData, pfParamString, pfPassphrase = null ) => {
+
+  const pfValidSignature = (pfData, pfParamString, pfPassphrase = null) => {
     // Calculate security signature
     let tempParamString = '';
     if (pfPassphrase !== null) {
-      pfParamString +=`&passphrase=${encodeURIComponent(pfPassphrase.trim()).replace(/%20/g, "+")}`;
+      pfParamString += `&passphrase=${encodeURIComponent(pfPassphrase.trim()).replace(/%20/g, "+")}`;
     }
-  
+
     const signature = crypto.createHash("md5").update(pfParamString).digest("hex");
     return pfData['signature'] === signature;
   };
 
-  async function ipLookup(domain){
+  async function ipLookup(domain) {
     return new Promise((resolve, reject) => {
-      dns.lookup(domain, {all: true}, (err, address, family) => {
-        if(err) {
+      dns.lookup(domain, { all: true }, (err, address, family) => {
+        if (err) {
           reject(err)
         } else {
           const addressIps = address.map(function (item) {
-           return item.address;
+            return item.address;
           });
           resolve(addressIps);
         }
       });
     });
   }
-  
+
   const pfValidIP = async (req) => {
     const validHosts = [
       'www.payfast.co.za',
@@ -257,30 +263,30 @@ app.post('/notify', async (req, res) => {
       'w1w.payfast.co.za',
       'w2w.payfast.co.za'
     ];
-  
+
     let validIps = [];
     const pfIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  
-    try{
-      for(let key in validHosts) {
+
+    try {
+      for (let key in validHosts) {
         const ips = await ipLookup(validHosts[key]);
         validIps = [...validIps, ...ips];
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
-  
+
     const uniqueIps = [...new Set(validIps)];
-  
+
     if (uniqueIps.includes(pfIp)) {
       return true;
     }
     return false;
   };
 
-  const pfValidPaymentData = ( cartTotal, pfData ) => {
+  const pfValidPaymentData = (cartTotal, pfData) => {
     return Math.abs(parseFloat(cartTotal) - parseFloat(pfData['amount_gross'])) <= 0.01;
-  }; 
+  };
 
   const pfValidServerConfirmation = async (pfHost, pfParamString) => {
     try {
@@ -291,36 +297,56 @@ app.post('/notify', async (req, res) => {
         },
         body: JSON.stringify(pfParamString),
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
       return data === 'VALID';
     } catch (error) {
       console.error(error);
       return false;
     }
-  }; 
+  };
 
   const check1 = pfValidSignature(pfData, pfParamString, 'jt7NOE43FZPn');
-  console.log(check1 ? 'is valid signature' : 'not valid signature')
-  const check2 = pfValidIP(req);
-  console.log(check2 ? 'is valid IP' : 'not valid Ip')
-  const check3 = pfValidPaymentData('1450.00', pfData );
-  console.log(check1 ? 'is valid data' : 'not valid data')
-  const check4 = pfValidServerConfirmation(pfHost, pfParamString);
-  console.log(check1 ? 'is valid confirmation' : 'not valid confirmation')
-  
-  if(check1 && check2 && check3 && check4) {
-      // All checks have passed, the payment is successful
-      console.log('done')
-      res.status(200).send('success')
-  } else {
-      // Some checks have failed, check payment manually and log for investigation
-      res.status(400).send('not success')
-  } 
+  const check2 = await pfValidIP(req);
+  const check3 = pfValidPaymentData(pfData['amount_gross'], pfData);
+  const check4 = await pfValidServerConfirmation(pfHost, pfParamString);
+
+  let checks = [check1, check2, check3, check4];
+  let status = 'investigate';
+  if (check1 && check2 && check3 && check4) {
+    checks = ['true', 'true', 'true', 'true'];
+    status = 'complete';
+  }
+
+  try {
+    const userDocRef = doc(db, 'users', pfData['custom_str1']);
+    await updateDoc(userDocRef, {
+      plan: 'PRO'
+    });
+
+    console.log('Document successfully updated!');
+  } catch (error) {
+    console.error('Error updating document:', error);
+  }
+
+  try {
+    const transactionData = {
+      status: status,
+      checks: checks,
+      ownerId: pfData['custom_str1'],
+      ...req.body
+    };
+
+    docRef = await addDoc(collection(db, "transactions"), transactionData);
+
+
+  } catch (error) {
+    // Log error
+  }
 });
 
 // generate signature
@@ -343,12 +369,12 @@ let data = {
 // Passphrase used for salting the signature (set in PayFast settings)
 let passPhrase = 'jt7NOE43FZPn ';
 
-// Signature generation function
-const generateAPISignature = (data, passPhrase) => {
+  // Signature generation function
+  const generateAPISignature = (data, passPhrase) => {
     // Arrange the array by key alphabetically for API calls
     let ordered_data = {};
     Object.keys(data).sort().forEach(key => {
-        ordered_data[key] = data[key];
+      ordered_data[key] = data[key];
     });
     data = ordered_data;
     // console.log('DATA', data)
@@ -356,7 +382,7 @@ const generateAPISignature = (data, passPhrase) => {
     // Create the get string
     let getString = '';
     for (let key in data) {
-        getString += key + '=' + encodeURIComponent(data[key]).replace(/%20/g,'+') + '&';
+      getString += key + '=' + encodeURIComponent(data[key]).replace(/%20/g, '+') + '&';
     }
 
     // Remove the last '&'
@@ -366,18 +392,152 @@ const generateAPISignature = (data, passPhrase) => {
 
     // Hash the data and create the signature
     return crypto.createHash("md5").update(getString).digest("hex");
-}
+  }
 
-// Generate the signature for the API request
-const signature = generateAPISignature(data, passPhrase);
+  // Generate the signature for the API request
+  const signature = generateAPISignature(data, passPhrase);
 
-// Output the generated signature
-console.log('Generated Signature:', signature);
-res.send(signature)
+  // Output the generated signature
+  console.log('Generated Signature:', signature);
+  res.send(signature)
 
 })
 
 
+
+app.post('/cancel-plan', async (req, res) => {
+  const passPhrase = process.env.VITE_PASSPHRASE;
+  const merchantId = process.env.VITE_MERCHANT_ID;
+
+  const formData = req.body;
+  const uid = formData.uid;
+  const subscriptionToken = formData.subscriptionToken;
+  // console.log('formdata:' + JSON.stringify(formData));
+
+  let dateNow = new Date();
+  dateNow = dateNow.toISOString().slice(0, 19);
+
+
+
+  // Generate the MD5 signature
+  const timestamp = `&timestamp=${encodeURIComponent(dateNow).replace(/%20/g, '+')}`;
+  const sig = 'merchant-id=' + merchantId + '&passphrase=' + passPhrase + timestamp + '&version=v1';
+  const signature = crypto.createHash('md5').update(sig).digest('hex');
+
+  // Send request /ping
+  // const response = await fetch(`https://api.payfast.co.za/ping?testing=true`, {
+  //   method: 'GET',
+  //   headers: {
+  //     'merchant-id': merchantId,
+  //     'version': 'v1',
+  //     'timestamp': dateNow,
+  //     'signature': signature,
+  //   },
+  //   redirect: 'follow'
+  // });
+
+  // if (!response.ok) {
+  //   throw new Error('Network response was not ok');
+  // }
+
+  // const result = await response.text();
+  // console.log('REX' + result)
+
+
+
+  try {
+    const response = await fetch(`https://api.payfast.co.za/subscriptions/${subscriptionToken}/cancel?testing=true`, {
+      method: 'PUT',
+      headers: {
+        'merchant-id': merchantId,
+        'version': 'v1',
+        'timestamp': dateNow,
+        'signature': signature,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const userDocRef = doc(db, 'users', uid);
+    await updateDoc(userDocRef, {
+      plan: 'FREE',
+      planStatus: 'CANCELLED'
+    });
+
+    res.status(200).send({ success: 'ok' });
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
+
+
+app.post('/pause-plan', async (req, res) => {
+  const passPhrase = process.env.VITE_PASSPHRASE;
+  const merchantId = process.env.VITE_MERCHANT_ID;
+
+  const formData = req.body;
+  const uid = formData.uid;
+  const subscriptionToken = formData.subscriptionToken;
+  const planStatus = formData.planStatus;
+  // console.log('formdata:' + JSON.stringify(formData));
+
+  let dateNow = new Date();
+  dateNow = dateNow.toISOString().slice(0, 19);
+
+
+
+  // Generate the MD5 signature
+  const timestamp = `&timestamp=${encodeURIComponent(dateNow).replace(/%20/g, '+')}`;
+  const sig = 'merchant-id=' + merchantId + '&passphrase=' + passPhrase + timestamp + '&version=v1';
+  const signature = crypto.createHash('md5').update(sig).digest('hex');
+
+
+  let planEndpoint = `https://api.payfast.co.za/subscriptions/${subscriptionToken}/pause?testing=true`;
+  let planStatusDB = 'PAUSED';
+  if (planStatus == 'PAUSED') {
+    planStatusDB = 'ACTIVE';
+    planEndpoint = `https://api.payfast.co.za/subscriptions/${subscriptionToken}/unpause?testing=true`;
+  }
+console.log(planStatus)
+  console.log(planEndpoint)
+  try {
+    const response = await fetch(planEndpoint, {
+      method: 'PUT',
+      headers: {
+        'merchant-id': merchantId,
+        'version': 'v1',
+        'timestamp': dateNow,
+        'signature': signature,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const userDocRef = doc(db, 'users', uid);
+    await updateDoc(userDocRef, {
+      plan: 'PRO',
+      planStatus: planStatusDB
+    });
+
+    res.status(200).send({ success: 'ok', planStatus: planStatusDB });
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+});
+
+
+// app.get('/', (req, res) => {
+//   console.log('yass')
+//   res.send('yasss')
+// })
+
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
