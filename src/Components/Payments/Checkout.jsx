@@ -7,7 +7,7 @@ export default function Checkout() {
     const [passPhrase, setPassphrase] = useState(import.meta.env.VITE_PASSPHRASE);
     const [payFastSignature, setPayFastSignature] = useState('');
     const paymentForm = useRef(null);
-    const baseURL = 'https://570d-41-216-202-85.ngrok-free.app';
+    const baseURL = 'https://3aad-41-216-202-52.ngrok-free.app';
 
     const generatePayFastSignature = async (e) => {
       e.preventDefault();

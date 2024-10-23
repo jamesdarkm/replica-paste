@@ -24,10 +24,12 @@ const Deck = () => {
     const [deckID, setDeckID] = useState('');
     const [deckCount, setDeckCount  ] = useState([]);
     const [didUploadDeck, setDidUploadDeck] = useState(false);
+    const [cardIndex, setCardIndex] = useState(null);
 
     const navigate = useNavigate();
     const { id } = useParams();
     const uid = currentUser.uid;
+    const hasDecks = Object.keys(decks).length !== 0;
 
     if (!currentUser) {
         return <Navigate to='/' replace={true} />;
@@ -69,9 +71,10 @@ const Deck = () => {
                 if (docSnap.exists()) {
                     // Access the data in the document
                     const data = docSnap.data();
-                    // console.log(uid, data)
+                    const deckObjectToArray = Object.entries(data.decks);
+                    // console.log(deckObjectToArray)
 
-                    setDecks(data.decks)
+                    setDecks(deckObjectToArray)
                     setHeading(data.heading)
                     setDeckCount(Object.keys(data.decks).length)
                 } else {
@@ -97,15 +100,16 @@ const Deck = () => {
     }
 
     const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
-    const toggleDropZonePopup = () => {
-        console.log('here')
+    const toggleDropZonePopup = (cardIndex) => {
+        // console.log(cardIndex)
+        setCardIndex(cardIndex)
         setIsDropZoneOpen(!isDropZoneOpen);
     };
 
 
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID} />
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID}  decks={decks} setCardIndex={setCardIndex} cardIndex={cardIndex} />
 
             <div className='flex-1'>
                 <div className='w-full flex items-center justify-between z-10 '>
@@ -169,7 +173,7 @@ const Deck = () => {
                 </div>
             </div>
             
-            <Posts decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} />
+            <Posts hasDecks={hasDecks} decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} />
         </>
     );
 };

@@ -1,8 +1,9 @@
 import React from 'react'
 
 export default function BillingOverview() {
+
   return (
-    <div>
+    <div onClick={send}>
         Billing Overview
     </div>
   )

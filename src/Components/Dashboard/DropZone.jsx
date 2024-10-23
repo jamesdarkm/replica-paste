@@ -19,15 +19,32 @@ import { Navigation, Thumbs } from 'swiper/modules';
 
 
 
-const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID }) => {
+const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, decks, cardIndex, setCardIndex, }) => {
     if (!isOpen) return null;
     const uniqueId = uuidv4();
+    // let { card, cardIndex } = cardDetails;
+    // // console.log(card, cardIndex)
+    const deckId = decks[cardIndex][0];
+    const cardItems = decks[cardIndex][1];
+    // console.log(cardIndex, cardItems.caption)
 
-    const [selectedImages, setSelectedImages] = useState([]);
+
+    // const [cardItems.images, setSelectedImages] = useState(cardItems.images);
     const [imageNumber, setimageNumber] = useState('');
 
     const captionRef = useRef(null);
-    const [editorData, setEditorData] = useState('');
+    const [editorData, setEditorData] = useState(cardItems.caption);
+    // console.log(card && card.images)
+    // console.log(cardItems.caption)
+    // console.log(card)
+
+    const moveToNextCard = () => {
+        setCardIndex((prevIndex) => (prevIndex + 1) % decks.length)
+    }
+
+    const moveToPrevCard = () => {
+        setCardIndex((cardIndex - 1 + decks.length) % decks.length)
+    }
 
     /**
      * 
@@ -46,7 +63,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                         // Access the data in the document
                         const data = docSnap.data();
 
-                        console.log(data);
+                        // console.log(data);
                         // Uncomment and set your state here
                         // setDecks(data.decks);
                         // setHeading(data.heading);
@@ -83,12 +100,8 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
     };
 
 
-
-
-
-
     const uploadPost = async () => {
-        if (!captionRef.current.value && selectedImages.length === 0) {
+        if (!captionRef.current.value && cardItems.images.length === 0) {
             // console.log('duh');
             onClose();
             return;
@@ -107,7 +120,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
 
         // Handle uploading images and updating the document
         await Promise.all(
-            selectedImages.map(async (image, index) => {
+            cardItems.images.map(async (image, index) => {
                 // Use a unique identifier for the image upload path
                 const imageRef = ref(
                     storage,
@@ -125,7 +138,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                 lastDownloadURL = downloadURL;
 
                 // Update the thumbnail with the last uploaded image's download URL
-                if (index === selectedImages.length - 1) {
+                if (index === cardItems.images.length - 1) {
                     await updateDoc(deckSubDocRef, {
                         [`decks.${uniqueId}.thumbnail`]: lastDownloadURL,
                     });
@@ -140,6 +153,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
     };
 
     const onDrop = useCallback((acceptedFiles) => {
+        // console.log(acceptedFiles)
         setimageNumber(acceptedFiles.length);
 
         setSelectedImages(
@@ -176,50 +190,50 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
         }),
         [isFocused, isDragAccept, isDragReject]
     );
-    const selected_images = selectedImages?.map((file, index) => (
-        <div
-            key={file.uniqueId}
-            className={`bg-cover bg-center bg-blue-500 w-full ${index > 3 ? 'hidden' : ''
-                }`}
-            style={{
-                backgroundImage: `url(${file.preview})`,
-            }}
-            data-index={index}
-        >
-            <div
-                className={`w-full bg-stone-950 opacity-70 flex flex justify-center items-center ${index > 2 ? '' : 'hidden'
-                    }`}
-            >
-                <button
-                    type='button'
-                    onClick={() => removeImage(file.uniqueId)}
-                >
-                    <ion-icon
-                        name='search-outline'
-                        style={{ color: 'white', fontSize: '50px' }}
-                    ></ion-icon>{' '}
-                    <span className='text-white font-bold text-2xl'>
-                        {' '}
-                        {index + 1}+
-                    </span>
-                </button>
-            </div>
-            <button
-                type='button'
-                className={`mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500 ${index > 2 ? 'hidden' : ''
-                    }`}
-                onClick={() => removeImage(file.uniqueId)}
-            >
-                <ion-icon
-                    style={{ fontSize: '20px' }}
-                    name='trash-outline'
-                ></ion-icon>
-            </button>
-        </div>
-    ));
+    // const selected_images = cardItems.images?.map((file, index) => (
+    //     <div
+    //         key={file.uniqueId}
+    //         className={`bg-cover bg-center bg-blue-500 w-full ${index > 3 ? 'hidden' : ''
+    //             }`}
+    //         style={{
+    //             backgroundImage: `url(${file.preview})`,
+    //         }}
+    //         data-index={index}
+    //     >
+    //         <div
+    //             className={`w-full bg-stone-950 opacity-70 flex flex justify-center items-center ${index > 2 ? '' : 'hidden'
+    //                 }`}
+    //         >
+    //             <button
+    //                 type='button'
+    //                 onClick={() => removeImage(file.uniqueId)}
+    //             >
+    //                 <ion-icon
+    //                     name='search-outline'
+    //                     style={{ color: 'white', fontSize: '50px' }}
+    //                 ></ion-icon>{' '}
+    //                 <span className='text-white font-bold text-2xl'>
+    //                     {' '}
+    //                     {index + 1}+
+    //                 </span>
+    //             </button>
+    //         </div>
+    //         <button
+    //             type='button'
+    //             className={`mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500 ${index > 2 ? 'hidden' : ''
+    //                 }`}
+    //             onClick={() => removeImage(file.uniqueId)}
+    //         >
+    //             <ion-icon
+    //                 style={{ fontSize: '20px' }}
+    //                 name='trash-outline'
+    //             ></ion-icon>
+    //         </button>
+    //     </div>
+    // ));
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
-    const [color, setColor] = useState('#ffffff'); // default color is white
+    const [color, setColor] = useState('light'); // default color is white
     const [textColor, setTextColor] = useState('#000000');
 
     const calculateLuminance = (hex) => {
@@ -235,19 +249,19 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
 
     // Function to handle color change
     const handleColorChange = (e) => {
-        const newColor = e.target.value;
-        setColor(newColor);
+        const newColour = e.target.value;
+        setColor(newColour);
         // setLayout('color');
 
-        const luminance = calculateLuminance(newColor);
+        const luminance = calculateLuminance(newColour);
         if (luminance < 128) {
             // Dark color: log "dark" and set text color to white
             console.log('dark');
-            setTextColor('#ffffff');
+            setTextColor('dark');
         } else {
             // Light color: log "light" and set text color to black
             console.log('light');
-            setTextColor('#000000');
+            setTextColor('light');
         }
     };
 
@@ -257,19 +271,15 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
 
     const layoutIntro = {
         background: 'url(https://picsum.photos/id/1043/800/600) rgba(000, 000, 000, 0.5)',
+        background: `url(${cardItems.images[0]})`,
         backgroundBlendMode: 'multiply',
         backgroundSize: 'cover',
     }
 
-    const changeLayout = () => {
-        console.log('Layout changed');
-    };
-
-
 
     return (
         <>
-            <div className="p-4 w-full h-screen" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : layout === 'left' ? { backgroundColor: color } : { ...layoutIntro }}>
+            <div className="p-4 w-full h-screen" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
                 <div className='flex justify-end'>
                     <button className='p-2' onClick={onClose}>
                         <ion-icon
@@ -281,14 +291,15 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
 
                 <div className={`${layout === 'top' ? 'flex flex-col' : layout === 'bottom' ? '' : 'flex'}`}>
                     <div className={`${layout === 'right' ? 'w-1/2 order-2' : layout === 'left' ? 'w-1/2 order-1' : layout === 'bottom' ? 'w-full flex-1 order-1' : layout === 'top' ? 'w-full flex-1 order-2' : 'w-full order-1'}`}>
-                        <div className='flex justify-center p-4 text-white text-[#ffffff]'>
+                        <div className={`flex justify-center p-4 text-white ${textColor} text-[#ffffff]`}>
                             <CKEditor
                                 editor={InlineEditor}
-                                data={editorData}
+                                data={cardItems.caption}
                                 onChange={(event, editor) => {
                                     const data = editor.getData();
                                     setEditorData(data);
-                                    console.log({ event, editor, data });
+                                    // console.log(data)
+                                    // console.log({ event, editor, data });
                                 }}
                                 config={{
                                     toolbar: [
@@ -318,7 +329,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                 }}
                             />
                         </div>
-                        <input ref={captionRef} type='hidden' value={editorData} />
+                        <input ref={captionRef} type='hidden' value={cardItems.caption} />
                     </div>
                     <div className={`p-4 flex flex-wrap ${layout === 'right' ? 'w-1/2 order-1' : layout === 'left' ? 'w-1/2 order-2' : layout === 'top' ? 'w-full flex-1 order-1 border-solid border-red-500' : layout === 'bottom' ? 'w-full flex-1 order-2' : layout === 'top' ? 'w-full flex-1 order-2' : 'hidden'}`}>
                         <div
@@ -332,45 +343,32 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                     thumbs={{ swiper: thumbsSwiper }}
                                     style={{ width: '100%' }}
                                 >
-                                    {selectedImages.map((file, index) => (
-                                        <SwiperSlide key={index}>
-                                            <div
-                                                key={file.uniqueId}
-                                                className={`bg-cover bg-center bg-blue-500 w-full ${index > 3 ? 'hidden' : ''
-                                                    }`}
-                                                style={{
-                                                    backgroundImage: `url(${file.preview})`,
-                                                }}
-                                                data-index={index}
-                                            >
+                                    {cardItems.images && cardItems.images.map((file, index) => {
+                                        const isObject = typeof file === 'object';
+                                        const imageSrc = isObject ? file.preview : file;
+                                    
+                                        return (
+                                            <SwiperSlide key={index}>
                                                 <button
                                                     type='button'
                                                     className='mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500'
-                                                    onClick={() =>
-                                                        removeImage(file.uniqueId)
-                                                    }
+                                                    onClick={() => removeImage(isObject ? file.uniqueId : file)}
                                                 >
-                                                    <ion-icon
-                                                        style={{ fontSize: '20px' }}
-                                                        name='trash-outline'
-                                                    ></ion-icon>
+                                                    <ion-icon style={{ fontSize: '20px' }} name='trash-outline'></ion-icon>
                                                 </button>
-                                            </div>
+                                                <img
+                                                    src={imageSrc}
+                                                    alt={`Slide ${index + 1}`}
+                                                    className='object-cover'
+                                                    style={{ width: '100%', height: '100%' }}
+                                                />
+                                            </SwiperSlide>
+                                        );
+                                    })}
 
-                                            <img
-                                                src={file.preview}
-                                                alt={`Slide ${index + 1}`}
-                                                className='object-cover'
-                                                style={{
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                            />
-                                        </SwiperSlide>
-                                    ))}
                                 </Swiper>
 
-                                <Swiper
+                                {/* <Swiper
                                     onSwiper={setThumbsSwiper}
                                     modules={[Thumbs]}
                                     spaceBetween={10}
@@ -379,7 +377,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                     watchSlidesProgress
                                     style={{ marginTop: '10px', height: '30vh' }} // Adjust height as needed
                                 >
-                                    {selectedImages.map((file, index) => (
+                                    {cardItems.images.map((file, index) => (
                                         <SwiperSlide
                                             key={index}
                                             className='group relative'
@@ -410,7 +408,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                             </>
                                         </SwiperSlide>
                                     ))}
-                                </Swiper>
+                                </Swiper> */}
                             </div>
                         </div>
                     </div>
@@ -455,13 +453,13 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                         setLayout('bottom');
                                     }}>
                                         <img src='/src/Components/Assets/slide-orientation.svg' />
-                                        <strong>Bottom</strong>
+                                        <strong>Top</strong>
                                     </button>
                                     <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('top');
                                     }}>
                                         <img src='/src/Components/Assets/slide-orientation.svg' />
-                                        <strong>Top</strong>
+                                        <strong>Bottom</strong>
                                     </button>
                                 </div>
                             )}
@@ -502,7 +500,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                         </button>
 
                         <div className='flex items-center gap-2'>
-                            <button className='p-3'>
+                            <button className='p-3' onClick={moveToNextCard}>
                                 <svg
                                     width='10'
                                     height='18'
@@ -520,7 +518,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID })
                                 </svg>
                             </button>
                             <div>{deckCount}</div>
-                            <button className='p-3'>
+                            <button className='p-3' onClick={moveToPrevCard}>
                                 <svg
                                     width='10'
                                     height='18'

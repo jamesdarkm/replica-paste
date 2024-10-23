@@ -196,11 +196,11 @@ app.post('/checkout', (req, res) => {
 
   // Add the passphrase
   pfOutput += `&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, '+')}`;
-  console.log(pfOutput)
+  // console.log(pfOutput)
 
   // Generate the MD5 signature
   const signature = crypto.createHash('md5').update(pfOutput).digest('hex');
-  console.log(signature)
+  console.log(`SIGN:${signature}   ---*****`)
   // Return the signature as a response
   res.status(200).send({ signature });
 })
@@ -328,20 +328,20 @@ app.get('/signature-generation', (req, res) => {
 
   console.log('received')
 
-// Example data for a payment request
+// PayFast data
 let data = {
-    'merchant_id': '10031040',
-    'amount': '500.00',
-    'currency': 'ZAR',
-    'item_name': 'Product A',
-    'email_address': 'mandla@darkm.co.za',
-    'return_url': 'https://570d-41-216-202-85.ngrok-free.app/return',
-    'cancel_url': 'https://570d-41-216-202-85.ngrok-free.app/cancel',
-    'notify_url': 'https://570d-41-216-202-85.ngrok-free.app/notify'
+  "merchant_id": "10000100",
+  "merchant_key": "46f0cd694581a",
+  "return_url": "https://3aad-41-216-202-52.ngrok-free.app/return",
+  "notify_url": "https://3aad-41-216-202-52.ngrok-free.app/notify",
+  "cancel_url": "https://3aad-41-216-202-52.ngrok-free.app/cancel",
+  // "m_payment_id": "162923",
+  "amount": "1450.00",
+  "item_name": "Social Paste"
 };
 
 // Passphrase used for salting the signature (set in PayFast settings)
-let passPhrase = 'LionelMess10';
+let passPhrase = 'jt7NOE43FZPn ';
 
 // Signature generation function
 const generateAPISignature = (data, passPhrase) => {
@@ -351,6 +351,7 @@ const generateAPISignature = (data, passPhrase) => {
         ordered_data[key] = data[key];
     });
     data = ordered_data;
+    // console.log('DATA', data)
 
     // Create the get string
     let getString = '';
@@ -360,11 +361,8 @@ const generateAPISignature = (data, passPhrase) => {
 
     // Remove the last '&'
     getString = getString.substring(0, getString.length - 1);
-
-    // Append the passphrase to the getString, if provided
-    if (passPhrase !== null) {
-        getString += `&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, "+")}`;
-    }
+    if (passPhrase !== null) {getString +=`&passphrase=${encodeURIComponent(passPhrase.trim()).replace(/%20/g, "+")}`;}
+    console.log('STRING', getString)
 
     // Hash the data and create the signature
     return crypto.createHash("md5").update(getString).digest("hex");

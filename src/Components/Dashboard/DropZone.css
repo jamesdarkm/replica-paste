@@ -70,3 +70,11 @@
     color: #000;
     font-size: 30px;
 }
+
+.dark * {
+    color: white !important;
+}
+
+.light * {
+    color: black !important;
+}

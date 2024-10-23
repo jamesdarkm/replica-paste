@@ -5,13 +5,12 @@ import './Posts.css';
 import { db } from "../../../firebase";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
 
-const Posts = ({ decks = {}, toggleDropZonePopup, uid, id, setDeckID }) => {
+const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => {
     const navigate = useNavigate();
     const { id: deckId } = useParams();
-    const hasDecks = Object.keys(decks).length !== 0;
 
     const viewCard = (item, cardId) => {
-        console.log(item, decks, cardId);
+        console.log(item, hasDecks, cardId);
         navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } });
     };
 
@@ -28,51 +27,61 @@ const Posts = ({ decks = {}, toggleDropZonePopup, uid, id, setDeckID }) => {
             <div className='mx-auto w-full deck-preview'>
                 <div className='grid grid-cols-3'>
                     {hasDecks
-                        ? Object.entries(decks).map(([id, item]) => (
-                            <div
-                                key={id}
-                                className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
-                                onClick={(e) => {
-                                    setDeckID(id);
-                                    toggleDropZonePopup();
-                                }}
-                            >
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        deleteCard(id);
-                                    }}
-                                    className="absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-red-500"
-                                >
-                                    <ion-icon
-                                        style={{ fontSize: "30px" }}
-                                        name="trash-outline"
-                                    ></ion-icon>
-                                </button>
-                                <div
-                                    className={`p-6 w-1/2 text-2xl ${!item.thumbnail && 'mx-auto'
-                                        }`}
-                                >
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: item.caption,
-                                        }}
-                                    />
-                                </div>
+                        ? decks.map(([id, item], index, array) => {
+                            const thumbnail = item.thumbnail;
+                            const deckId = array[index][0];
+                            const thumb = array[index][1];
 
-                                {item.thumbnail && (
-                                    <div
-                                        className='w-1/2 h-full bg-center bg-cover'
-                                        style={{
-                                            backgroundImage: `url(${item.thumbnail})`,
+                            // console.log(item)
+                            // console.log(array);
+
+                            return (
+                                <div
+                                    key={id}
+                                    className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
+                                    onClick={(e) => {
+                                        setDeckID(id);
+                                        // toggleDropZonePopup(item, array);
+                                        toggleDropZonePopup(index);
+                                    }}
+                                >
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteCard(id);
                                         }}
-                                    ></div>
-                                )}
-                            </div>
-                        ))
+                                        className="absolute z-99 right-[10px] top-[10px] p-5 text-white font-bold rounded-full bg-red-500"
+                                    >
+                                        <ion-icon
+                                            style={{ fontSize: "30px" }}
+                                            name="trash-outline"
+                                        ></ion-icon>
+                                    </button>
+                                    <div
+                                        className={`p-6 w-1/2 text-2xl ${!item.thumbnail && 'mx-auto'
+                                            }`}
+                                    >
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: item.caption,
+                                            }}
+                                        />
+                                    </div>
+    
+                                    {item.thumbnail && (
+                                        <div
+                                            className={`w-1/2 h-full bg-center bg-cover bg-[url(${thumbnail})]`}
+                                            // style={{
+                                            //     backgroundImage: `url(${item.thumbnail})`,
+                                            // }}
+                                        ></div>
+                                    )}
+                                </div>
+                            )
+                        })
                         : ''}
 
-                    <button type='button' onClick={toggleDropZonePopup}>
+                    <button type='button' onClick={() => toggleDropZonePopup(null)}>
                         <div className='min-h-96 flex justify-center items-center min-h-48 border border-solid border-slate-200 hover:border-slate-300'>
                             <ion-icon
                                 size='large'
