@@ -7,14 +7,15 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        'gt-super': ['GT-Super-Display-Super-Trial', 'sans-serif'],
+        'Inter': ['Inter', 'sans-serif'],
       },
       zIndex: {
         '99': '99',
         '10': '10'
       },
       colors: {
-        'custom-purple': '#4f15a6',
+        'socialpaste-purple': '#8129D9',
+        'socialpaste-purple-dark': '#7329BD',
       },
     },
   },

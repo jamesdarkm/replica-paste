@@ -10,15 +10,50 @@ import { doSignOut } from '../../../auth';
 import { db, storage } from '../../../firebase';
 import { doc, addDoc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 
+import Logo from '../Icons/Logo.jsx'
+import DashboardIcon from '../Icons/DashboardIcon.jsx'
+import QuestionIcon from '../Icons/QuestionIcon.jsx'
+import LightningIcon from '../Icons/LightningIcon.jsx'
+
 const DashboardTeams = () => {
     const [data, setData] = useState([]);
     const [modal, setModal] = useState(false);
-    const [avatar, setAvatar] = useState(null);
+    
     const { currentUser } = useAuth();
-    const navigate = useNavigate();  
-    const displayPhoto = currentUser?.photoURL;
-    const uid = currentUser?.uid;
+    const navigate = useNavigate();
+    
+    const [avatar, setAvatar] = useState(currentUser?.photoURL); // remove
+
+
+    /**
+     * Display picture
+     * Use Google's user's profile picture if the avatar is blank
+     */
+    let displayPicture = currentUser.additionalInformation.avatar
+    if (displayPicture == '') {
+        displayPicture = currentUser?.photoURL
+    }
+    
+    /**
+     * User ID
+     */
+    const uid = currentUser?.uid
+
+
+    /**
+     * Truncate the string if it contains more than 10 characters.
+     */
+    const displayName = currentUser.additionalInformation.firstName
+    const truncatedDisplayName = displayName.length > 10 ? `${displayName.substring(0, 10)}...` : displayName
+
+
+    /**
+     * 
+     */
+    
+    
     console.log(currentUser)
+
 
     /**
      * Hide the scrollbar when modal is active
@@ -40,35 +75,52 @@ const DashboardTeams = () => {
         setIsProfileOpen(!isProfileOpen);
     };
 
-    useEffect(() => {
-        if (!currentUser) {
-            navigate('/');
-        } else {
-            async function getUserAvatar() {
-                const docRef = doc(db, 'users', currentUser.uid);
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    const userAvatar = docSnap.data().avatar;
-                    setAvatar(userAvatar)
-                } else {
-                  console.log("No such doc!");
-                }
-            }
-            getUserAvatar();
-        }
-    }, [currentUser, navigate])
-
-
-    if (avatar == '' && displayPhoto == null) {
-        console.log('here')
-    }
-      
+    
     return (
-        <>          
-            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
-            <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team"/>
+        <>
+            <section className='flex bg-[#F6F7F5]'>
+                <aside className='py-6 px-4 z-5 flex flex-col justify-between w-64 h-screen bg-white'>
+                    <div>
+                        <Link to='/' className='mb-8 block'><Logo className='w-3/5' /></Link>
 
-            <div className='flex'>
+                        <Link to='/' className='p-3 flex items-center rounded-full border-2 border-solid border-white bg-white hover:bg-[#F6F7F5] hover:border-[#F6F7F5]'>
+                            <DashboardIcon className='w-12' />
+                            <span className='ml-2 text-sm font-semibold'>Dashboard</span>
+                        </Link>
+
+                        <Link to='https://support.socialpaste.io' className='mt-2 p-3 flex items-center rounded-full border-2 border-solid border-white bg-white hover:bg-[#F6F7F5] hover:border-[#F6F7F5]' target='_blank'>
+                            <QuestionIcon className='w-12' />
+                            <span className='ml-2 text-sm font-semibold'>Help</span>
+                        </Link>
+                    </div>
+
+                    <div>
+                        <Link to='/checkout' className='p-3 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-[#F6F7F5] hover:text-white hover:bg-socialpaste-purple'>
+                            <LightningIcon className='w-12 hover:invert' />
+                            <span className='ml-2 text-sm font-semibold'>Upgrade to Pro</span>
+                        </Link>
+
+                        <Link to='/' className='mt-2 p-1 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]'>
+                            <img className='w-9 rounded-full' src={displayPicture} referrerPolicy="no-referrer" />
+                            <span className='ml-2 text-sm font-semibold'>{truncatedDisplayName}</span>
+                        </Link>
+                    </div>
+                </aside>
+                <div className='flex flex-1 py-2 pr-6'>
+                    <div className='flex justify-center w-full'>
+                        <div className='flex flex-col gap-10 justify-center items-center w-[394px] text-center'>
+                            <h1 className='text-5xl font-black'>Ready. Set. Paste</h1>
+                            <p className='text-lg'>When you make your first team, it will show up here. Ready to make beautiful slides in seconds?</p>
+                            <button type='button' className='px-8 py-4 rounded-full font-bold text-white bg-socialpaste-purple hover:bg-socialpaste-purple-dark' onClick={toggleCreateDeckPopup}>Create new team</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid} currentUser={currentUser} />
+            <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team" />
+
+            <div className='flex bg-[#F6F7F5]'>
                 <div className='h-screen w-64 p-4 z-5'>
                     <div className='flex items-center justify-between'>
                         <Link
@@ -137,7 +189,7 @@ const DashboardTeams = () => {
                                     <div className='ml-4 '>
                                         <button onClick={toggleProfilePopup} className='flex content-end'><div className='mt-3 mr-5'>Online</div> <img className='w-10 rounded-full' src={avatar || displayPhoto} referrerPolicy="no-referrer" />
 
-                                        {avatar == '' && displayPhoto == null && <ion-icon className='mr-5' name='person-circle-outline' style={{ fontSize: '40px' }}></ion-icon>}
+                                            {avatar == '' && displayPhoto == null && <ion-icon className='mr-5' name='person-circle-outline' style={{ fontSize: '40px' }}></ion-icon>}
                                         </button>
                                     </div>
                                     <div>
@@ -161,14 +213,14 @@ const DashboardTeams = () => {
                                     </button>
 
                                     {currentUser && (
-                                    <>
-                                        <button
-                                            onClick={() => doSignOut()}
-                                            className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-red-600 hover:border-red-900 px-3 py-2 hover:bg-red-900 bg-red-600'
-                                        >
-                                            Logout
-                                        </button>
-                                    </>
+                                        <>
+                                            <button
+                                                onClick={() => doSignOut()}
+                                                className='ml-4 font-bold text-slate-50 rounded border-solid border-2 border-red-600 hover:border-red-900 px-3 py-2 hover:bg-red-900 bg-red-600'
+                                            >
+                                                Logout
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </div>

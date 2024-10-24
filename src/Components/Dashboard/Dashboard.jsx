@@ -131,7 +131,8 @@ const Tests = () => {
     }, [currentUser, navigate])
       
     return (
-        <>            
+        <>    
+
             <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
             <Profile isOpen={isProfileOpen} onClose={toggleProfilePopup} uid={uid}  />
             <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck"/>

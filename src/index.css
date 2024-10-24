@@ -1,14 +1,20 @@
 /*!
 * Copyright 2024, DarkMatter https://www.darkm.co.za
 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500&family=Outfit:wght@100..900&display=swap');
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+/*
 
 @font-face {
-  font-family: GT-Super-Display-Super-Trial;
+  font-family: Inter;
   src: url('./assets/fonts/GT-Super/GT-Super-Display-Super-Trial.otf');
 }
 
@@ -52,8 +58,11 @@ ul {
   list-style: none;
 }
 
+*  {
+  font-family: 'Inter', impact!important;
+}
 :root {
-  font-family: "Outfit", sans-serif;
+  font-family: "Inter", impact;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -82,3 +91,4 @@ ul {
     display:initial
   }
 }
+  */
