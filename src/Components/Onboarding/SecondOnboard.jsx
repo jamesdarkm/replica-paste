@@ -55,10 +55,10 @@ const SwiperButtonNext = ({ children }) => {
   
   return (
     <button
-      className={`mt-5 py-6 px-12 block cursor-pointer text-xl font-bold rounded-full ${
+      className={`mt-5 py-4 px-12 block cursor-pointer font-bold rounded-full text-[16px] font-semibold font-[Inter] ${
         children === 'Continue'
-          ? 'bg-[#4f15a6] text-white'
-          : 'border border-solid border-[#4f15a6] text-[#4f15a6]'
+          ? 'bg-socialpaste-purple text-white'
+          : 'bg-socialpaste-lightergray text-[#000]'
       }`}
       onClick={() => subscribeToEmail(children)}
     >
@@ -67,7 +67,7 @@ const SwiperButtonNext = ({ children }) => {
   );
 };
 
-export default function OnboardTwo() {
+export default function SecondOnboard() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   if (!currentUser) {
@@ -103,33 +103,26 @@ export default function OnboardTwo() {
       className="mySwiper"
     >
       <SwiperSlide>
-        <main className="h-screen p-5">
-          <div className="flex justify-center">
-            <img className="invert" src={weTransferLogo} alt="WeTransfer Logo" />
-          </div>
-    
-          <div className="h-[353px] my-10">
-            <img src={onboardImage} alt="Onboarding" className="block w-full h-full mt-5 object-contain" />
-          </div>
-    
-          <div className="py-7">
-            <div className="text-center leading-7">
-            
-              Now that we know a bit about you, we'd love to let you know a bit about us.
-              Want in on stories <br /> about creativity and the latest WeTransfer news?
+        <main className="h-screen p-5 flex justify-center items-center">
+          <section className='flex justify-center flex-col w-[586px]'>
+            <div>
+              <p className='font-[Inter] font-black text-[46px] text-center mb-5'>
+                Get to know us
+              </p>
+              <p className='font-[Inter] font-normal text-[16px] text-socialpaste-gray text-center'>
+                Now that we know a bit about you, we’d love to let you know a bit about us. Want in on stories about creativity 
+                and the latest SocialPaste news?
+                <br />
+                <br />
+                You can always unsubscribe later - no hard feelings.
+              </p>
             </div>
-          </div>
-
-          <div className="py-7">
-            <div className="text-center leading-7 text-gray-500">
-              You can always unsubscribe later - no hard feelings.
+      
+            <div className="flex justify-center gap-4 mt-3">
+              <SwiperButtonNext>Continue</SwiperButtonNext>
+              <SwiperButtonNext>No thanks</SwiperButtonNext>
             </div>
-          </div>
-    
-          <div className="flex justify-center gap-4 mt-3">
-            <SwiperButtonNext>Continue</SwiperButtonNext>
-            <SwiperButtonNext>No thanks</SwiperButtonNext>
-          </div>
+          </section>
         </main>
       </SwiperSlide>
     </Swiper>

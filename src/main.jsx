@@ -1,21 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import LoginSignup from './Components/Account/LoginSignup.jsx';
-import ForgotPassword from './Components/Account/ForgotPassword.jsx';
+import ForgotPassword from './Components/Auth/ForgotPassword.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Card from './Components/Dashboard/Card.jsx';
 import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
-import Onboard from './Components/Onboard/Onboard.jsx';
+import FirstOnboard from './Components/Onboarding/FirstOnboard.jsx';
 import Invite from './Components/Invite/Invite.jsx';
 import Notify from './Components/Payments/Notify.jsx';
 import Return from './Components/Payments/Return.jsx';
 import Cancel from './Components/Payments/Cancel.jsx';
 import Checkout from './Components/Payments/Checkout.jsx';
-
-
+import Auth from './Components/Auth/Auth.jsx';
 import BillingOverview from './Components/Payments/Billing Overview.jsx';
 
 import { PDFViewer } from '@react-pdf/renderer';
@@ -44,7 +42,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/',
-        element: <LoginSignup />,
+        element: <Auth />,
     },
     {
         path: '/forgot-password',
@@ -52,7 +50,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/onboard',
-        element: <Onboard />,
+        element: <FirstOnboard />,
     },
     {
         path: '/dashboard/:teamId',

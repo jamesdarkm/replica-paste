@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../Context/authContext/index';
 import { doSignInWithGoogle, doCreateUserWithEmailAndPassword } from '../../../auth';
 import TermsOfService from '../Legal/TermsOfService';
 import PrivacyPolicy from '../Legal/PrivacyPolicy';
-const SignUp = () => {
-    const navigate = useNavigate();
 
+const SignUpForm = () => {
+    const navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -52,37 +52,11 @@ const SignUp = () => {
             
             <TermsOfService isOpen={isTermsOpen} onClose={toggleTermsPopup} />
             <PrivacyPolicy isOpen={isPrivacyOpen} onClose={togglePrivacyPopup} />
-            
-            <button
-                disabled={isRegistering}
-                onClick={(e) => {
-                    onGoogleSignIn(e);
-                }}
-                className={`mt-5 w-full flex items-center justify-center gap-x-3 py-4 border rounded-full border-gray-200 border-solid text-sm font-bold ${
-                    isRegistering
-                        ? 'cursor-not-allowed'
-                        : 'hover:border-gray-600 transition duration-300 active:bg-gray-100'
-                }`}
-            >
-                <img
-                    src='./src/Components/Assets/google-logo.svg'
-                    className='w-5'
-                />
-                {isRegistering ? 'Signing In...' : 'Continue with Google'}
-            </button>
 
-            <div className='my-5 flex items-center'>
-                <hr className='flex-grow border-t border-gray-300' />
-                <span className='px-3 text-sm text-gray-500'>
-                    Or better yet...
-                </span>
-                <hr className='flex-grow border-t border-gray-300' />
-            </div>
-
-            <form onSubmit={onSubmit} className='space-y-4'>
+            <form onSubmit={onSubmit} className='space-y-4 my-5'>
                 <div className='relative'>
                     <input
-                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        className='w-full pl-4 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
                         placeholder='First Name'
                         type='text'
                         required
@@ -91,18 +65,11 @@ const SignUp = () => {
                             setFirstName(e.target.value);
                         }}
                     />
-                    <div
-                        className='absolute inset-y-0 pl-3  
-                            flex items-center  
-                            pointer-events-none'
-                    >
-                        <ion-icon name="person-outline"></ion-icon>
-                    </div>
                 </div>
 
                 <div className='relative'>
                     <input
-                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        className='w-full pl-4 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
                         placeholder='Last Name'
                         type='text'
                         required
@@ -111,18 +78,11 @@ const SignUp = () => {
                             setLastName(e.target.value);
                         }}
                     />
-                    <div
-                        className='absolute inset-y-0 pl-3  
-                            flex items-center  
-                            pointer-events-none'
-                    >
-                        <ion-icon name="person-outline"></ion-icon>
-                    </div>
                 </div>
 
                 <div className='relative'>
                     <input
-                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        className='w-full pl-4 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
                         placeholder='Email'
                         type='email'
                         autoComplete='email'
@@ -132,20 +92,13 @@ const SignUp = () => {
                             setEmail(e.target.value);
                         }}
                     />
-                    <div
-                        className='absolute inset-y-0 pl-3  
-                            flex items-center  
-                            pointer-events-none'
-                    >
-                        <ion-icon name='mail-outline'></ion-icon>
-                    </div>
                 </div>
 
                 <div className='mt-3 relative'>
                     <input
                         disabled={isRegistering}
                         type='password'
-                        className='w-full pl-10 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
+                        className='w-full pl-4 pr-4 py-4 rounded border-none bg-gray-50 rounded-lg'
                         autoComplete='current-password'
                         required
                         value={password}
@@ -154,13 +107,6 @@ const SignUp = () => {
                         }}
                         placeholder='Password'
                     />
-                    <div
-                        className='absolute inset-y-0 pl-3  
-                            flex items-center  
-                            pointer-events-none'
-                    >
-                        <ion-icon name="lock-closed-outline"></ion-icon>
-                    </div>
                 </div>
 
 
@@ -179,15 +125,39 @@ const SignUp = () => {
                     disabled={isRegistering}
                     className={`mt-4 w-full px-4 py-4 text-sm font-bold text-white rounded-full ${
                         isRegistering
-                            ? 'bg-gray-300 cursor-not-allowed'
-                            : 'bg-gray-900 hover:bg-indigo-700 hover:shadow-xl transition duration-300'
+                            ? 'bg-socialpaste-purple cursor-not-allowed'
+                            : 'bg-socialpaste-purple hover:shadow-xl transition duration-300'
                     }`}
                 >
                     {isRegistering ? 'Creating your account...' : 'Create Paste Replica'}
                 </button>
             </form>
+
+            <div className="my-5 flex items-center justify-center"> 
+                <p className="px-3 text-sm text-white-500 text-center"> 
+                    OR
+                </p> 
+            </div>
+
+            <button
+                disabled={isRegistering}
+                onClick={(e) => {
+                    onGoogleSignIn(e);
+                }}
+                className={`mt-5 w-full flex items-center justify-center gap-x-3 py-4 border rounded-full border-gray-200 border-solid text-sm font-bold ${
+                    isRegistering
+                        ? 'cursor-not-allowed'
+                        : 'hover:border-gray-600 transition duration-300 active:bg-gray-100'
+                }`}
+            >
+                <img
+                    src='./src/Components/Assets/google-logo.svg'
+                    className='w-5'
+                />
+                {isRegistering ? 'Signing In...' : 'Continue with Google'}
+            </button>
         </>
     );
 };
 
-export default SignUp;
+export default SignUpForm;
