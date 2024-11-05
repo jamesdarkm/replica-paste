@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import ForgotPassword from './Components/Auth/ForgotPassword.jsx';
 import Dashboard from './Components/Dashboard/Dashboard.jsx';
 import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
+import Profile from './Components/Profile/Profile.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Card from './Components/Dashboard/Card.jsx';
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
     {
         path: '/dashboard/deck/card/:id',
         element: <Card />,
+    },
+    {
+        path: '/dashboard/profile',
+        element: <Profile />,
     },
     {
         path: '/comments',
