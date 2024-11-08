@@ -1,52 +1,44 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../Context/authContext'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../../Context/authContext/index.jsx'
+
+/* Firebase */
+import { db } from '../../../firebase.js'
+import {
+    doc, getDoc, collection, getDocs, query, where
+} from 'firebase/firestore'
 
 /* Compontents */
 import Aside from '../NavBar/Aside'
-import CreateDeck from './DeckCreate'
-import Teams from './Teams.jsx'
+import CreateDeck from '../Popups/DeckCreate'
+import Decks from '../Decks/Decks'
+import InviteTeamMember from '../Popups/InviteTeamMember'
 
-const DashboardTeams = () => {
-    const [modal, setModal] = useState(false)
-
-    const { currentUser } = useAuth()
-    
+const Dashboard = () => {
     /**
-     * Redirect if user isn't logged in
+     * Login state
      */
+    const { currentUser } = useAuth()
+
     const navigate = useNavigate()
     useEffect(() => {
         if (!currentUser) {
             navigate('/', { replace: true })
         }
     }, [currentUser, navigate])
-    
-
-
-    /**
-     * Display picture
-     * Use Google's user's profile picture if the avatar is blank
-     */
-    let displayPicture = currentUser.additionalInformation.avatar
-    if (displayPicture === '' || displayPicture === null) {
-        displayPicture = currentUser?.photoURL
-    }
 
 
 
     /**
-     * User ID
+     * States
      */
+    const [modal, setModal] = useState(false)
+    const [avatar, setAvatar] = useState(null)
+    const [teamName, setTeamName] = useState('My decks')
+    const [teams, setTeams] = useState([])
+    const [posts, setPosts] = useState([])
+    const { teamId } = useParams()
     const uid = currentUser?.uid
-
-
-
-    /**
-     * Truncate the string if it contains more than 10 characters.
-     */
-    const displayName = currentUser.additionalInformation.firstName
-    const truncatedDisplayName = displayName.length > 10 ? `${displayName.substring(0, 10)}...` : displayName
 
 
 
@@ -67,20 +59,64 @@ const DashboardTeams = () => {
      */
     const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false)
     const toggleCreateDeckPopup = () => {
+
         setIsCreateDeckOpen(!isCreateDeckOpen)
     }
+
+
+
+    /**
+     * Invite team member popup
+     */
+    const [isInviteTeamMemberPopupOpen, setIsInviteTeamMemberPopupOpen] = useState(false)
+    const toggleInviteTeamMemberPopup = () => {
+        setIsInviteTeamMemberPopupOpen(!isInviteTeamMemberPopupOpen)
+    }
+
+
+
+    /**
+     * Fetch decks data based on the team ID
+     */
+    useEffect(() => {
+        const fetchDecks = async () => {
+            try {
+                const docTeamRef = doc(db, 'teams', teamId)
+                const docNameSnap = await getDoc(docTeamRef)
+
+                if (docNameSnap.exists()) {
+                    setTeamName(docNameSnap.data().name + '\'s team')
+                }
+
+                const decksRef = collection(db, 'decks')
+                const q = query(decksRef, where('teamId', '==', teamId))
+                const querySnapshot = await getDocs(q)
+                const decksData = querySnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }))
+                
+                setPosts(decksData)
+            } catch (error) {
+                console.error("Error fetching decks:", error)
+            }
+        }
+
+        fetchDecks()
+    }, [teamId])
 
     return (
         <>
             <section className='lg:flex'>
-                <Aside displayPicture={displayPicture} truncatedDisplayName={truncatedDisplayName} />
-                
-                <Teams uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
+                <Aside currentUser={currentUser} toggleInviteTeamMemberPopup={toggleInviteTeamMemberPopup} />
+
+                <Decks teamName={teamName} posts={posts} setPosts={setPosts} uid={uid} toggleCreateDeckPopup={toggleCreateDeckPopup} />
             </section>
 
-            <CreateDeck isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="team" />
+            <InviteTeamMember isOpen={isInviteTeamMemberPopupOpen} onClose={toggleInviteTeamMemberPopup} />
+            <CreateDeck isOpen={isCreateDeckOpen} teams={teams} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} uid={uid} popupType="deck" />
         </>
     )
 }
 
-export default DashboardTeams;
+export default Dashboard;
