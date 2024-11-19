@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { doSignOut } from '../../../auth';
 import './Aside.css'
 
 /* Icons */
@@ -8,6 +9,8 @@ import DashboardIcon from '../Icons/DashboardIcon'
 import QuestionIcon from '../Icons/QuestionIcon'
 import LightningIcon from '../Icons/LightningIcon'
 import UserIcon from '../Icons/UserIcon'
+import CurrencyDollarIcon from '../Icons/CurrencyDollarIcon'
+import SignOutIcon from '../Icons/SignOutIcon'
 
 /**
  * Props passed from /src/Components/Dashboard/Dashboard.jsx & /src/Components/Dashboard/DashboardTeams.jsx
@@ -53,7 +56,7 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
             document.body.classList.remove('bg-[#F6F7F5]')
         }
     }, [location.pathname])
-
+    const [accountOpen, setAccount] = useState(null)
     return (
         <>
             <aside className='aside pt-3 lg:py-6 lg:px-4 fixed lg:static z-[999] flex flex-col lg:justify-between w-full lg:w-[256px] lg:min-w-[256px] lg:h-screen bg-white'>
@@ -117,10 +120,42 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
                         <span className='ml-2 text-sm font-semibold'>Upgrade to Pro</span>
                     </Link>
 
-                    <Link to='/dashboard/account' className='mt-2 p-2 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]'>
+                    <button type='button' className='mt-2 p-2 w-full flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]' onClick={() => setAccount(accountOpen === true ? null : true)}>
                         <img className='w-9 rounded-full' src={displayPicture} referrerPolicy="no-referrer" />
                         <span className='ml-2 text-sm font-semibold'>Account</span>
-                    </Link>
+                    </button>
+
+                    {accountOpen && (
+                        <div className='absolute left-[100px] bottom-[65px] flex flex-col w-[300px] md:max-h-[calc(100vh-80px)] text-left bg-white shadow-[0px_16px_32px_4px_rgba(0,0,0,0.2)] rounded-[20px] py-[13px] px-1'>
+                            <span to='/dashboard/account' className='mt-2 px-[20px] flex items-center'>
+                                <img className='w-11 rounded-full' src={displayPicture} referrerPolicy="no-referrer" />
+                                <span className='ml-4 text-sm font-semibold'>{truncatedDisplayName}</span>
+                            </span>
+
+                            <p className='mt-[40px] mb-[10px] px-[20px] text-[13px] font-bold text-socialpaste-gray'>Account</p>
+                            <Link to='/dashboard/account' className='py-[10px] px-[20px] flex items-center items-center rounded-full hover:bg-socialpaste-lightergray'>
+                                <UserIcon className='w-[13px]' />
+                                <span className='ml-4 block text-[13px]'>My Account</span>
+                            </Link>
+
+                            <Link to='/dashboard/billing-overview' className='py-[10px] px-[20px] flex items-center items-center rounded-full hover:bg-socialpaste-lightergray'>
+                                <CurrencyDollarIcon className='w-[16px]' />
+                                <span className='ml-4 block text-[13px]'>My Billing</span>
+                            </Link>
+
+                            <p className='mt-[30px] mb-[10px] px-[20px] text-[13px] font-bold text-socialpaste-gray'>Support</p>
+
+                            <NavLink to='https://support.socialpaste.io' className='py-[10px] px-[20px] flex items-center items-center rounded-full hover:bg-socialpaste-lightergray'>
+                                <QuestionIcon className='w-[16px]' />
+                                <span className='ml-4 block text-[13px]'>Help</span>
+                            </NavLink>
+
+                            <button type='button' className='py-[10px] px-[20px] flex items-center items-center rounded-full hover:bg-socialpaste-lightergray' onClick={() => doSignOut()}>
+                                <SignOutIcon className='w-[16px]' />
+                                <span className='ml-4 block text-[13px]'>Sign out</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
             </aside>
         </>

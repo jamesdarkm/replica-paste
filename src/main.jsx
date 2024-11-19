@@ -98,7 +98,7 @@ const router = createBrowserRouter([
         element: <Checkout />,
     },
     {
-        path: '/billing-overview',
+        path: '/dashboard/billing-overview',
         element: <BillingOverview />,
     },
     {
