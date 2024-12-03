@@ -104,7 +104,7 @@ const Comments = ({ deckId, cardId }) => {
                 )}
 
                 {openCommentBox && (
-                    <div className='w-full border border-solid border-2 border-socialpaste-grey rounded-[10px] shadow-xl fixed bottom-[23px] z-10 bg-white max-h-[400px] overflow-y-auto'>
+                    <div className='w-[calc(100%-40px)] md:w-[692px] border border-solid border-2 border-socialpaste-grey rounded-[10px] shadow-xl fixed bottom-[23px] left-1/2 transform -translate-x-1/2 z-10 bg-white max-h-[400px] overflow-y-auto'>
                         <div className='sticky top-0 py-[16px] px-[18px] flex justify-between items-center font-semibold text-[16px] border-solid border-b-2 border-socialpaste-grey bg-white z-10'>
                             <span>Comments</span>
                             <button
