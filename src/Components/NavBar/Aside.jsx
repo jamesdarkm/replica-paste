@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { doSignOut } from '../../../auth';
+
+/* CSS */
 import './Aside.css'
 
 /* Icons */
@@ -57,6 +59,7 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
         }
     }, [location.pathname])
     const [accountOpen, setAccount] = useState(null)
+
     return (
         <>
             <aside className='aside pt-3 lg:py-6 lg:px-4 fixed lg:static z-[999] flex flex-col lg:justify-between w-full lg:w-[256px] lg:min-w-[256px] lg:h-screen bg-white'>

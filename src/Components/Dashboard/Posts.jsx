@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import CommentsTest from '../CommentsTest/CommentsTest';
+import Comments from '../Comments/Comments';
 import { useParams, useNavigate } from 'react-router-dom';
 import './Posts.css';
 import { db } from "../../../firebase";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
+
 
 const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
 
     return (
         <>
+        <Comments />
             <div className='mx-auto w-full deck-preview'>
                 <div className='grid grid-cols-3'>
                     {hasDecks

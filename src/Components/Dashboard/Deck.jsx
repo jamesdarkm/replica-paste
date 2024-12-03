@@ -1,53 +1,102 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate, Link } from 'react-router-dom';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../../Context/authContext';
+
+/* Firebase */
+import { db } from '../../../firebase';
+import { doc, getDoc } from 'firebase/firestore';
+
+/* Icons */
+import ChevronIcon from '../Icons/ChevronIcon'
+import EllipsisIcon from '../Icons/EllipsisIcon'
+
+/* CSS */
 import './Deck.css';
 import './Modal.css';
-import { useAuth } from '../../Context/authContext';
-import DropZone from './DropZone.jsx';
 import './DropZone.css';
-import Posts from './Posts.jsx';
 import './Posts.css';
-import { db, storage } from '../../../firebase';
-import {
-    doc,
-    addDoc,
-    setDoc,
-    getDoc,
-    collection,
-    getDocs,
-} from 'firebase/firestore';
+
+/* Compontents */
+import DropZone from './DropZone.jsx';
+import Posts from './Posts.jsx';
+
 const Deck = () => {
-    const { currentUser } = useAuth();
+    /**
+     * Login state
+     */
+    const { currentUser } = useAuth()
+
+    const navigate = useNavigate()
+    useEffect(() => {
+        if (!currentUser) {
+            navigate('/', { replace: true })
+        }
+    }, [currentUser, navigate])
+
+
+
+    /**
+     * States
+     */
     const [heading, setHeading] = useState([]);
     const [decks, setDecks] = useState([]);
     const [deckID, setDeckID] = useState('');
-    const [deckCount, setDeckCount  ] = useState([]);
+    const [deckCount, setDeckCount] = useState([]);
     const [didUploadDeck, setDidUploadDeck] = useState(false);
     const [cardIndex, setCardIndex] = useState(null);
 
-    const navigate = useNavigate();
     const { id } = useParams();
-    const uid = currentUser.uid;
     const hasDecks = Object.keys(decks).length !== 0;
 
-    if (!currentUser) {
-        return <Navigate to='/' replace={true} />;
-    }
 
 
+    /**
+     * Naigate to the previous page
+     */
+    const goBack = () => {
+        navigate(-1);
+    };
+
+
+
+    /**
+     * Document it
+     */
     const changeUploadState = () => {
         setDidUploadDeck(!didUploadDeck)
     }
 
-    const goBack = () => {
-        navigate(-1);
-    };
-    
 
+
+    /**
+    * Fetch deck heading based on ID
+    */
+    useEffect(() => {
+        const fetchDecks = async () => {
+            try {
+                const docTeamRef = doc(db, 'decks', id)
+                const docNameSnap = await getDoc(docTeamRef)
+
+                if (docNameSnap.exists()) {
+                    setHeading(docNameSnap.data().heading)
+                }
+
+
+            } catch (error) {
+                console.error("Error fetching decks:", error)
+            }
+        }
+
+        fetchDecks()
+    }, [id])
+
+
+    /**
+     * Verify if I can delete this
+     */
     useEffect(() => {
         async function getDeckSubCollectionDocument() {
-            // console.log('reached')
             try {
                 // Reference to the main document in 'decks' collection
                 const mainDocRef = doc(
@@ -99,79 +148,43 @@ const Deck = () => {
         document.body.classList.remove('active-modal');
     }
 
+
+    /**
+     * Dropzone popup
+     */
     const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
     const toggleDropZonePopup = (cardIndex) => {
-        // console.log(cardIndex)
         setCardIndex(cardIndex)
         setIsDropZoneOpen(!isDropZoneOpen);
     };
 
-
     return (
         <>
-            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID}  decks={decks} setCardIndex={setCardIndex} cardIndex={cardIndex} />
+        <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID} decks={decks} setCardIndex={setCardIndex} cardIndex={cardIndex} />
 
-            <div className='flex-1'>
-                <div className='w-full flex items-center justify-between z-10 '>
-                    <div className='p-4 px-6 items-center w-full justify-between flex'>
-                        <div className='flex items-center justify-center'>
-                            <div onClick={goBack}>
-                                <ion-icon
-                                    style={{ fontSize: '20px' }}
-                                    name='chevron-back-outline'
-                                ></ion-icon>
-                            </div>
+            <div className='p-4 px-6 items-center w-full justify-between flex'>
+                <div className='flex gap-[19px] items-center justify-center'>
+                    <button className='w-[46px] h-[46px] text-center  border-2 border-solid rounded-full border-[#F6F7F5] hover:bg-[#F6F7F5]' onClick={goBack}>
+                        <ChevronIcon className='w-[8px] mx-auto' />
+                    </button>
 
-                            <div className='pl-4'>
-                                <h1 className=' text-3xl font-bold'>{heading}</h1>
-                                <span>Group</span>
-                            </div>
-                        </div>
+                    <h1 className='text-[16px] font-semibold'>{heading}</h1>
+                </div>
 
-                        <div>
-                            <div className='justify-between flex content-end'>
-                                <div className='ml-4 '>
-                                    <button className='flex content-end'>
-                                        <div className='mt-3 mr-5'>Online</div>
-                                    </button>
-                                </div>
-                                <div>
-                                    <Link
-                                        to='/'
-                                        className='ml-10 flex items-center justify-center w-10 h-10 rounded-full border-solid border-2 border-slate-200 rounded-full font-bold hover:bg-slate-200'
-                                    >
-                                        <ion-icon
-                                            size='small'
-                                            name='help-outline'
-                                        ></ion-icon>
-                                    </Link>
-                                </div>
+                <div>
+                    <div className='gap-[16px] justify-between flex content-end'>
+                        <button type='button' className='px-8 py-4 rounded-full font-bold text-white bg-socialpaste-purple hover:bg-socialpaste-purple-dark'>Share deck</button>
 
-                                <button
-                                    type='button'
-                                    className='ml-6 font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
-                                >
-                                    Share deck
-                                </button>
 
-                                <button
-                                    type='button'
-                                    className='ml-4 font-bold rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 text-violet-700 hover:text-gray-50 hover:bg-violet-900 '
-                                >
-                                    Present
-                                </button>
+                        <button type='button' className='px-8 py-4 rounded-full font-bold border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]'>Present</button>
 
-                                <button className='ml-4'>
-                                    <ion-icon
-                                        name='ellipsis-horizontal-outline'
-                                        size='small'
-                                    ></ion-icon>
-                                </button>
-                            </div>
-                        </div>
+                        <button className='border-2 border-solid rounded-full border-[#F6F7F5] hover:bg-[#F6F7F5]'>
+                            <EllipsisIcon className='w-14 rotate-90' />
+                        </button>
                     </div>
                 </div>
             </div>
+
             
             <Posts hasDecks={hasDecks} decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} />
         </>

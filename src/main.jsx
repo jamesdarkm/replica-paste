@@ -7,7 +7,7 @@ import Account from './Components/Account/Account.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Card from './Components/Dashboard/Card.jsx';
-import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
+import Comments from './Components/Comments/Comments.jsx';
 import FirstOnboard from './Components/Onboarding/FirstOnboard.jsx';
 import Invite from './Components/Invite/Invite.jsx';
 import Notify from './Components/Payments/Notify.jsx';
@@ -79,7 +79,7 @@ const router = createBrowserRouter([
     },
     {
         path: '/comments',
-        element: <CommentsTest />,
+        element: <Comments />,
     },
     {
         path: '/return',

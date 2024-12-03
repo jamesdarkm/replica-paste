@@ -17,17 +17,24 @@ import { v4 as uuidv4 } from 'uuid';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs } from 'swiper/modules';
 
-
+/* Icons */
+import ImageUploadIcon from '../Icons/ImageUploadIcon'
+import SlideOrientationIntroIcon from '../Icons/SlideOrientationIntroIcon'
+import SlideOrientationIcon from '../Icons/SlideOrientationIcon'
 
 const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, decks, cardIndex, setCardIndex, }) => {
     if (!isOpen) return null;
+
+
     const uniqueId = uuidv4();
     // let { card, cardIndex } = cardDetails;
     // // console.log(card, cardIndex)
-    const deckId = decks[cardIndex][0];
-    const cardItems = decks[cardIndex][1];
+    console.log(decks)
+    console.log(decks[0][1].caption)
+    // const deckId = decks[cardIndex][0];
+    const cardItems = decks[0][1];
     // console.log(cardIndex, cardItems.caption)
-
+    console.log(cardIndex)
 
     // const [cardItems.images, setSelectedImages] = useState(cardItems.images);
     const [imageNumber, setimageNumber] = useState('');
@@ -279,7 +286,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
     return (
         <>
-            <div className="p-4 w-full h-screen" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
+            <div className="p-4 w-full h-screen bg-black" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
                 <div className='flex justify-end'>
                     <button className='p-2' onClick={onClose}>
                         <ion-icon
@@ -346,7 +353,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                     {cardItems.images && cardItems.images.map((file, index) => {
                                         const isObject = typeof file === 'object';
                                         const imageSrc = isObject ? file.preview : file;
-                                    
+
                                         return (
                                             <SwiperSlide key={index}>
                                                 <button
@@ -417,12 +424,12 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
                 {/* Dropdown Menu */}
 
-                <div className='flex justify-between bg-white bg-opacity-30 fixed bottom-0 left-0 right-0 z-10'>
+                <div className='py-[11px] flex justify-between bg-white bg-opacity-30 fixed bottom-0 left-0 right-0 z-10'>
                     <div></div>
                     <div className='flex gap-8 rounded px-3'>
                         <button {...getRootProps({ style })}>
                             <input {...getInputProps()} />
-                            <img src='/src/Components/Assets/image upload.svg' />
+                            <ImageUploadIcon className='w-12' />
                         </button>
                         <button className='relative z-10'
                             onClick={() => {
@@ -431,39 +438,39 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                         >
                             {menuOpen && (
                                 <div className='absolute bottom-14 -left-[50px] py-2 bg-white shadow-md rounded min-w-36'>
-                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
+                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('intro');
                                     }}>
-                                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                                        <SlideOrientationIntroIcon className='w-12' />
                                         <strong>Intro</strong>
                                     </button>
-                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
+                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('right');
                                     }}>
-                                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                                        <SlideOrientationIcon className='w-12' />
                                         <strong>Right</strong>
                                     </button>
-                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
+                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('left');
                                     }}>
-                                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                                        <SlideOrientationIcon className='w-12 rotate-[-180deg]' />
                                         <strong>Left</strong>
                                     </button>
-                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
+                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('bottom');
                                     }}>
-                                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                                        <SlideOrientationIcon className='w-12 rotate-[-90deg]' />
                                         <strong>Top</strong>
                                     </button>
-                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
+                                    <button className='flex border-b-2 border-solid border-slate-100 items-center gap-3 w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100' onClick={() => {
                                         setLayout('top');
                                     }}>
-                                        <img src='/src/Components/Assets/slide-orientation.svg' />
+                                        <SlideOrientationIcon className='w-12 rotate-90' />
                                         <strong>Bottom</strong>
                                     </button>
                                 </div>
                             )}
-                            <img src='/src/Components/Assets/slide-orientation.svg' />
+                            <SlideOrientationIcon className='w-12 ml-[-10px] mb-[-4px]' />
                         </button>
 
                         <label className='relative flex flex-col justify-center'>
@@ -492,12 +499,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                         </label>
                     </div>
                     <div className='flex gap-8 rounded px-3'>
-                        <button
-                            className='font-bold text-slate-50 rounded border-solid border-2 border-violet-700 hover:border-violet-900 px-3 py-2 hover:bg-violet-900 bg-violet-800'
-                            onClick={uploadPost}
-                        >
-                            Done
-                        </button>
+                        <button type='button' className='px-8 py-4 rounded-full font-bold text-white bg-black hover:bg-[#171717]' onClick={uploadPost}>Done</button>
 
                         <div className='flex items-center gap-2'>
                             <button className='p-3' onClick={moveToNextCard}>
