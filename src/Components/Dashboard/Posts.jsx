@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Comments from '../Comments/Comments';
 import { useParams, useNavigate } from 'react-router-dom';
+
+/* CSS */
 import './Posts.css';
+
+/* Firebase */
 import { db } from "../../../firebase";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
 
-
-const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => {
+const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDecks }) => {
     const navigate = useNavigate();
     const { id: deckId } = useParams();
 
@@ -15,17 +18,26 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
         navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } });
     };
 
+
+
+    /**
+     * Delete card & update the local decks state
+     */
     const deleteCard = async (cardId) => {
         const docRef = doc(db, "decks", deckId);
 
         await updateDoc(docRef, {
             [`decks.${cardId}`]: deleteField(),
         });
+
+        const updatedDecks = decks.filter(([key]) => key !== cardId);
+        setDecks(updatedDecks);
     };
 
     return (
         <>
-        <Comments />
+            <Comments />
+
             <div className='mx-auto w-full deck-preview'>
                 <div className='grid grid-cols-3'>
                     {hasDecks
@@ -69,13 +81,13 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
                                             }}
                                         />
                                     </div>
-    
+
                                     {item.thumbnail && (
                                         <div
                                             className={`w-1/2 h-full bg-center bg-cover bg-[url(${thumbnail})]`}
-                                            // style={{
-                                            //     backgroundImage: `url(${item.thumbnail})`,
-                                            // }}
+                                        // style={{
+                                        //     backgroundImage: `url(${item.thumbnail})`,
+                                        // }}
                                         ></div>
                                     )}
                                 </div>
@@ -85,6 +97,7 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
 
                     <button type='button' onClick={() => toggleDropZonePopup(null)}>
                         <div className='min-h-96 flex justify-center items-center min-h-48 border border-solid border-slate-200 hover:border-slate-300'>
+                            NEW
                             <ion-icon
                                 size='large'
                                 name='add-outline'

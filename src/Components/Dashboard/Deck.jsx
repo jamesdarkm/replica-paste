@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { useAuth } from '../../Context/authContext';
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+import { useAuth } from '../../Context/authContext'
 
 /* Firebase */
-import { db } from '../../../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../../firebase'
+import { doc, getDoc } from 'firebase/firestore'
 
 /* Icons */
 import ChevronIcon from '../Icons/ChevronIcon'
 import EllipsisIcon from '../Icons/EllipsisIcon'
 
 /* CSS */
-import './Deck.css';
-import './Modal.css';
-import './DropZone.css';
-import './Posts.css';
+import './Deck.css'
+import './Modal.css'
+import './DropZone.css'
+import './Posts.css'
 
 /* Compontents */
-import DropZone from './DropZone.jsx';
-import Posts from './Posts.jsx';
+import DropZone from './DropZone.jsx'
+import Posts from './Posts.jsx'
 
 const Deck = () => {
     /**
@@ -39,15 +39,15 @@ const Deck = () => {
     /**
      * States
      */
-    const [heading, setHeading] = useState([]);
-    const [decks, setDecks] = useState([]);
-    const [deckID, setDeckID] = useState('');
-    const [deckCount, setDeckCount] = useState([]);
-    const [didUploadDeck, setDidUploadDeck] = useState(false);
-    const [cardIndex, setCardIndex] = useState(null);
+    const [heading, setHeading] = useState([])
+    const [decks, setDecks] = useState([])
+    const [deckID, setDeckID] = useState('')
+    const [deckCount, setDeckCount] = useState([])
+    const [didUploadDeck, setDidUploadDeck] = useState(false)
+    const [cardIndex, setCardIndex] = useState(null)
 
-    const { id } = useParams();
-    const hasDecks = Object.keys(decks).length !== 0;
+    const { id } = useParams()
+    const hasDecks = Object.keys(decks).length !== 0
 
 
 
@@ -55,8 +55,8 @@ const Deck = () => {
      * Naigate to the previous page
      */
     const goBack = () => {
-        navigate(-1);
-    };
+        navigate(-1)
+    }
 
 
 
@@ -74,6 +74,7 @@ const Deck = () => {
     */
     useEffect(() => {
         const fetchDecks = async () => {
+            console.log('caaled')
             try {
                 const docTeamRef = doc(db, 'decks', id)
                 const docNameSnap = await getDoc(docTeamRef)
@@ -92,6 +93,7 @@ const Deck = () => {
     }, [id])
 
 
+
     /**
      * Verify if I can delete this
      */
@@ -103,39 +105,39 @@ const Deck = () => {
                     db,
                     'decks',
                     id
-                );
+                )
 
                 // Reference to the 'decksSubCollection' subcollection within the main document
                 // const subCollectionRef = collection(
                 //     mainDocRef,
                 //     'decksSubCollection'
-                // );
+                // )
 
                 // Reference to the specific document within the 'decksSubCollection'
-                // const subDocRef = collection(mainDocRef);
+                // const subDocRef = collection(mainDocRef)
 
                 // Fetch the document
-                const docSnap = await getDoc(mainDocRef);
+                const docSnap = await getDoc(mainDocRef)
 
                 if (docSnap.exists()) {
                     // Access the data in the document
-                    const data = docSnap.data();
-                    const deckObjectToArray = Object.entries(data.decks);
+                    const data = docSnap.data()
+                    const deckObjectToArray = Object.entries(data.decks)
                     // console.log(deckObjectToArray)
 
                     setDecks(deckObjectToArray)
                     setHeading(data.heading)
                     setDeckCount(Object.keys(data.decks).length)
                 } else {
-                    console.log('No such document!');
+                    console.log('No such document!')
                 }
             } catch (error) {
-                console.error('Error fetching document:', error);
+                console.error('Error fetching document:', error)
             }
         }
 
-        getDeckSubCollectionDocument();
-    }, [didUploadDeck]);
+        getDeckSubCollectionDocument()
+    }, [didUploadDeck])
 
 
 
@@ -143,24 +145,25 @@ const Deck = () => {
      * Hide the scrollbar when modal is active
      */
     if (decks) {
-        document.body.classList.add('active-modal');
+        document.body.classList.add('active-modal')
     } else {
-        document.body.classList.remove('active-modal');
+        document.body.classList.remove('active-modal')
     }
+
 
 
     /**
      * Dropzone popup
      */
-    const [isDropZoneOpen, setIsDropZoneOpen] = useState(false);
+    const [isDropZoneOpen, setIsDropZoneOpen] = useState(false)
     const toggleDropZonePopup = (cardIndex) => {
         setCardIndex(cardIndex)
-        setIsDropZoneOpen(!isDropZoneOpen);
-    };
+        setIsDropZoneOpen(!isDropZoneOpen)
+    }
 
     return (
         <>
-        <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID} decks={decks} setCardIndex={setCardIndex} cardIndex={cardIndex} />
+            <DropZone isOpen={isDropZoneOpen} onClose={toggleDropZonePopup} deckCount={deckCount} id={id} changeUploadState={changeUploadState} deckID={deckID} decks={decks} setCardIndex={setCardIndex} cardIndex={cardIndex} />
 
             <div className='p-4 px-6 items-center w-full justify-between flex'>
                 <div className='flex gap-[19px] items-center justify-center'>
@@ -175,7 +178,6 @@ const Deck = () => {
                     <div className='gap-[16px] justify-between flex content-end'>
                         <button type='button' className='px-8 py-4 rounded-full font-bold text-white bg-socialpaste-purple hover:bg-socialpaste-purple-dark'>Share deck</button>
 
-
                         <button type='button' className='px-8 py-4 rounded-full font-bold border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]'>Present</button>
 
                         <button className='border-2 border-solid rounded-full border-[#F6F7F5] hover:bg-[#F6F7F5]'>
@@ -185,10 +187,9 @@ const Deck = () => {
                 </div>
             </div>
 
-            
-            <Posts hasDecks={hasDecks} decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} />
+            <Posts hasDecks={hasDecks} decks={decks} toggleDropZonePopup={toggleDropZonePopup} setDeckID={setDeckID} setDecks={setDecks} />
         </>
-    );
-};
+    )
+}
 
-export default Deck;
+export default Deck

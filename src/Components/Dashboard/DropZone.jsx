@@ -29,12 +29,11 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     const uniqueId = uuidv4();
     // let { card, cardIndex } = cardDetails;
     // // console.log(card, cardIndex)
-    console.log(decks)
-    console.log(decks[0][1].caption)
+
     // const deckId = decks[cardIndex][0];
     const cardItems = decks[0][1];
     // console.log(cardIndex, cardItems.caption)
-    console.log(cardIndex)
+
 
     // const [cardItems.images, setSelectedImages] = useState(cardItems.images);
     const [imageNumber, setimageNumber] = useState('');
