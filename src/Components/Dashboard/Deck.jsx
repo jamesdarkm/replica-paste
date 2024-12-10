@@ -157,7 +157,14 @@ const Deck = () => {
      */
     const [isDropZoneOpen, setIsDropZoneOpen] = useState(false)
     const toggleDropZonePopup = (cardIndex) => {
+
+        if (cardIndex === null) {
+            console.log('Card index is null');
+        } else {
+            console.log('Card index is:', cardIndex);
+        }
         setCardIndex(cardIndex)
+        
         setIsDropZoneOpen(!isDropZoneOpen)
     }
 

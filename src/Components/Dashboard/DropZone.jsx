@@ -25,25 +25,42 @@ import SlideOrientationIcon from '../Icons/SlideOrientationIcon'
 const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, decks, cardIndex, setCardIndex, }) => {
     if (!isOpen) return null;
 
-
+    /**
+     * deckID = card ID
+     * cardIndex = index of the cards in the array
+     */
+    console.log(decks)
+    console.log('IDX: ' + deckID.length)
     const uniqueId = uuidv4();
     // let { card, cardIndex } = cardDetails;
     // // console.log(card, cardIndex)
-
+    console.log(cardIndex)
     // const deckId = decks[cardIndex][0];
-    const cardItems = decks[0][1];
-    // console.log(cardIndex, cardItems.caption)
 
 
-    // const [cardItems.images, setSelectedImages] = useState(cardItems.images);
+    let deckArrayId = '';
+    let deckCaptionArray = '';
+    let deckCaption = ''
+    let deckImage = ''
+
+    if (deckID != '') {
+        console.log('heeeeeeeeee')
+        deckArrayId = decks[cardIndex][0];
+        deckCaptionArray = decks[cardIndex][1];
+        deckCaption = deckCaptionArray.caption;
+        deckImage = deckCaptionArray.images[0]
+    }
+    // console.log(cardIndex, deckCaptionArray.caption)
+
+    const [selectedImages, setSelectedImages] = useState(deckCaptionArray.images);
     const [imageNumber, setimageNumber] = useState('');
 
     const captionRef = useRef(null);
-    const [editorData, setEditorData] = useState(cardItems.caption);
+    const [editorData, setEditorData] = useState(deckCaption);
     // console.log(card && card.images)
-    // console.log(cardItems.caption)
+    // console.log(deckCaptionArray.caption)
     // console.log(card)
-
+    console.log(selectedImages)
     const moveToNextCard = () => {
         setCardIndex((prevIndex) => (prevIndex + 1) % decks.length)
     }
@@ -107,52 +124,87 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
 
     const uploadPost = async () => {
-        if (!captionRef.current.value && cardItems.images.length === 0) {
-            // console.log('duh');
+        // if (!editorData && deckCaptionArray.images.length === 0) {
+
+        /**
+         * Close if caption is empty or there's no images selected
+         */
+        // if (!editorData && deckCaptionArray.images.length === 0) {
+        if (!editorData) {
             onClose();
             return;
         }
 
         let lastDownloadURL = '';
 
+        // a4ede940-eff1-4d5d-9231-08a8e9314f11
+
         // Reference to the specific document in decksSubCollection
         // const deckSubDocRef = doc(db, 'decks', uid, 'decksSubCollection', id);
         const deckSubDocRef = doc(db, 'decks', id);
 
-        // Update the deckSubDocRef document with caption
-        await updateDoc(deckSubDocRef, {
-            [`decks.${uniqueId}.caption`]: captionRef.current.value,
-        });
+        /**
+         * Updates a the document with caption data 
+         * based on the presence of `deckID`. If 
+         * empty, `uniqueId` is used instead.
+         */
+        if (deckID != '') {
+            await updateDoc(deckSubDocRef, {
+                [`decks.${deckArrayId}.caption`]: editorData,
+            });
+        } else {
+            await updateDoc(deckSubDocRef, {
+                [`decks.${uniqueId}.caption`]: editorData,
+            });
+        }
+
+
 
         // Handle uploading images and updating the document
-        await Promise.all(
-            cardItems.images.map(async (image, index) => {
-                // Use a unique identifier for the image upload path
-                const imageRef = ref(
-                    storage,
-                    `decks/${deckSubDocRef.id}/images/${image.name}`
-                );
+        if (deckCaptionArray && selectedImages) {
+            console.log(selectedImages)
+            await Promise.all(
+                selectedImages.map(async (image, index) => {
+                    // Use a unique identifier for the image upload path
+                    const imageRef = ref(
+                        storage,
+                        `decks/${deckSubDocRef.id}/images/${image.name}`
+                    );
 
-                await uploadBytes(imageRef, image, 'data_url');
-                const downloadURL = await getDownloadURL(imageRef);
+                    await uploadBytes(imageRef, image, 'data_url');
+                    const downloadURL = await getDownloadURL(imageRef);
 
-                // Update the document with the new image URL
-                await updateDoc(deckSubDocRef, {
-                    [`decks.${uniqueId}.images`]: arrayUnion(downloadURL),
-                });
+                    // Update the document with the new image URL
+                    if (deckID != '') {
+                        await updateDoc(deckSubDocRef, {
+                            [`decks.${deckArrayId}.images`]: arrayUnion(downloadURL),
+                        });
+                    } else {
+                        await updateDoc(deckSubDocRef, {
+                            [`decks.${uniqueId}.images`]: arrayUnion(downloadURL),
+                        });
+                    }
+                    
 
-                lastDownloadURL = downloadURL;
+                    lastDownloadURL = downloadURL;
 
-                // Update the thumbnail with the last uploaded image's download URL
-                if (index === cardItems.images.length - 1) {
-                    await updateDoc(deckSubDocRef, {
-                        [`decks.${uniqueId}.thumbnail`]: lastDownloadURL,
-                    });
-                }
-            })
-        );
+                    // Update the thumbnail with the last uploaded image's download URL
+                    if (index === selectedImages.length - 1) {
+                        if (deckID != '') {
+                            await updateDoc(deckSubDocRef, {
+                                [`decks.${deckArrayId}.thumbnail`]: lastDownloadURL,
+                            });
+                        } else {
+                            await updateDoc(deckSubDocRef, {
+                                [`decks.${uniqueId}.thumbnail`]: lastDownloadURL,
+                            });
+                        }
+                    }
+                })
+            );
+        }
 
-        captionRef.current.value = '';
+        setEditorData('')
         setSelectedImages([]);
         changeUploadState();
         onClose();
@@ -175,7 +227,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
     const removeImage = (id) => {
         setSelectedImages((prevImages) =>
-            prevImages.filter((image) => image.uniqueId !== id)
+            prevImages.filter((image) => !image.includes(id))
         );
     };
 
@@ -196,7 +248,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
         }),
         [isFocused, isDragAccept, isDragReject]
     );
-    // const selected_images = cardItems.images?.map((file, index) => (
+    // const selected_images = deckCaptionArray.images?.map((file, index) => (
     //     <div
     //         key={file.uniqueId}
     //         className={`bg-cover bg-center bg-blue-500 w-full ${index > 3 ? 'hidden' : ''
@@ -276,16 +328,15 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     const [layout, setLayout] = useState('left');
 
     const layoutIntro = {
-        background: 'url(https://picsum.photos/id/1043/800/600) rgba(000, 000, 000, 0.5)',
-        background: `url(${cardItems.images[0]})`,
+        background: `url(${deckImage}) rgba(000, 000, 000, 0.5)`,
         backgroundBlendMode: 'multiply',
         backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
     }
-
 
     return (
         <>
-            <div className="p-4 w-full h-screen bg-black" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
+            <div className="relative z-20 p-4 w-full h-screen bg-black" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
                 <div className='flex justify-end'>
                     <button className='p-2' onClick={onClose}>
                         <ion-icon
@@ -300,7 +351,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                         <div className='flex justify-center p-4 text-white '>
                             <CKEditor
                                 editor={InlineEditor}
-                                data={cardItems.caption}
+                                data={deckCaptionArray.caption}
                                 onChange={(event, editor) => {
                                     const data = editor.getData();
                                     setEditorData(data);
@@ -335,7 +386,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                 }}
                             />
                         </div>
-                        <input ref={captionRef} type='hidden' value={cardItems.caption} />
+                        <input ref={captionRef} type='hidden' value={deckCaptionArray.caption} />
                     </div>
                     <div className={`p-4 flex flex-wrap ${layout === 'right' ? 'w-1/2 order-1' : layout === 'left' ? 'w-1/2 order-2' : layout === 'top' ? 'w-full flex-1 order-1 border-solid border-red-500' : layout === 'bottom' ? 'w-full flex-1 order-2' : layout === 'top' ? 'w-full flex-1 order-2' : 'hidden'}`}>
                         <div
@@ -349,7 +400,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                     thumbs={{ swiper: thumbsSwiper }}
                                     style={{ width: '100%' }}
                                 >
-                                    {cardItems.images && cardItems.images.map((file, index) => {
+                                    {selectedImages && selectedImages.map((file, index) => {
                                         const isObject = typeof file === 'object';
                                         const imageSrc = isObject ? file.preview : file;
 
@@ -367,6 +418,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                                     alt={`Slide ${index + 1}`}
                                                     className='object-cover'
                                                     style={{ width: '100%', height: '100%' }}
+                                                    referrerPolicy='no-referrer'
                                                 />
                                             </SwiperSlide>
                                         );
@@ -383,7 +435,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                     watchSlidesProgress
                                     style={{ marginTop: '10px', height: '30vh' }} // Adjust height as needed
                                 >
-                                    {cardItems.images.map((file, index) => (
+                                    {deckCaptionArray.images.map((file, index) => (
                                         <SwiperSlide
                                             key={index}
                                             className='group relative'

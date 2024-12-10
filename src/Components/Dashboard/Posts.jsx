@@ -85,9 +85,9 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDe
                                     {item.thumbnail && (
                                         <div
                                             className={`w-1/2 h-full bg-center bg-cover bg-[url(${thumbnail})]`}
-                                        // style={{
-                                        //     backgroundImage: `url(${item.thumbnail})`,
-                                        // }}
+                                        style={{
+                                            backgroundImage: `url(${item.thumbnail})`,
+                                        }}
                                         ></div>
                                     )}
                                 </div>
@@ -95,7 +95,11 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDe
                         })
                         : ''}
 
-                    <button type='button' onClick={() => toggleDropZonePopup(null)}>
+                    <button type='button'
+                        onClick={() => {
+                            setDeckID('');
+                            toggleDropZonePopup(null)
+                        }}>
                         <div className='min-h-96 flex justify-center items-center min-h-48 border border-solid border-slate-200 hover:border-slate-300'>
                             NEW
                             <ion-icon
