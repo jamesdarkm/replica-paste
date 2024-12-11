@@ -1,3 +1,21 @@
+.swiper-slide {
+    max-height: 525px;
+    max-width: 525px;
+    aspect-ratio: 1 / 1;
+    flex-basis: 525px;
+    margin-right: 10px;   
+}
+button {
+    position: relative;
+    padding-bottom: 100%;
+}
+img {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    height: 100%;
+    top: 0;
+}
 /* CKEditor Content */
 .ck-content {
     /* height: 100%; */
@@ -15,8 +33,17 @@
 /* Additional CSS for content styling */
 .ck-content p {
     margin-top: 15px;
-    font-size: 40px;
+    font-size: clamp(20px, 6vw, 40px);
     color: rgba(0, 0, 0, 0.8);
+}
+
+.ck-content ul {
+    margin-left:40px;
+}
+
+.ck-content ul, li {
+    list-style: disc inside;
+    list-style-type: disc;
 }
 
 .ck-content ul li {
@@ -24,8 +51,22 @@
     color: rgba(0, 0, 0, 0.8);
 }
 
+.ck-content .ck-list-bogus-paragraph {
+    display:inline-block!important
+}
+
+.ck-content a {
+    text-decoration: underline;
+}
+
 .ck-content h1 {
-    font-size: 80px;
+    font-size: clamp(40px, 6vw, 80px);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* Intro editor colour */
+.intro .ck-content h1, .intro .ck-content p, .intro .ck-content ul li {
+    color: #fff;
 }
 
 .ck-heading_heading1 {
@@ -40,7 +81,7 @@
     flex-direction: column;
 }
 /* Adjust the CKEditor to ensure it fits within its container */
-.ck-editor__editable_inline > * {
+.ck-editor__editable_inline > *:not(ul, p) {
     margin: 0 10px;
     display: flex;
     align-items: center;

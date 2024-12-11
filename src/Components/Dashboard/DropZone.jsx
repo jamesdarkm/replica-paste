@@ -184,7 +184,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                             [`decks.${uniqueId}.images`]: arrayUnion(downloadURL),
                         });
                     }
-                    
+
 
                     lastDownloadURL = downloadURL;
 
@@ -336,8 +336,14 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
     return (
         <>
-            <div className="relative z-20 p-4 w-full h-screen bg-black" style={layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom' ? { backgroundColor: color } : { ...layoutIntro }}>
-                <div className='flex justify-end'>
+
+            <div className={` justify-center flex-col overflow-y-auto relative z-20 p-4 w-full h-screen bg-black ${layout}`} style={{
+                height: 'calc(100vh)',
+                ...(layout === 'left' || layout === 'right' || layout === 'top' || layout === 'bottom'
+                    ? { backgroundColor: color }
+                    : layoutIntro),
+            }}>
+                <div className='fixed top-0 right-0 flex justify-end'>
                     <button className='p-2' onClick={onClose}>
                         <ion-icon
                             style={{ fontSize: '30px' }}
@@ -345,10 +351,10 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                         ></ion-icon>
                     </button>
                 </div>
-
-                <div className={`${layout === 'top' ? 'flex flex-col' : layout === 'bottom' ? '' : 'flex'}`}>
-                    <div className={`${layout === 'right' ? 'w-1/2 order-2' : layout === 'left' ? 'w-1/2 order-1' : layout === 'bottom' ? 'w-full flex-1 order-1' : layout === 'top' ? 'w-full flex-1 order-2' : 'w-full order-1'}`}>
-                        <div className='flex justify-center p-4 text-white '>
+                
+                <div className={`mx-auto max-w-[1184px] overflow-y-auto ${layout === 'top' ? 'flex flex-col' : layout === 'bottom' ? '' : 'flex items-center'}`}>
+                    <div className={`${layout === 'right' ? 'w-1/2 order-2' : layout === 'left' ? 'w-1/2 order-1' : layout === 'bottom' ? 'w-full flex-1 order-1' : layout === 'top' ? 'w-full flex-1 order-2' : 'w-full order-1'}`} style={{ maxHeight: 'calc(100% - 162px)' }}>
+                        <div className='flex justify-center p-4 text-white border-2 border-solid'>
                             <CKEditor
                                 editor={InlineEditor}
                                 data={deckCaptionArray.caption}
@@ -408,7 +414,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                                             <SwiperSlide key={index}>
                                                 <button
                                                     type='button'
-                                                    className='mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500'
+                                                    className='absolute mt-4 ml-4 p-4 text-white font-bold rounded-full bg-red-500'
                                                     onClick={() => removeImage(isObject ? file.uniqueId : file)}
                                                 >
                                                     <ion-icon style={{ fontSize: '20px' }} name='trash-outline'></ion-icon>
