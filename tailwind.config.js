@@ -21,6 +21,7 @@ export default {
         'socialpaste-lightergray': '#F6F7F5',
         'socialpaste-red': '#BF000B',
         'socialpaste-green': '#43E660',
+        'border': '#F6F7F5'
       },
     },
   },

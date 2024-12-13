@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { doSignOut } from '../../../auth';
+import UpgradePopUp from './UpgradePopUp';
 
 /* CSS */
 import './Aside.css'
@@ -60,8 +61,15 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
     }, [location.pathname])
     const [accountOpen, setAccount] = useState(null)
 
+
+    const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false)
+    const toggleCreateDeckPopup = () => {
+        setIsCreateDeckOpen(!isCreateDeckOpen)
+    }
+
     return (
         <>
+            <UpgradePopUp isOpen={isCreateDeckOpen} onClose={toggleCreateDeckPopup} toggleCreateDeckPopup={toggleCreateDeckPopup} popupType="team" />
             <aside className='aside pt-3 lg:py-6 lg:px-4 fixed lg:static z-[999] flex flex-col lg:justify-between w-full lg:w-[256px] lg:min-w-[256px] lg:h-screen bg-white'>
                 <div className='px-4 lg:px-0 pb-3 flex lg:block justify-between items-center border-b-2 border-solid border-[#F6F7F5] lg:border-none'>
                     <Link to='/dashboard' className='block'><Logo className='w-32 lg:w-3/5 lg:mb-8' /></Link>
@@ -115,6 +123,10 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
                 </div>
 
                 <div className='hidden lg:block'>
+                    <div onClick={toggleCreateDeckPopup} className='px-3 py-4 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-[#F6F7F5] hover:text-white hover:bg-socialpaste-purple group'>
+                        <LightningIcon className='w-12 group-hover:invert' />
+                        <span className='ml-2 text-sm font-semibold'>Upgrade to Pro</span>
+                    </div>
                     <Link
                         to='/checkout'
                         className='px-3 py-4 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-[#F6F7F5] hover:text-white hover:bg-socialpaste-purple group'
