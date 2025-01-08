@@ -1,15 +1,15 @@
-.swiper-slide {
+.swiper-slideX {
     max-height: 525px;
     max-width: 525px;
     aspect-ratio: 1 / 1;
     flex-basis: 525px;
     margin-right: 10px;   
 }
-button {
+buttonX {
     position: relative;
     padding-bottom: 100%;
 }
-img {
+imgX {
     width: 100%;
     position: absolute;
     left: 0;

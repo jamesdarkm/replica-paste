@@ -48,9 +48,9 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
         deckArrayId = decks[cardIndex][0];
         deckCaptionArray = decks[cardIndex][1];
         deckCaption = deckCaptionArray.caption;
-        deckImage = deckCaptionArray.images[0]
+       // deckImage = deckCaptionArray.images[0] // uncomment
     }
-    // console.log(cardIndex, deckCaptionArray.caption)
+    console.log(cardIndex, deckCaptionArray.caption)
 
     const [selectedImages, setSelectedImages] = useState(deckCaptionArray.images);
     const [imageNumber, setimageNumber] = useState('');
@@ -158,11 +158,12 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
             });
         }
 
-
-
+        console.log('Deck caption array')
+console.log(deckCaptionArray)
+console.log('sselected images')
+console.log(selectedImages)
         // Handle uploading images and updating the document
         if (deckCaptionArray && selectedImages) {
-            console.log(selectedImages)
             await Promise.all(
                 selectedImages.map(async (image, index) => {
                     // Use a unique identifier for the image upload path
@@ -187,7 +188,8 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
 
 
                     lastDownloadURL = downloadURL;
-
+                    console.log('heerrre')
+                    console.log(lastDownloadURL)
                     // Update the thumbnail with the last uploaded image's download URL
                     if (index === selectedImages.length - 1) {
                         if (deckID != '') {
@@ -202,6 +204,8 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
                     }
                 })
             );
+        } else {
+            console.log('12345')
         }
 
         setEditorData('')

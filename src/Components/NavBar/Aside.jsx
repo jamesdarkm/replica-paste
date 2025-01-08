@@ -127,13 +127,6 @@ const Aside = ({ currentUser, toggleInviteTeamMemberPopup }) => {
                         <LightningIcon className='w-12 group-hover:invert' />
                         <span className='ml-2 text-sm font-semibold'>Upgrade to Pro</span>
                     </div>
-                    <Link
-                        to='/checkout'
-                        className='px-3 py-4 flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-[#F6F7F5] hover:text-white hover:bg-socialpaste-purple group'
-                    >
-                        <LightningIcon className='w-12 group-hover:invert' />
-                        <span className='ml-2 text-sm font-semibold'>Upgrade to Pro</span>
-                    </Link>
 
                     <button type='button' className='mt-2 p-2 w-full flex items-center rounded-full border-2 border-solid border-[#F6F7F5] bg-white hover:bg-[#F6F7F5]' onClick={() => setAccount(accountOpen === true ? null : true)}>
                         <img className='w-9 rounded-full' src={displayPicture} referrerPolicy="no-referrer" />
