@@ -43,16 +43,19 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDe
                     {hasDecks
                         ? decks.map(([id, item], index, array) => {
                             const thumbnail = item.thumbnail;
+                            const bgColour = item.bgColour;
                             const deckId = array[index][0];
                             const thumb = array[index][1];
-
+                            console.log(bgColour)
                             // console.log(item)
                             // console.log(array);
 
                             return (
                                 <div
                                     key={id}
-                                    className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
+                                    className={`relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid bg-[${bgColour}]`}
+
+                                    style={{ backgroundColor: bgColour }}
                                     onClick={(e) => {
                                         setDeckID(id);
                                         // toggleDropZonePopup(item, array);
@@ -101,7 +104,6 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDe
                             toggleDropZonePopup(null)
                         }}>
                         <div className='min-h-96 flex justify-center items-center min-h-48 border border-solid border-slate-200 hover:border-slate-300'>
-                            NEW
                             <ion-icon
                                 size='large'
                                 name='add-outline'

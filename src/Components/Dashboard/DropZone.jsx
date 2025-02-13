@@ -26,6 +26,10 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     if (!isOpen) return null;
 
     /**
+     * States
+     */
+    
+    /**
      * deckID = card ID
      * cardIndex = index of the cards in the array
      */
@@ -41,6 +45,7 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
     let deckArrayId = '';
     let deckCaptionArray = '';
     let deckCaption = ''
+    let deckBgColour = '#ffffff'
     let deckImage = ''
 
     if (deckID != '') {
@@ -48,9 +53,13 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
         deckArrayId = decks[cardIndex][0];
         deckCaptionArray = decks[cardIndex][1];
         deckCaption = deckCaptionArray.caption;
+        deckBgColour = deckCaptionArray.bgColour;
+        
        // deckImage = deckCaptionArray.images[0] // uncomment
     }
     console.log(cardIndex, deckCaptionArray.caption)
+
+    const [color, setColor] = useState(deckBgColour); // default color is white
 
     const [selectedImages, setSelectedImages] = useState(deckCaptionArray.images);
     const [imageNumber, setimageNumber] = useState('');
@@ -151,10 +160,12 @@ const DropZone = ({ isOpen, onClose, id, deckCount, changeUploadState, deckID, d
         if (deckID != '') {
             await updateDoc(deckSubDocRef, {
                 [`decks.${deckArrayId}.caption`]: editorData,
+                [`decks.${deckArrayId}.bgColour`]: color
             });
         } else {
             await updateDoc(deckSubDocRef, {
                 [`decks.${uniqueId}.caption`]: editorData,
+                [`decks.${uniqueId}.bgColour`]: color
             });
         }
 
@@ -163,7 +174,8 @@ console.log(deckCaptionArray)
 console.log('sselected images')
 console.log(selectedImages)
         // Handle uploading images and updating the document
-        if (deckCaptionArray && selectedImages) {
+        //if (deckCaptionArray && selectedImages) { // I need this option not sure why
+        if (selectedImages) {
             await Promise.all(
                 selectedImages.map(async (image, index) => {
                     // Use a unique identifier for the image upload path
@@ -295,7 +307,7 @@ console.log(selectedImages)
     // ));
 
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
-    const [color, setColor] = useState('#ffffff'); // default color is white
+    
     const [textColor, setTextColor] = useState('dark');
 
     const calculateLuminance = (hex) => {
