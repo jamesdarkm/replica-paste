@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import CommentsTest from '../CommentsTest/CommentsTest';
+import React from 'react';
+import Comments from '../Comments/Comments';
 import { useParams, useNavigate } from 'react-router-dom';
+
+/* CSS */
 import './Posts.css';
+
+/* Firebase */
 import { db } from "../../../firebase";
 import { doc, updateDoc, deleteField } from "firebase/firestore";
 
-const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => {
+const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID, setDecks }) => {
     const navigate = useNavigate();
     const { id: deckId } = useParams();
 
@@ -14,31 +18,44 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
         navigate(`/dashboard/deck/card/${deckId}`, { state: { card: item, cardId } });
     };
 
+
+
+    /**
+     * Delete card & update the local decks state
+     */
     const deleteCard = async (cardId) => {
         const docRef = doc(db, "decks", deckId);
 
         await updateDoc(docRef, {
             [`decks.${cardId}`]: deleteField(),
         });
+
+        const updatedDecks = decks.filter(([key]) => key !== cardId);
+        setDecks(updatedDecks);
     };
 
     return (
         <>
+            <Comments />
+
             <div className='mx-auto w-full deck-preview'>
                 <div className='grid grid-cols-3'>
                     {hasDecks
                         ? decks.map(([id, item], index, array) => {
                             const thumbnail = item.thumbnail;
+                            const bgColour = item.bgColour;
                             const deckId = array[index][0];
                             const thumb = array[index][1];
-
+                            console.log(bgColour)
                             // console.log(item)
                             // console.log(array);
 
                             return (
                                 <div
                                     key={id}
-                                    className='relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid'
+                                    className={`relative min-h-96 flex items-center border border-slate-200 hover:border-slate-400 border-solid bg-[${bgColour}]`}
+
+                                    style={{ backgroundColor: bgColour }}
                                     onClick={(e) => {
                                         setDeckID(id);
                                         // toggleDropZonePopup(item, array);
@@ -67,13 +84,13 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
                                             }}
                                         />
                                     </div>
-    
+
                                     {item.thumbnail && (
                                         <div
                                             className={`w-1/2 h-full bg-center bg-cover bg-[url(${thumbnail})]`}
-                                            // style={{
-                                            //     backgroundImage: `url(${item.thumbnail})`,
-                                            // }}
+                                        style={{
+                                            backgroundImage: `url(${item.thumbnail})`,
+                                        }}
                                         ></div>
                                     )}
                                 </div>
@@ -81,7 +98,11 @@ const Posts = ({ hasDecks, decks, toggleDropZonePopup, uid, id, setDeckID }) => 
                         })
                         : ''}
 
-                    <button type='button' onClick={() => toggleDropZonePopup(null)}>
+                    <button type='button'
+                        onClick={() => {
+                            setDeckID('');
+                            toggleDropZonePopup(null)
+                        }}>
                         <div className='min-h-96 flex justify-center items-center min-h-48 border border-solid border-slate-200 hover:border-slate-300'>
                             <ion-icon
                                 size='large'

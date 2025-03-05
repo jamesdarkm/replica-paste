@@ -1,0 +1,100 @@
+:root {
+    --socialpaste-purple: #8129D9;
+    --socialpaste-purple-dark: #7329BD;
+    --socialpaste-chinese-white: #E0E2D9;
+    --socialpaste-gray: #676B5F;
+    --socialpaste-lightergray: #F6F7F5;
+    --socialpaste-red: #BF000B;
+    --socialpaste-green: #43E660;
+}
+
+.replyBtn,
+.comment-title,
+.userImg,
+hr {
+    display: none !important;
+}
+
+/* No comments here string */
+.no-comDiv {
+    margin-top: 0, !important;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* Comment avatar */
+.imgdefault {
+    top: 0 !important;
+}
+
+.form {
+    padding: 16px 20px 0!important;
+    border-radius: 0!important;
+    border-top: 2px solid var(--socialpaste-lightergray)!important;
+    background: #fff!important;
+}
+
+/* Comment field */
+.postComment {
+    order: 1;
+    outline: none !important;
+    border: none !important;
+}
+
+.postComment:focus {
+    padding-right: 0;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+
+/* Post button */
+.postBtn[disabled] {
+    display: none;
+}
+
+.postBtn {
+    order: 0;
+    color: transparent !important;
+    width: 12px;
+    height: 36px;
+    border: none !important;
+    background-repeat: no-repeat;
+    background-position: 4px 2px;
+    background-color: transparent !important;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzEiIHZpZXdCb3g9IjAgMCAzMSAzMSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE1LjUgMzFDMjQuMDYwNCAzMSAzMSAyNC4wNjA0IDMxIDE1LjVDMzEgNi45Mzk1OSAyNC4wNjA0IDAgMTUuNSAwQzYuOTM5NTkgMCAwIDYuOTM5NTkgMCAxNS41QzAgMjQuMDYwNCA2LjkzOTU5IDMxIDE1LjUgMzFaIiBmaWxsPSIjODEyOUQ5Ii8+CjxwYXRoIGQ9Ik0yMi42OTc4IDE1LjUyNzRMMTYuMDIzMyAxMi43NzUzTDEyLjY4NiAxMS4zOTkzTDkuMzQ4NzcgMTAuMDIzMkM5LjMxMTY5IDEwLjAwNTggOS4yNzA4MSA5Ljk5Nzk3IDkuMjI5OTEgMTAuMDAwNEM5LjE4OTAxIDEwLjAwMjkgOS4xNDkzOCAxMC4wMTU2IDkuMTE0NjYgMTAuMDM3NEM5LjA3OTk1IDEwLjA1OTIgOS4wNTEyNiAxMC4wODkzIDkuMDMxMjIgMTAuMTI1QzkuMDExMTkgMTAuMTYwOCA5LjAwMDQ1IDEwLjIwMSA5IDEwLjI0MlYxMy43ODI0QzkgMTMuODQwNiA5LjAyMDMyIDEzLjg5NyA5LjA1NzQ3IDEzLjk0MThDOS4wOTQ2MSAxMy45ODY2IDkuMTQ2MjQgMTQuMDE3MSA5LjIwMzQ1IDE0LjAyNzlMMTYuOTQyMSAxNS40OTY1QzE3LjQ4NDYgMTUuNTk5MyAxNy40ODQ2IDE2LjM3NiAxNi45NDIxIDE2LjQ3ODhMOS4yMDMxNCAxNy45NDc0QzkuMTQ2MDQgMTcuOTU4MyA5LjA5NDUyIDE3Ljk4ODcgOS4wNTc0NSAxOC4wMzM1QzkuMDIwMzcgMTguMDc4MiA5LjAwMDA2IDE4LjEzNDUgOSAxOC4xOTI2VjIxLjczMTVDOSAyMS45MTA4IDkuMTgzNzYgMjIuMDUyMSA5LjM0ODc3IDIxLjk4MTRMMjIuNjk3OCAxNi40NDU3QzIyLjc4NzUgMTYuNDA3MSAyMi44NjM5IDE2LjM0MyAyMi45MTc3IDE2LjI2MTRDMjIuOTcxNCAxNi4xNzk4IDIzIDE2LjA4NDIgMjMgMTUuOTg2NkMyMyAxNS44ODg5IDIyLjk3MTQgMTUuNzkzMyAyMi45MTc3IDE1LjcxMTdDMjIuODYzOSAxNS42MzAxIDIyLjc4NzUgMTUuNTY2MSAyMi42OTc4IDE1LjUyNzRaIiBmaWxsPSIjRjVGNUY1Ii8+Cjwvc3ZnPgo=")
+}
+
+/* Emoji selector */
+.emoji-input .emoji-icon {
+    top: 0!important;
+    width: 36px!important;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzMiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMyAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExLjEzNTEgMTYuNUMxMi4xMjI5IDE2LjUgMTIuOTIzNiAxNS42OTkzIDEyLjkyMzYgMTQuNzExNkMxMi45MjM2IDEzLjcyMzggMTIuMTIyOSAxMi45MjMxIDExLjEzNTEgMTIuOTIzMUMxMC4xNDc0IDEyLjkyMzEgOS4zNDY2OCAxMy43MjM4IDkuMzQ2NjggMTQuNzExNkM5LjM0NjY4IDE1LjY5OTMgMTAuMTQ3NCAxNi41IDExLjEzNTEgMTYuNVoiIGZpbGw9IiM2NzZCNUYiLz4KPHBhdGggZD0iTTE2LjUwMzIgMjYuMDM4NUMxMy4xMTg2IDI2LjAzODUgMTAuMjcxOSAyMy44MzggOS4zNzEgMjAuODM0OEM5LjM0NTgxIDIwLjc0NTUgOS4zNDE4MyAyMC42NTE0IDkuMzU5NCAyMC41NjAzQzkuMzc2OTcgMjAuNDY5MSA5LjQxNTU5IDIwLjM4MzMgOS40NzIxOSAyMC4zMDk3QzkuNTI4NzkgMjAuMjM2MSA5LjYwMTggMjAuMTc2NyA5LjY4NTQxIDIwLjEzNjNDOS43NjkwMSAyMC4wOTU5IDkuODYwOSAyMC4wNzU2IDkuOTUzNzQgMjAuMDc3SDIzLjA0NkMyMy4xMzg5IDIwLjA3NTYgMjMuMjMwOCAyMC4wOTU5IDIzLjMxNDQgMjAuMTM2M0MyMy4zOTggMjAuMTc2NyAyMy40NzEgMjAuMjM2MSAyMy41Mjc2IDIwLjMwOTdDMjMuNTg0MiAyMC4zODMzIDIzLjYyMjggMjAuNDY5MSAyMy42NDA0IDIwLjU2MDNDMjMuNjU3OSAyMC42NTE0IDIzLjY1NCAyMC43NDU1IDIzLjYyODggMjAuODM0OEMyMi43MzUzIDIzLjgzOCAxOS44ODc5IDI2LjAzODUgMTYuNTAzMiAyNi4wMzg1WiIgZmlsbD0iIzY3NkI1RiIvPgo8cGF0aCBkPSJNMjEuODY1NiAxNi41QzIyLjg1MzMgMTYuNSAyMy42NTQxIDE1LjY5OTMgMjMuNjU0MSAxNC43MTE2QzIzLjY1NDEgMTMuNzIzOCAyMi44NTMzIDEyLjkyMzEgMjEuODY1NiAxMi45MjMxQzIwLjg3NzkgMTIuOTIzMSAyMC4wNzcxIDEzLjcyMzggMjAuMDc3MSAxNC43MTE2QzIwLjA3NzEgMTUuNjk5MyAyMC44Nzc5IDE2LjUgMjEuODY1NiAxNi41WiIgZmlsbD0iIzY3NkI1RiIvPgo8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTE2LjUgMkM4LjQ5MTg3IDIgMiA4LjQ5MTg3IDIgMTYuNUMyIDI0LjUwODEgOC40OTE4NyAzMSAxNi41IDMxQzI0LjUwODEgMzEgMzEgMjQuNTA4MSAzMSAxNi41QzMxIDguNDkxODcgMjQuNTA4MSAyIDE2LjUgMlpNMCAxNi41QzAgNy4zODczIDcuMzg3MyAwIDE2LjUgMEMyNS42MTI3IDAgMzMgNy4zODczIDMzIDE2LjVDMzMgMjUuNjEyNyAyNS42MTI3IDMzIDE2LjUgMzNDNy4zODczIDMzIDAgMjUuNjEyNyAwIDE2LjVaIiBmaWxsPSIjNjc2QjVGIi8+Cjwvc3ZnPgo=")!important;
+}
+
+.emoji-picker-react {
+    left: 0!important;
+}
+
+.overlay {
+    padding: 0!important;
+    background: transparent !important;
+    width: 100%;
+    height: auto;
+    position: static;
+}
+
+.overlay>div {
+    order: 0;
+    padding: 10px 20px!important;
+}
+
+.overlay>div:first-of-type {
+    order: 1;
+    padding: 40px 0 0!important;
+}
+
+
+.comment-title {
+    margin-bottom: 10px!important;
+}

@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ForgotPassword from './Components/Auth/ForgotPassword.jsx';
-import Dashboard from './Components/Dashboard/Dashboard.jsx';
-import DashboardTeams from './Components/Dashboard/DashboardTeams.jsx';
-import Profile from './Components/Profile/Profile.jsx';
+import Dashboard from './Components/Dashboard/DashboardTeams.jsx';
+import DashboardTeams from './Components/Dashboard/Dashboard.jsx';
+import Account from './Components/Account/Account.jsx';
 import Deck from './Components/Dashboard/Deck.jsx';
 import DropZone from './Components/Dashboard/DropZone.jsx';
 import Card from './Components/Dashboard/Card.jsx';
-import CommentsTest from './Components/CommentsTest/CommentsTest.jsx';
+import Comments from './Components/Comments/Comments.jsx';
 import FirstOnboard from './Components/Onboarding/FirstOnboard.jsx';
 import Invite from './Components/Invite/Invite.jsx';
 import Notify from './Components/Payments/Notify.jsx';
@@ -74,12 +74,12 @@ const router = createBrowserRouter([
         element: <Card />,
     },
     {
-        path: '/dashboard/profile',
-        element: <Profile />,
+        path: '/dashboard/account',
+        element: <Account />,
     },
     {
         path: '/comments',
-        element: <CommentsTest />,
+        element: <Comments />,
     },
     {
         path: '/return',
@@ -98,7 +98,7 @@ const router = createBrowserRouter([
         element: <Checkout />,
     },
     {
-        path: '/billing-overview',
+        path: '/dashboard/billing-overview',
         element: <BillingOverview />,
     },
     {

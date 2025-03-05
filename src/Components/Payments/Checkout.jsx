@@ -1,8 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import tick from '../../assets/tick.png';
 import { useAuth } from '../../Context/authContext';
+import LightningIcon from '../Icons/LightningIcon';
 
 export default function Checkout() {
+<<<<<<< HEAD
     const [platformMerchantId, setPlatformMerchantId] = useState(import.meta.env.VITE_MERCHANT_ID);
     const [platformMerchantKey, setPlatformMerchantkey] = useState(import.meta.env.VITE_MERCHANT_KEY);
     const [amount, setAmount] = useState('1450.00');
@@ -12,14 +15,22 @@ export default function Checkout() {
     const paymentForm = useRef(null);
     const { currentUser } = useAuth();
     const baseURL = 'https://3aad-41-216-202-52.ngrok-free.app';
+=======
+  // const [platformMerchantId, setPlatformMerchantId] = useState(import.meta.env.VITE_MERCHANT_ID);
+  // const [platformMerchantKey, setPlatformMerchantkey] = useState(import.meta.env.VITE_MERCHANT_KEY);
+  // const [amount, setAmount] = useState('1450.00');
+  // const [passPhrase, setPassphrase] = useState(import.meta.env.VITE_PASSPHRASE);
+  // const [payFastSignature, setPayFastSignature] = useState('');
+  // const paymentForm = useRef(null);
+  // const baseURL = 'https://3aad-41-216-202-52.ngrok-free.app';
+>>>>>>> 7b5eadad2b5f0ac312dd2bee031c1fc9a5ba6bde
 
-
-  // Current date
-  useEffect(() => {
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0];
-    setToday(formattedDate);
-  }, []);
+  // // Current date
+  // useEffect(() => {
+  //   const currentDate = new Date();
+  //   const formattedDate = currentDate.toISOString().split('T')[0];
+  //   setToday(formattedDate);
+  // }, []);
 
   const generatePayFastSignature = async (e) => {
     e.preventDefault();
@@ -42,48 +53,67 @@ export default function Checkout() {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // useEffect(() => {
+  //   console.log(platformMerchantId, platformMerchantKey, amount)
+  // }, [])
+
+>>>>>>> 7b5eadad2b5f0ac312dd2bee031c1fc9a5ba6bde
   return (
-    <>
+    <section className='lg:flex'>
+    
       <div className='p-10'>
         <div>
-          <Link to='/billing-overview' className='text-violet-700 font-bold hover:text-gray-400 flex block'>&lt; Back to Billing Overview</Link>
+          <Link to='/dashboard/billing-overview' className='text-violet-700 font-bold hover:text-gray-400 flex block'>
+            &lt; Back to plans
+          </Link>
         </div>
 
-        <h1 className='mt-3 mb-8 text-3xl font-bold'>Go Pro. Cancel anytime.</h1>
+        <div className='wrapper pl-[140px] mt-[53px]'>
+          <h1 className='mt-3 mb-8 text-3xl font-bold'>Go Pro. Cancel anytime.</h1>
 
-        <p>Unlimited decks</p>
-        <p className='my-4'>Cancel anytime</p>
-        <p>Full features</p>
+          <div className='text-wrapper flex items-center gap-[15px]'>
+            <img src={tick} alt='' className='h-[12px] w-[15px] static' />
+            <p>Unlimited decks</p>
+          </div>
 
-        <div className='mt-8 p-5 border-2 border-solid border-slate-200'>
-          <p className='mb-4 font-bold'>Your subscription</p>
+          <div className='text-wrapper flex items-center gap-[15px]'>
+            <img src={tick} alt='' className='h-[12px] w-[15px] static' />
+            <p>Cancel anytime</p>
+          </div>
 
-          <p className='mb-4'>SocialPaste Pro &middot; R{amount}</p>
-          <p className='mt-3 mb-8 text-3xl font-bold'>Due today &middot; R{amount}</p>
+          <div className='text-wrapper flex items-center gap-[15px]'>
+            <img src={tick} alt='' className='h-[12px] w-[15px] static' />
+            <p>Full features</p>
+          </div>
+          
+          <p className='my-4'>Cancel anytime</p>
+          <p>Full features</p>
 
-          <form ref={paymentForm} action="https://sandbox.payfast.co.za​/eng/process" method="post" onSubmit={(event) => generatePayFastSignature(event)}>
-            <input type="hidden" name="merchant_id" value={platformMerchantId} />
-            <input type="hidden" name="merchant_key" value={platformMerchantKey} />
-            <input type="hidden" name="amount" value={amount} />
-            <input type="hidden" name="item_name" value="Social Paste PRO" />
-            <input type="hidden" name="return_url" value={`${baseURL}/return`} />
-            <input type="hidden" name="cancel_url" value={`${baseURL}/cancel`} />
-            <input type="hidden" name="notify_url" value={`${baseURL}/notify`} />
-            <input type="hidden" name="signature" value={payFastSignature} />
-            <input type="hidden" name="custom_str1" value={currentUser.uid} />
-            <input type="hidden" name="subscription_type" value="1" />
-            <input type="hidden" name="email_address" value='aaaasds@gmail.com' />
-            <input type="hidden" name="billing_date" value={today} />
-            <input type="hidden" name="recurring_amount" value={amount} />
-            <input type="hidden" name="frequency" value="3" />
-            <input type="hidden" name="cycles" value="12" />
-            <input type="hidden" name="subscription_notify_email" value="true" />
-            <input type="hidden" name="subscription_notify_webhook" value="true" />
-            <input type="hidden" name="subscription_notify_buyer" value="true" />
-            <input type="submit" className='w-full font-bold text-slate-50 rounded-full py-4 bg-violet-800' value="Pay Now" />
-          </form>
+          <div className='w-[522px] border-[1px] border-[solid] border-[border] rounded-[26px] mt-[53px]'>
+            <div className='border-b-[1px] border-[border] p-[25px]'>
+              <p className='text-1xl font-semibold'>Your Subscription</p>
+            </div>
+            <div className='border-b-[1px] border-[border] p-[25px]'>
+              <p className='text-1xl font-semibold text-[#676B5F]'>SocialPaste Pro</p>
+            </div>
+            <div className='flex justify-between p-[25px]'>
+              <p className='text-3xl font-extrabold'>Due Today</p>
+              <p className='text-3xl font-extrabold'>R99</p>
+            </div>
+
+            <div className=' p-[25px]'>
+              <button className='flex  justify-center items-center p-[15px] bg-[#F6F7F5] rounded-[100px] text-[#E0E2D9] w-[100%]'>
+                <LightningIcon className='w-12 group-hover:invert' />
+                Update to Pro
+              </button>
+
+              <p className='mx-[auto] mt-[20px] text-center'>You can cancel anytime.</p>
+            </div>
+          </div>
         </div>
       </div>
-    </>
-  )
+    </section>
+  );
 }

@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState, useMemo, useEffect } from 'react'
 import { useParams, useLocation, Link, useNavigate } from 'react-router-dom';
 import { db, storage } from '../../../firebase';
 import { doc, addDoc, getDoc, updateDoc, setDoc, collection } from 'firebase/firestore';
-import CommentsTest from '../CommentsTest/CommentsTest';
+import Comments from '../Comments/Comments';
 
 
 export default function Card() {
@@ -100,7 +100,7 @@ export default function Card() {
                   <img src={thumbnail} alt="" className="banner w-full h-full object-cover" />
                 </div>
 
-                <CommentsTest deckId={id} cardId={cardId}/>
+                <Comments deckId={id} cardId={cardId}/>
             </div>
 
         </>

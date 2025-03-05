@@ -16,8 +16,12 @@ export default {
       colors: {
         'socialpaste-purple': '#8129D9',
         'socialpaste-purple-dark': '#7329BD',
+        'socialpaste-chinese-white': '#E0E2D9',
         'socialpaste-gray': '#676B5F',
         'socialpaste-lightergray': '#F6F7F5',
+        'socialpaste-red': '#BF000B',
+        'socialpaste-green': '#43E660',
+        'border': '#F6F7F5'
       },
     },
   },
