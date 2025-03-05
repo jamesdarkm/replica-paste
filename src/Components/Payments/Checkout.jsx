@@ -8,7 +8,9 @@ export default function Checkout() {
     const [amount, setAmount] = useState('1450.00');
     const [passPhrase, setPassphrase] = useState(import.meta.env.VITE_PASSPHRASE);
     const [payFastSignature, setPayFastSignature] = useState('');
+    const [today, setToday] = useState(null);
     const paymentForm = useRef(null);
+    const { currentUser } = useAuth();
     const baseURL = 'https://3aad-41-216-202-52.ngrok-free.app';
 
 
@@ -31,8 +33,6 @@ export default function Checkout() {
       if (response.ok) {
         const signatureResponse = await response.json();
         setPayFastSignature(signatureResponse.signature)
-        console.log(signatureResponse)
-        console.log(payFastSignature)
         paymentForm.current.submit();
       } else {
         console.error('Error generating signature');
@@ -40,12 +40,7 @@ export default function Checkout() {
     } catch (error) {
       console.error('Error generating signature:', error);
     }
-    // console.log(payFastSignature)
   }
-
-  useEffect(() => {
-    console.log(platformMerchantId, platformMerchantKey, amount)
-  }, [])
 
   return (
     <>

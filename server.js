@@ -403,7 +403,9 @@ let passPhrase = 'jt7NOE43FZPn ';
 
 })
 
-
+app.get("/", (req, res) => {
+  res.send("Hello from Vercel!");
+});
 
 app.post('/cancel-plan', async (req, res) => {
   const passPhrase = process.env.VITE_PASSPHRASE;
